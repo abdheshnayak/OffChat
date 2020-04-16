@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@integer/fadeDuration"
+    android:exitFadeDuration="@integer/fadeDuration">
+    <!-- disabled state -->
+    <item android:state_pressed="true" android:color="#ffd5c5ff" />
+    <item android:color="#ffccff"/>
+</selector>

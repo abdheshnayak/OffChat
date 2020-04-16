@@ -1,0 +1,37 @@
+<resources>
+
+    <string name="app_name">OffChat</string>
+    <string name="user_dp">user_dp</string>
+    <string name="user_name">Alex Pardian</string>
+    <string name="channel_description">chanel Discription</string>
+    <string name="channel_name">chanelName</string>
+    <string name="todo">imgLogo</string>
+    <string name="textview">This is larger text This is larger text This is larger text This is larger text This is larger text This is larger text </string>
+    <string name="this_messages_are_end_to_end_encrypted">This messages are end to end encrypted.</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="desc_offchat_lockup">Firebase logo and name</string>
+    <string name="signed_in">Signed In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_verification_code">Verification Code</string>
+    <string name="start_phone_auth">Next</string>
+    <string name="verify_phone_auth">Verify</string>
+    <string name="resend_phone_auth">Resend</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="status_code_sent">Code Sent</string>
+    <string name="status_verification_failed">Verification failed</string>
+    <string name="status_verification_succeeded">Verification succeeded</string>
+    <string name="status_sign_in_failed">Sign-in failed</string>
+    <string name="instant_validation">(instant validation)</string>
+
+    <string name="firebase_status_fmt">Firebase UID: %s</string>
+
+    <string name="phone_title_text">Enter your phone number</string>
+    <string name="verification_phone_info">OffChat will send an SMS message to verify your phone number.</string>
+    <string name="verification_phone_charges_info">Carrier SMS charges may apply</string>
+    <string name="country_info_phone_auth">Nepal and India only.</string>
+    <string name="Refresh" >Refresh</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search by Name/Number</string>
+    <string name="profile_button">Profile</string>
+</resources>
