@@ -7,7 +7,6 @@ Android app Project For Chatting.
 ![Image of the Main Screen](screenshots/3.jpg)
 ![Image of the Main Screen](screenshots/4.jpg)
 ![Image of the Main Screen](screenshots/5.jpg)
-![Image of the Main Screen](screenshots/6.jpg)
 
 
 
