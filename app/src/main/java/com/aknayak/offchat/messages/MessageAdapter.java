@@ -86,31 +86,59 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         final DBHelper mydb = new DBHelper(parentActivity);
 
-        if (message.getMessageStatus()<3 && message.getMessageSource().equals(receiverUsername) ){
-            if (message.getMessageSource().equals(receiverUsername)){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).child("messageStatus");
-                        fdbr.setValue(3);
-
-                        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                        User user = null;
-                        try {
-                            user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(),mydb.getlastMessages(rootPath).getMessage(),"no",3);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+        if (message.getMessageStatus()==3 && message.getMessageSource().equals(senderUserName) ) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (!message.getMessageID().equals(mydb.getlastMessages(rootPath).getMessageID())){
+                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
                         }
-                        mFirebaseDatabaseReference.updateChildren(user.toMap());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                }).start();
-            }
+                }
+            }).start();
+        }
+        if (message.getMessageStatus()<3 && message.getMessageSource().equals(receiverUsername) ) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
+                    message.setMessageStatus(3);
+                    fdbr.updateChildren(message.toMap());
+//                        fdbr.setValue(3);
+//                        try {
+//                            if (!mydb.getlastMessages(rootPath).getMessageID().equals(message.getMessageID())){
+////                                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
+//                            }
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
+
+                    DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
+                    User user = null;
+                    try {
+                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    mFirebaseDatabaseReference.updateChildren(user.toMap());
+                }
+            }).start();
         }
 
         if (message.getMessageSource().equals(senderUserName)){
             if (message.getMessageStatus()==1) {
-                DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
-                fdbr.updateChildren(message.toMap());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        message.setMessageStatus(2);
+                        DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
+                        fdbr.updateChildren(message.toMap());
+                    }
+                }).start();
             }
             uiUpdate(message,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,waitingForSent);
         }

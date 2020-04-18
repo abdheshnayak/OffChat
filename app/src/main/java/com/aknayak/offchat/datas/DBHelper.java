@@ -347,6 +347,21 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public ArrayList<Message> getAllMessagesByStatus(String messageRoot,int status,String Source) throws ParseException {
+        ArrayList<Message> array_list = new ArrayList<>();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from messages where messageroot = '"+messageRoot+"' and messagesource = '"+Source+"' and messageStatus = '"+status+"'  order by messagesenttime asc", null );
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")),res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))),res.getInt(res.getColumnIndex("messageStatus")),res.getString(res.getColumnIndex("messageId"))));
+//            Log.d("Retrived :",res.getString(res.getColumnIndex("message")));
+            res.moveToNext();
+        }
+        return array_list;
+    }
 
 }

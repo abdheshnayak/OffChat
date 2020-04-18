@@ -23,6 +23,8 @@ public class Message implements Serializable {
         this.messageID=messageID;
     }
 
+
+
     public Message(String message, String messageSource,Date messageSentTime, int messageStatus,String messageID) {
         this(message,messageSource,messageStatus,messageID);
         this.messageSentTime= messageSentTime;

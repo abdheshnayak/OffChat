@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Console;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,6 +86,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     BroadcastReceiver networkStateReceiver;
     DBHelper mydb;
 
+    int cnt=0;
     public Boolean isOnline(){
         try {
             Process p1= java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
@@ -232,8 +234,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
-        v3 = new ValueEventListener() {
 
+        v3 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 messages.clear();
@@ -249,7 +251,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 }
                 adapter.notifyDataSetChanged();
                 if (messages.size()!=0) {
-                    rvMessages.scrollToPosition(messages.size() - 1);
+                    try {
+                        if (cnt!=mydb.getAllMessages(rootPath).size()) {
+                            cnt = mydb.getAllMessages(rootPath).size();
+                            rvMessages.scrollToPosition(messages.size() - 1);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -264,6 +273,53 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onTick(long millisUntilFinished) {
                 o_status.addValueEventListener(v2);
+
+                try {
+                    msg= mydb.getAllMessagesByStatus(rootPath,2,receiverUsername);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                int n = msg.size();
+
+                for (int i=0;i<n;i++){
+                    DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
+                    Message msgvar=msg.get(i);
+                    msgvar.setMessageStatus(3);
+                    fdbr.updateChildren(msgvar.toMap());
+//                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                }
+
+                try {
+                    msg=mydb.getAllMessagesByStatus(rootPath,3,senderUserName);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                n = msg.size();
+                Message lastMessage = null;
+                try {
+                    lastMessage= mydb.getlastMessages(rootPath);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Log.d("KKKK"," "+n);
+                for (int i =0;i<n;i++){
+                    if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())){
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                    }
+                }
+                try {
+                    if (messages.size()!=0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)){
+                        Log.d("MMM",mydb.getlastMessages(rootPath).getMessage());
+                        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
+                        User user = new User(senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(),mydb.getlastMessages(rootPath).getMessage(),"no",3);
+                        mFirebaseDatabaseReference.updateChildren(user.toMap());
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+//                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -317,7 +373,12 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }
 
         messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
-        messageRef.addValueEventListener(v3);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                messageRef.addValueEventListener(v3);
+            }
+        }).start();
 
 
         userName.setText(mydb.getUserName(receiverUsername));
@@ -384,7 +445,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         // That's all!
         adapter.notifyDataSetChanged();
         if (messages.size()!=0) {
-            rvMessages.scrollToPosition(messages.size() - 1);
+            try {
+                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath,2,receiverUsername).size()-1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -460,7 +525,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
                 mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),0,message.getMessageID(),getRoot(senderUserName,receiverUsername));
 
-                rvMessages.scrollToPosition(messages.size()-1);
+                rvMessages.scrollToPosition(messages.size());
 
                 break;
             case R.id.profileButton:
@@ -499,39 +564,21 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         messageRef.addValueEventListener(v3);
         super.onResume();
     }
-
+    ArrayList<Message> msg=null;
+    int n;
     @Override
     protected void onStart() {
         super.onStart();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ArrayList<Message> msg=null;
-                try {
-                    msg= mydb.getAllMessages(rootPath);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                int n=msg.size();
-                for (int i=0;i<n;i++){
-                    if (msg.get(i).getMessageStatus()<3){
-                        if (msg.get(i).getMessageSource().equals(receiverUsername)){
-                            DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).child("messageStatus");
-                            fdbr.setValue(3);
-                        }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
                     }
-                }
+                }).start();
 
-                try {
-                    if (messages.size()!=0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)){
-                        Log.d("MMM",mydb.getlastMessages(rootPath).getMessage());
-                        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                        User user = new User(senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(),mydb.getlastMessages(rootPath).getMessage(),"no",3);
-                        mFirebaseDatabaseReference.updateChildren(user.toMap());
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
             }
         }).start();
     }
