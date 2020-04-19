@@ -2,7 +2,7 @@
 
 Android app Project For Chatting.
 
-App Link - [Download App](https://github.com/abdheshnayak/OffChat/blob/master/OffChat.apk)
+App Link - [Download App](https://github.com/abdheshnayak/OffChat/blob/master/app/release/app-release.apk)
 
 #### ScreenShot 1
 
