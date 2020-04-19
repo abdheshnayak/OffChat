@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static android.app.Notification.VISIBILITY_PUBLIC;
 import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
@@ -343,7 +346,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(),"You don't have access now.",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
-                notifyIt(R.drawable.ic_launcher_empty, "Your Name","This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large 8888888888888text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text ");
+                Toast.makeText(getApplicationContext(),"Your Number: "+senderUserName,Toast.LENGTH_LONG).show();
+//                notifyIt(R.drawable.ic_launcher_empty, "Your Name","This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large 8888888888888text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text ",getApplicationContext(),55);
                 break;
             default:
                 break;
@@ -402,21 +406,96 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void notifyIt(int icon, String title, String message){
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID);
-        builder.setSmallIcon(icon);
-        builder.setContentTitle(title);
-//        builder.setContentText(message);
-        if(message.length()>300){
-            builder.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(message.substring(0,300)+"..."));
+    public static void notifyIt(int icon, String title, String message, Context context,int notificationId){
+        String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+//        builder.setSmallIcon(icon);
+//        builder.setGroup(GROUP_KEY_WORK_EMAIL);
+//        builder.setContentTitle(title);
+//        builder.setStyle(new NotificationCompat.InboxStyle()
+//                .addLine("Alex Faarborg  Check this out")
+//                .addLine("Jeff Chang    Launch Party")
+//                .setBigContentTitle("2 new messages")
+//                .setSummaryText(title));
+////        builder.setContentText(message);
+//        if(message.length()>300){
+//            builder.setStyle(new NotificationCompat.InboxStyle()
+//                    .addLine(message.substring(0,300)+"...")
+//                    .addLine("Jeff Chang    Launch Party")
+//                    .setBigContentTitle("2 new messages")
+//                    .setSummaryText(title));
+////            builder.setStyle(new NotificationCompat.BigTextStyle()
+////                    .bigText(message.substring(0,300)+"..."));
+//        }else {
+////            builder.setStyle(new NotificationCompat.BigTextStyle()
+//
+//            builder.setStyle(new NotificationCompat.InboxStyle()
+//                    .addLine(message)
+//                    .addLine("Jeff Chang    Launch Party")
+//                    .setBigContentTitle("2 new messages")
+//                    .setSummaryText(title));
+////                    .bigText(message));
+//        }
+//        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+//        notificationManager.notify(notificationId++, builder.build());
+//
+
+        //use constant ID for notification used as group summary
+        String msg;
+        if(message.length()>300) {
+            msg=message.substring(0,300)+"...";
         }else {
-            builder.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(message));
+            msg=message;
         }
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-        notificationManager.notify(notificationId++, builder.build());
+
+        int SUMMARY_ID = 0;
+
+        PendingIntent contentIntent =
+                PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+
+        Notification newMessageNotification =
+                new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setSmallIcon(icon)
+                        .setContentTitle(title)
+                        .setContentText(msg)
+                        .setGroup(GROUP_KEY_WORK_EMAIL)
+                        .setContentIntent(contentIntent)
+                        .setAutoCancel(true)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .build();
+
+
+        Notification summaryNotification =
+                new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setContentTitle(title)
+                        //set content text to support devices running API level < 24
+                        .setContentText("")
+                        .setSmallIcon(icon)
+                        //build summary info into InboxStyle template
+                        .setStyle(new NotificationCompat.InboxStyle()
+                                .addLine("")
+                                .setBigContentTitle("")
+//                                .setSummaryText("janedoe@example.com")
+                                )
+                        //specify which group this notification belongs to
+                        .setGroup(GROUP_KEY_WORK_EMAIL)
+                        //set this notification as the summary for the group
+                        .setGroupSummary(true)
+                        .setDefaults(Notification.DEFAULT_SOUND)
+                        .setContentIntent(contentIntent)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .build();
+
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationId, newMessageNotification);
+//        notificationManager.notify(notificationId+1, newMessageNotification2);
+        notificationManager.notify(SUMMARY_ID, summaryNotification);
+
+
     }
     public static String getRandString(int n){
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

@@ -40,6 +40,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
+import static com.aknayak.offchat.MainActivity.notifyIt;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
@@ -136,6 +137,9 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                         //                Updating History Of Sender
                         DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(user.getUserName()).child(senderUserName).child("sentStatus");
                         mFirebaseDatabaseReference.setValue(2);
+                        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hhmmss", Locale.ENGLISH);
+                        notifyIt(R.drawable.ic_launcher_empty,""+mydb.getUserName(message.getMessageSource()) ,message.getMessage(),parrentActivity.getApplicationContext(),Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                        Log.d("LLLL",""+Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                     }
                         mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),message.getMessageStatus(),snapshot.getKey(),rootPath);
                 }

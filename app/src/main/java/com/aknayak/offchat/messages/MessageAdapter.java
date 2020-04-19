@@ -129,7 +129,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }).start();
         }
 
-        if (message.getMessageSource().equals(senderUserName)){
+        if (message.getMessageSource().equals(receiverUsername)){
             if (message.getMessageStatus()==1) {
                 new Thread(new Runnable() {
                     @Override
@@ -140,6 +140,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     }
                 }).start();
             }
+        }
+        if (message.getMessageSource().equals(senderUserName)){
             uiUpdate(message,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,waitingForSent);
         }
     }
