@@ -124,33 +124,40 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         uiUpdate(user,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,lastMessageTextView,unseenTextView);
 
 
-        final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
-        fdbr.addValueEventListener(new ValueEventListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (final DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    Message message = snapshot.getValue(Message.class);
-                    if (message.getMessageStatus() == 1 && message.getMessageSource().equals(user.getUserName())){
-                        message.setMessageStatus(2);
-                        fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
+            public void run() {
+                final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
+                fdbr.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (final DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                            Message message = snapshot.getValue(Message.class);
+                            if (message.getMessageStatus() == 1 && message.getMessageSource().equals(user.getUserName())){
+                                message.setMessageStatus(2);
+                                fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
 
-                        //                Updating History Of Sender
-                        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(user.getUserName()).child(senderUserName).child("sentStatus");
-                        mFirebaseDatabaseReference.setValue(2);
-                        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hhmmss", Locale.ENGLISH);
-                        notifyIt(R.drawable.ic_launcher_empty,""+mydb.getUserName(message.getMessageSource()) ,message.getMessage(),parrentActivity.getApplicationContext(),Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
-                        Log.d("LLLL",""+Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+//                        mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),2,message.getMessageID(),rootPath);
+
+                                //                Updating History Of Sender
+                                DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(user.getUserName()).child(senderUserName).child("sentStatus");
+                                mFirebaseDatabaseReference.setValue(2);
+                                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hhmmss", Locale.ENGLISH);
+                                notifyIt(R.drawable.ic_launcher_empty,""+mydb.getUserName(message.getMessageSource()) ,message.getMessage(),parrentActivity.getApplicationContext(),Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                Log.d("LLLL",""+Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                            }
+                            mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),message.getMessageStatus(),snapshot.getKey(),rootPath);
+                        }
+                        unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
+                        uiUpdate(user,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,lastMessageTextView,unseenTextView);
                     }
-                        mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),message.getMessageStatus(),snapshot.getKey(),rootPath);
-                }
-                unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
-                uiUpdate(user,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,lastMessageTextView,unseenTextView);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
             }
-        });
+        }).start();
 
 
     }

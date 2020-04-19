@@ -87,23 +87,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         final DBHelper mydb = new DBHelper(parentActivity);
 
         if (message.getMessageStatus()==3 && message.getMessageSource().equals(senderUserName) ) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
                     try {
                         if (!message.getMessageID().equals(mydb.getlastMessages(rootPath).getMessageID())){
                             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
-                    }
+//                    }
                 }
-            }).start();
+//            }).start();
         }
         if (message.getMessageStatus()<3 && message.getMessageSource().equals(receiverUsername) ) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
                     DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
                     message.setMessageStatus(3);
                     fdbr.updateChildren(message.toMap());
@@ -126,20 +126,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     }
                     mFirebaseDatabaseReference.updateChildren(user.toMap());
                 }
-            }).start();
-        }
+//            }).start();
+//        }
 
         if (message.getMessageSource().equals(receiverUsername)){
             if (message.getMessageStatus()==1) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
                         message.setMessageStatus(2);
                         DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
                         fdbr.updateChildren(message.toMap());
                     }
-                }).start();
-            }
+//                }).start();
+//            }
         }
         if (message.getMessageSource().equals(senderUserName)){
             uiUpdate(message,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,waitingForSent);
