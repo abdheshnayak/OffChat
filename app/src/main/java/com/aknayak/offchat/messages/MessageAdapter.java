@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
-import com.aknayak.offchat.users.User;
+import com.aknayak.offchat.users.connDetail;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -122,16 +122,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
             DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
             message.setMessageStatus(3);
+
             fdbr.updateChildren(message.toMap());
 
             DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-            User user = null;
-            try {
-                user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            mFirebaseDatabaseReference.updateChildren(user.toMap());
+
+            mFirebaseDatabaseReference.setValue(new connDetail(true));
         }
 
         if (message.getMessageSource().equals(receiverUsername)) {
@@ -212,4 +208,5 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             seenStatusSingle.setVisibility(View.GONE);
         }
     }
+
 }

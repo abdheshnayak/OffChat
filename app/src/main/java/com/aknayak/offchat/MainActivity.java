@@ -30,9 +30,8 @@ import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
-import com.aknayak.offchat.users.User;
+import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
-import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +41,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,7 +52,7 @@ import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    public final ArrayList<User> users = new ArrayList<User>();
+    public final ArrayList<Message> messages  = new ArrayList<Message>();
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
     private static final String CHANNEL_ID = "MyNotification";
@@ -86,16 +86,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        messages.clear();
+        ArrayList<Message> arrayList= null;
+        try {
+            arrayList=mydb.getHist();
+            messages.addAll(arrayList);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         adapter.notifyDataSetChanged();
+        rvUser.scrollToPosition(arrayList.size());
     }
 
     String notification;
+    DBHelper mydb ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mydb = new DBHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
+
 
         mAuth = FirebaseAuth.getInstance();
         mUsername = ANONYMOUS;
@@ -148,43 +160,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         rvUser = findViewById(R.id.recyclerView);
 
-        adapter = new userAdapter(users, this);
+        adapter = new userAdapter(messages, this);
 
         // Attach the adapter to the recyclerview to populate items
         rvUser.setAdapter(adapter);
+//        rvUser.scrollToPosition(users.size());
+
         // Set layout manager to position the items
-        rvUser.setLayoutManager(new LinearLayoutManager(this));
+//        rvUser.setLayoutManager(new LinearLayoutManager(this));
 
-        final DBHelper mydb = new DBHelper(getApplicationContext());
 
-        ArrayList<contactsUser> k = mydb.getAllCotacts();
+        ArrayList<Message> msg=null;
+        int n=0;
+        try {
+             msg= mydb.getHist();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        n=msg.size();
+        for (int i = 0;i < n ;i++) {
+            Log.d("BBBB"+msg.get(i).getMessageFor(),simpleDateFormat.format(msg.get(i).getMessageSentTime()));
+        }
 
         adapter.notifyDataSetChanged();
 
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        linearLayoutManager.setReverseLayout(true);
+//        linearLayoutManager.setReverseLayout(true);
         rvUser.setLayoutManager(linearLayoutManager);
 
         try {
-            if (mydb.getAllHistories().size() == 0) {
+            if (mydb.getHist().size() == 0) {
                 FirebaseDatabase.getInstance().getReference().child("admin").child("welcome_notification").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         notification = dataSnapshot.getValue(String.class);
 
-                        Message message = new Message(notification, "+1", 1, getRandString(15));
+                        Message message = new Message(notification, "+1", 1, getRandString(15),senderUserName);
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot("+1", senderUserName))
                                 .child(message.getMessageID()).updateChildren(message.toMap());
 
                         DatabaseReference mFirebaseRefrence = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child("+1");
 
-                        Date td = Calendar.getInstance(Locale.ENGLISH).getTime();
-                        User user = new User("+1", td, notification, "no", 0);
-                        mFirebaseRefrence.updateChildren(user.toMap());
-                        DBHelper mydb = new DBHelper(getApplicationContext());
-                        mydb.inserthistory("+1", notification, Calendar.getInstance(Locale.ENGLISH).getTime(), 0);
+
+//                        Date td = Calendar.getInstance(Locale.ENGLISH).getTime();
+//                        User user = new User("+1", td, notification, "no", 0);
+//                        mFirebaseRefrence.updateChildren(user.toMap());
+                        mFirebaseRefrence.setValue(new connDetail(true));
+//                        DBHelper mydb = new DBHelper(getApplicationContext());
+//                        mydb.inserthistory("+1", notification, Calendar.getInstance(Locale.ENGLISH).getTime(), 0);
 
                         DatabaseReference o_status = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child("+1").child("online_status");
                         o_status.setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
@@ -200,39 +226,102 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        if (users.size() != 0) {
-            users.clear();
+        if (messages.size() != 0) {
+            messages.clear();
         }
         try {
-            users.addAll(mydb.getAllHistories());
+            messages.clear();
+            messages.addAll(mydb.getHist());
+            adapter.notifyDataSetChanged();
+            rvUser.scrollToPosition(messages.size());
         } catch (ParseException e) {
             Log.d("lskdf", e.getMessage());
         }
 
 //        History Fetcher
-        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).addValueEventListener(new ValueEventListener() {
+//        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                messages.clear();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    User user = snapshot.getValue(User.class);
+//                    mydb.inserthistory(user.getUserName(), user.getLastMessage(), user.getLastMessageSentTime(), user.getSentStatus());
+//                }
+//                try {
+//                    messages.addAll(mydb.getHist());
+//                    adapter.notifyDataSetChanged();
+//                    rvUser.scrollToPosition(messages.size());
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+        final ValueEventListener v3 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                users.clear();
-                mydb.deleteAllHistories();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
-                    mydb.inserthistory(user.getUserName(), user.getLastMessage(), user.getLastMessageSentTime(), user.getSentStatus());
-                }
                 try {
-                    users.addAll(mydb.getAllHistories());
+                    messages.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Message message = snapshot.getValue(Message.class);
+                        if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor());
+                        }
+                    }
+                    messages.addAll(mydb.getHist());
+                    adapter.notifyDataSetChanged();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                adapter.notifyDataSetChanged();
-            }
 
+                if (messages.size() != 0) {
+//                    try {
+//                        if (cnt != mydb.getAllMessages(rootPath).size()) {
+//                            cnt = mydb.getAllMessages(rootPath).size();
+//                            rvMessages.scrollToPosition(messages.size() - 1);
+//                        }
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+                    adapter.notifyDataSetChanged();
+                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+
+
+        ValueEventListener v1 = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                    connDetail check = snapshot.getValue(connDetail.class);
+                    if (check.getConnected()){
+                        String user= snapshot.getKey();
+                        DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,user));
+                        messageRef.addValueEventListener(v3);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName);
+        historyRef.addValueEventListener(v1);
 
         cdt = new CountDownTimer(50000, 50000) {
             @Override
@@ -273,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
 
 
-        rvUser.scrollToPosition(users.size() - 1);
+//        rvUser.scrollToPosition(users.size());
     }
 
 
@@ -362,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public static String getRoot(String first, String second) {
-        Log.d("kk", "" + Double.valueOf(first));
+//        Log.d("kk", "" + Double.valueOf(first));
         if (Double.valueOf(first) > Double.valueOf(second)) {
             return first + second;
         } else {

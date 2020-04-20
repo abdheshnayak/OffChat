@@ -7,14 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.aknayak.offchat.messages.Message;
-import com.aknayak.offchat.users.User;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -44,13 +42,41 @@ public class DBHelper extends SQLiteOpenHelper {
         );
         db.execSQL(
                 "create table messages " +
-                        "(message text,messageId text primary key,messagesource text ,messagesenttime date, messageStatus number,messageRoot text)"
+                        "(message text,messageId text primary key,messagesource text ,messagesenttime date, messageStatus number,messageRoot text,messageFor)"
         );
 
-        db.execSQL(
-                "create table histories " +
-                        "(phone text primary key,lastmessage text,latmessagesenttime date,sentstatus number)"
-        );
+    }
+
+    public ArrayList<Message> getHist() throws ParseException {
+        ArrayList<Message> array_list = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select * from  (select * from messages order by messagesenttime asc)  group by messageRoot order by messagesenttime desc", null);
+        res.moveToFirst();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
+        while (res.isAfterLast() == false) {
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor"))));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public boolean insertUser(String phone) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("phone", phone);
+
+        Cursor res = db.rawQuery("select * from contacts where phone = '" + phone + "';", null);
+        res.moveToFirst();
+        if (res.getCount() == 0) {
+            db.insert("contacts", null, contentValues);
+//                Log.d("Inserted",name);
+        } else {
+//            Log.d("Already Inserted",name);
+        }
+        return true;
     }
 
 
@@ -121,21 +147,21 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
-    public ArrayList<User> getAllHistories() throws ParseException {
-        ArrayList<User> array_list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from histories order by latmessagesenttime asc", null);
-        res.moveToFirst();
-
-        while (res.isAfterLast() == false) {
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-
-            array_list.add(new User(res.getString(res.getColumnIndex("phone")), simpleDateFormat.parse(res.getString(res.getColumnIndex("latmessagesenttime"))), res.getString(res.getColumnIndex("lastmessage")), " ", res.getInt(res.getColumnIndex("sentstatus"))));
-            res.moveToNext();
-        }
-        return array_list;
-    }
+//    public ArrayList<User> getAllHistories() throws ParseException {
+//        ArrayList<User> array_list = new ArrayList<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor res = db.rawQuery("select * from histories order by latmessagesenttime desc", null);
+//        res.moveToFirst();
+//
+//        while (res.isAfterLast() == false) {
+//
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+//
+//            array_list.add(new User(res.getString(res.getColumnIndex("phone")), simpleDateFormat.parse(res.getString(res.getColumnIndex("latmessagesenttime"))), res.getString(res.getColumnIndex("lastmessage")), " ", res.getInt(res.getColumnIndex("sentstatus"))));
+//            res.moveToNext();
+//        }
+//        return array_list;
+//    }
 
     public boolean inserthistory(String phone, String lastmessage, Date lastmessagesenttime, int sentstatus) {
 //        Log.d("History :","Inserted");
@@ -174,7 +200,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot) {
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);
@@ -184,7 +210,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("messagesenttime", simpleDateFormat.format(messageSentTime));
         contentValues.put("messageStatus", messageStatus);
         contentValues.put("messageRoot", messageRoot);
-
+        contentValues.put("messageFor",messageFor);
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageId + "';", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
@@ -204,7 +230,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId"))));
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor"))));
             res.moveToNext();
         }
         return array_list;
@@ -251,7 +277,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageID + "';", null);
         res.moveToFirst();
         if (res.getCount() != 0) {
-            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")));
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor")));
         } else {
             return null;
         }
@@ -266,7 +292,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToLast();
 
         if (res.getCount() != 0) {
-            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")));
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor")));
         } else {
             return null;
         }
@@ -281,7 +307,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId"))));
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor"))));
             res.moveToNext();
         }
         return array_list;

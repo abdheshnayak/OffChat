@@ -60,12 +60,12 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
                 RecyclerView rv = parrentActivity.findViewById(R.id.recyclerView);
                 int pos = rv.getChildLayoutPosition(v);
-                User user = mUser.get(pos);
+                Message message = mMessages.get(pos);
 
 
                 Intent i = new Intent(userView.getContext(), messageViewActivity.class);
 
-                i.putExtra("phoneNumber", user.getUserName());
+                i.putExtra("phoneNumber", message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
 
                 parrentActivity.startActivity(i);
             }
@@ -79,20 +79,20 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
     @Override
     public void onBindViewHolder(userAdapter.userViewHolder viewHolder, int position) {
-        final User user = mUser.get(position);
+        final Message message = mMessages.get(position);
         // Set item views based on your views and data model
         final TextView seenStatusSingle = viewHolder.sentStatusSingle;
         final TextView seenStatusDouble = viewHolder.sentStatusSingleDouble;
         final TextView seenStatusDoubleBlue = viewHolder.sentStatusSingleDoubleBlue;
         TextView textView = viewHolder.usernameTextView;
         final DBHelper mydb = new DBHelper(parrentActivity);
-        textView.setText(mydb.getUserName(user.getUserName()));
+        textView.setText(mydb.getUserName(message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()));
         final TextView lastMessageTextView = viewHolder.lastMessageTextView;
         try {
-            if (user.getLastMessage().length() > 25) {
-                lastMessageTextView.setText(user.getLastMessage().substring(0, 25) + "...");
+            if (message.getMessage().length() > 25) {
+                lastMessageTextView.setText(message.getMessage().substring(0, 25) + "...");
             } else {
-                lastMessageTextView.setText(user.getLastMessage());
+                lastMessageTextView.setText(message.getMessage());
             }
         } catch (Exception e) {
             Log.d("Info", e.getMessage());
@@ -100,67 +100,66 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
         textView = viewHolder.lastMessageTimeTextView;
         DateFormat df = new SimpleDateFormat("hh:mm aa");
-        String strDate = df.format(user.getLastMessageSentTime());
+        String strDate = df.format(message.getMessageSentTime());
         textView.setText(strDate);
         final TextView unseenTextView = viewHolder.unseencount;
-        final String rootPath = getRoot(senderUserName, user.getUserName());
-        unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
 
-        uiUpdate(user, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
+        final String rootPath = getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
+        unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
 
+        Log.d("BBBB","kk"+unseen);
+        uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
 
-        new Thread(new Runnable() {
+        final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
+        fdbr.addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
-                final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
-                fdbr.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Message message = snapshot.getValue(Message.class);
-                            if (message.getMessageStatus() == 1 && message.getMessageSource().equals(user.getUserName())) {
-                                message.setMessageStatus(2);
-                                fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Message message = snapshot.getValue(Message.class);
+                    if (message.getMessageStatus() == 1 && message.getMessageSource().equals(message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource())) {
+                        message.setMessageStatus(2);
+                        fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
 
-                                //                Updating History Of Sender
-                                DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(user.getUserName()).child(senderUserName).child("sentStatus");
-                                mFirebaseDatabaseReference.setValue(2);
-                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
-                                notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
-                                Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
-                            }
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath);
-                        }
-                        unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
-                        uiUpdate(user, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
+                        //                Updating History Of Sender
+//                        DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()).child(senderUserName).child("sentStatus");
+//                        mFirebaseDatabaseReference.setValue(2);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
+                        notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                        Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()), message.getMessageFor());
+                }
+                unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
+                uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
             }
-        }).start();
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
     }
 
-    public void uiUpdate(User user, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView) {
+    public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView) {
         if (unseen == 0) {
-            if (user.getSentStatus() == 1) {
-                seenStatusDoubleBlue.setVisibility(View.GONE);
-                seenStatusDouble.setVisibility(View.GONE);
-                seenStatusSingle.setVisibility(View.VISIBLE);
-            } else if (user.getSentStatus() == 2) {
-                seenStatusDoubleBlue.setVisibility(View.GONE);
-                seenStatusSingle.setVisibility(View.GONE);
-                seenStatusDouble.setVisibility(View.VISIBLE);
-            } else if (user.getSentStatus() == 3) {
-                seenStatusDoubleBlue.setVisibility(View.VISIBLE);
-                seenStatusDouble.setVisibility(View.GONE);
-                seenStatusSingle.setVisibility(View.GONE);
-            } else if (user.getSentStatus() == 0) {
+            if (message.getMessageSource().equals(senderUserName)){
+                if (message.getMessageStatus() == 1) {
+                    seenStatusDoubleBlue.setVisibility(View.GONE);
+                    seenStatusDouble.setVisibility(View.GONE);
+                    seenStatusSingle.setVisibility(View.VISIBLE);
+                } else if (message.getMessageStatus() == 2) {
+                    seenStatusDoubleBlue.setVisibility(View.GONE);
+                    seenStatusSingle.setVisibility(View.GONE);
+                    seenStatusDouble.setVisibility(View.VISIBLE);
+                } else if (message.getMessageStatus() == 3) {
+                    seenStatusDoubleBlue.setVisibility(View.VISIBLE);
+                    seenStatusDouble.setVisibility(View.GONE);
+                    seenStatusSingle.setVisibility(View.GONE);
+                }
+            }else {
                 lastMessageTextView.setVisibility(View.VISIBLE);
                 lastMessageTextView.setTypeface(lastMessageTextView.getTypeface(), Typeface.NORMAL);
                 seenStatusDoubleBlue.setVisibility(View.GONE);
@@ -182,7 +181,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
     @Override
     public int getItemCount() {
-        return mUser.size();
+        return mMessages.size();
     }
 
     public class userViewHolder extends RecyclerView.ViewHolder {
@@ -210,11 +209,11 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         }
     }
 
-    private List<User> mUser;
+    private List<Message> mMessages;
     AppCompatActivity parrentActivity;
 
-    public userAdapter(List<User> mUser, AppCompatActivity a) {
-        this.mUser = mUser;
+    public userAdapter(List<Message> mMessages, AppCompatActivity a) {
+        this.mMessages = mMessages;
         this.parrentActivity = a;
     }
 }

@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
-import com.aknayak.offchat.users.User;
+import com.aknayak.offchat.users.connDetail;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -245,7 +245,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath);
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath,message.getMessageFor());
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -322,7 +322,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                             fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(senderUserName, receiverUsername));
+                                    mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(senderUserName, receiverUsername), msgvar.getMessageFor());
                                     messages.clear();
                                     try {
                                         messages.addAll(mydb.getAllMessages(rootPath));
@@ -373,8 +373,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                             if (messages.size() != 0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)) {
                                 Log.d("MMM", mydb.getlastMessages(rootPath).getMessage());
                                 mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                                User user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
-                                mFirebaseDatabaseReference.updateChildren(user.toMap());
+//                                User user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
+                                mFirebaseDatabaseReference.setValue(new connDetail(true));
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -541,20 +541,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating Message
                 final String messageKey;
                 messageKey = getRandString(15);
-                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, 1, messageKey);
+                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, 1, messageKey,receiverUsername);
                 mMessageBox.getText().clear();
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(senderUserName, receiverUsername));
-                        messages.add(new Message(message.getMessage(), message.getMessageSource(), 0, message.getMessageID()));
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(senderUserName, receiverUsername), message.getMessageFor());
+                        messages.add(new Message(message.getMessage(), message.getMessageSource(), 0, message.getMessageID(),message.getMessageFor()));
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername))
                                 .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(senderUserName, receiverUsername));
+                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(senderUserName, receiverUsername), message.getMessageFor());
                                 messages.clear();
                                 try {
                                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -569,17 +569,19 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating The Data base
 
 //                Updating History Of Sender
-                        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child(receiverUsername);
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child(receiverUsername).setValue(new connDetail(true));
 
-                        User user = new User(receiverUsername, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 1);
+//                        User user = new User(receiverUsername, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 1);
 
-                        mFirebaseDatabaseReference.updateChildren(user.toMap());
+//                        mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
+//                        mFirebaseDatabaseReference.updateChildren(user.toMap());
 
 //                Updating History Of Reciver
-                        mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 0);
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName).setValue(new connDetail(true));
+//                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 0);
 
-                        mFirebaseDatabaseReference.updateChildren(user.toMap());
+//                        mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
+//                        mFirebaseDatabaseReference.updateChildren(user.toMap());
 
                     }
                 }).start();

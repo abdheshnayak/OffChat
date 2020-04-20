@@ -14,18 +14,28 @@ public class Message implements Serializable {
     private Date messageSentTime;
     private int messageStatus;
     private String messageID;
+    private String messageFor;
 
-    public Message(String message, String messageSource, int messageStatus, String messageID) {
+    public Message(String message, String messageSource, int messageStatus, String messageID, String messageFor) {
         this.messageSentTime = Calendar.getInstance().getTime();
         this.Message = message;
         this.messageSource = messageSource;
         this.messageStatus = messageStatus;
         this.messageID = messageID;
+        this.messageFor = messageFor;
     }
 
 
-    public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID) {
-        this(message, messageSource, messageStatus, messageID);
+    public String getMessageFor() {
+        return messageFor;
+    }
+
+    public void setMessageFor(String messageFor) {
+        this.messageFor = messageFor;
+    }
+
+    public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor) {
+        this(message, messageSource, messageStatus, messageID,messageFor);
         this.messageSentTime = messageSentTime;
     }
 
@@ -80,6 +90,7 @@ public class Message implements Serializable {
         userUpdates.put("messageSource", messageSource);
         userUpdates.put("messageStatus", messageStatus);
         userUpdates.put("messageId", messageID);
+        userUpdates.put("messageFor",messageFor);
         return userUpdates;
     }
 }
