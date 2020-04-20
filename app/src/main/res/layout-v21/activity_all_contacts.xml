@@ -39,8 +39,7 @@
             app:layout_constraintStart_toEndOf="@+id/closeButton"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            android:visibility="gone"
-            />
+            android:visibility="gone"/>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:layout_marginLeft="10sp"
@@ -52,6 +51,7 @@
             android:layout_weight="1"
             android:background="@drawable/circle_design_white"
             android:padding="7sp"
+            android:elevation="3dp"
             android:src="@drawable/ic_arrow_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,12 +67,12 @@
             android:layout_weight="1"
             android:background="@drawable/circle_design_white"
             android:padding="7sp"
+            android:elevation="3dp"
             android:src="@drawable/ic_search_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxImageSize="30sp"
-            />
+            app:maxImageSize="30sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/contact_info_logo"
@@ -165,6 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16sp"
         android:layout_marginBottom="16sp"
+        android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_refresh_white_24dp"

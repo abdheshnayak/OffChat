@@ -160,6 +160,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName);
 
 
+
 //        Value Event Listners
         v1 = new ValueEventListener() {
             @Override
@@ -185,6 +186,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
+
+
         v2 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -204,27 +207,29 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                    System.out.println("Time in hours: " + diffHours + " hours.");
                     onlineStatusTextView.setVisibility(View.VISIBLE);
                     if(diffMinutes<1){
-                        onlineStatusTextView.setText("Online");
+                        onlineStatusTextView.setText("online");
                     }else {
                         long dayCheck =date.getDay()-currentTime.getDay();
                         String str;
                         if (dayCheck==0){
                             SimpleDateFormat sf= new SimpleDateFormat("hh:mm aa");
                             str=sf.format(date);
-                            str="Today "+str;
+                            str="today "+str;
                         }else if(dayCheck==1) {
                             SimpleDateFormat sf= new SimpleDateFormat("hh:mm aa");
                             str=sf.format(date);
-                            str ="Yesterday "+str;
+                            str ="yesterday "+str;
                         }else {
                             SimpleDateFormat sf= new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
                             str=sf.format(date);
                         }
 //                                Toast.makeText(getApplicationContext(),""+dayCheck,Toast.LENGTH_SHORT).show();
                         String str2 = str.replace("AM", "am").replace("PM","pm");
-                        onlineStatusTextView.setText(str);
+                        str2="last seen "+str2;
+                        onlineStatusTextView.setText(str2);
                     }
                 }else {
+                    onlineStatusTextView.setVisibility(View.VISIBLE);
                     onlineStatusTextView.setText("Never Used");
                 }
             }
@@ -234,6 +239,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
+
+        o_status.addValueEventListener(v2);
 
         v3 = new ValueEventListener() {
             @Override
@@ -539,14 +546,17 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 rvMessages.scrollToPosition(messages.size());
 
                 break;
-            case R.id.profileButton:
-                Toast t = Toast.makeText(getApplicationContext(),"Your Phone Number\n"+senderUserName,Toast.LENGTH_LONG);
-                t.show();
+            case R.id.profileButton_message:
+                findViewById(R.id.userSpace).performClick();
+                mMenuButtonClose.performClick();
             case R.id.messageBox_closeButton:
                 mMessageBox.getText().clear();
                 break;
             case R.id.userSpace:
-                Toast.makeText(getApplicationContext(),"UserName : "+mydb.getUserName(receiverUsername)+"\nPhone Number : "+ receiverUsername,Toast.LENGTH_LONG).show();
+                Intent i = new Intent(getApplicationContext(),profileCard.class);
+                i.putExtra("phone",receiverUsername);
+                startActivity(i);
+//                Toast.makeText(getApplicationContext(),"UserName : "+mydb.getUserName(receiverUsername)+"\nPhone Number : "+ receiverUsername,Toast.LENGTH_LONG).show();
                 break;
             case R.id.rootLayout:
             case R.id.splashImage:
@@ -570,11 +580,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         cdt.cancel();
     }
 
-    @Override
-    protected void onResume() {
-        messageRef.addValueEventListener(v3);
-        super.onResume();
-    }
 
     ArrayList<Message> msg=null;
 

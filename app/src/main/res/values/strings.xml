@@ -30,7 +30,7 @@
     <string name="verification_phone_info">OffChat will send an SMS message to verify your phone number.</string>
     <string name="verification_phone_charges_info">Carrier SMS charges may apply</string>
     <string name="country_info_phone_auth">Nepal and India only.</string>
-    <string name="Refresh" >Refresh</string>
+    <string name="Refresh">Refresh</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search by Name/Number</string>
     <string name="profile_button">Profile</string>
