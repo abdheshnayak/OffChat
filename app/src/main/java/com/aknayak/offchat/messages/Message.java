@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.aknayak.offchat.MainActivity.receiverUsername;
@@ -16,15 +17,6 @@ public class Message implements Serializable {
     private String messageID;
     private String messageFor;
 
-    public Message(String message, String messageSource, int messageStatus, String messageID, String messageFor) {
-        this.messageSentTime = Calendar.getInstance().getTime();
-        this.Message = message;
-        this.messageSource = messageSource;
-        this.messageStatus = messageStatus;
-        this.messageID = messageID;
-        this.messageFor = messageFor;
-    }
-
 
     public String getMessageFor() {
         return messageFor;
@@ -34,9 +26,13 @@ public class Message implements Serializable {
         this.messageFor = messageFor;
     }
 
-    public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor) {
-        this(message, messageSource, messageStatus, messageID,messageFor);
+    public Message(String message, String messageSource,Date messageSentTime, int messageStatus, String messageID, String messageFor) {
         this.messageSentTime = messageSentTime;
+        this.Message = message;
+        this.messageSource = messageSource;
+        this.messageStatus = messageStatus;
+        this.messageID = messageID;
+        this.messageFor = messageFor;
     }
 
     public String getMessageID() {

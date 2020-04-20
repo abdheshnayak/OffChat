@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         notification = dataSnapshot.getValue(String.class);
 
-                        Message message = new Message(notification, "+1", 1, getRandString(15),senderUserName);
+                        Message message = new Message(notification, "+1",Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15),senderUserName);
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot("+1", senderUserName))
                                 .child(message.getMessageID()).updateChildren(message.toMap());
 
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     messages.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
-                        if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
+                        if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
                             mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor());
                         }
                     }

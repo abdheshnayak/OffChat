@@ -240,7 +240,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-                    Log.d("Abdhesh", "bb");
+//                    Log.d("Abdhesh", "bb");
                     messages.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
@@ -363,7 +363,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-                        Log.d("KKKK", " " + n);
+//                        Log.d("KKKK", " " + n);
                         for (int i = 0; i < n; i++) {
                             if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())) {
                                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
@@ -371,7 +371,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         }
                         try {
                             if (messages.size() != 0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)) {
-                                Log.d("MMM", mydb.getlastMessages(rootPath).getMessage());
+//                                Log.d("MMM", mydb.getlastMessages(rootPath).getMessage());
                                 mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
 //                                User user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
                                 mFirebaseDatabaseReference.setValue(new connDetail(true));
@@ -541,7 +541,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating Message
                 final String messageKey;
                 messageKey = getRandString(15);
-                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, 1, messageKey,receiverUsername);
+                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey,receiverUsername);
                 mMessageBox.getText().clear();
 
                 new Thread(new Runnable() {
@@ -549,7 +549,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     public void run() {
 
                         mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(senderUserName, receiverUsername), message.getMessageFor());
-                        messages.add(new Message(message.getMessage(), message.getMessageSource(), 0, message.getMessageID(),message.getMessageFor()));
+                        messages.add(new Message(message.getMessage(), message.getMessageSource(),Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(),message.getMessageFor()));
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername))
                                 .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override

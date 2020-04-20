@@ -39,11 +39,12 @@ public class myProfile extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String UserName = dataSnapshot.getValue(String.class);
-                if (!UserName.equals("")){
+                if (UserName != null){
                     userName.setText(UserName);
                 }else {
                     userName.setText("");
                 }
+
             }
 
             @Override

@@ -81,6 +81,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
     public void onBindViewHolder(userAdapter.userViewHolder viewHolder, int position) {
         final Message message = mMessages.get(position);
         // Set item views based on your views and data model
+        final TextView seenStatusWaiting = viewHolder.sentStatusWaiting;
         final TextView seenStatusSingle = viewHolder.sentStatusSingle;
         final TextView seenStatusDouble = viewHolder.sentStatusSingleDouble;
         final TextView seenStatusDoubleBlue = viewHolder.sentStatusSingleDoubleBlue;
@@ -95,7 +96,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                 lastMessageTextView.setText(message.getMessage());
             }
         } catch (Exception e) {
-            Log.d("Info", e.getMessage());
+//            Log.d("Info", e.getMessage());
         }
 
         textView = viewHolder.lastMessageTimeTextView;
@@ -107,8 +108,8 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         final String rootPath = getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
         unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
 
-        Log.d("BBBB","kk"+unseen);
-        uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
+//        Log.d("BBBB","kk"+unseen);
+        uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView,seenStatusWaiting);
 
         final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
         fdbr.addValueEventListener(new ValueEventListener() {
@@ -125,12 +126,12 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 //                        mFirebaseDatabaseReference.setValue(2);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
                         notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
-                        Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+//                        Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                     }
                     mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()), message.getMessageFor());
                 }
                 unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
-                uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
+                uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView, seenStatusWaiting);
             }
 
             @Override
@@ -143,18 +144,27 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
     }
 
-    public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView) {
+    public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView, TextView seenStatusWaiting) {
         if (unseen == 0) {
             if (message.getMessageSource().equals(senderUserName)){
-                if (message.getMessageStatus() == 1) {
+                if (message.getMessageStatus() == 0) {
+//                    Log.d("kkk"+message.getMessage(),""+message.getMessageStatus());
+                    seenStatusWaiting.setVisibility(View.VISIBLE);
+                    seenStatusDoubleBlue.setVisibility(View.GONE);
+                    seenStatusDouble.setVisibility(View.GONE);
+                    seenStatusSingle.setVisibility(View.GONE);
+                }else if (message.getMessageStatus() == 1) {
+                    seenStatusWaiting.setVisibility(View.GONE);
                     seenStatusDoubleBlue.setVisibility(View.GONE);
                     seenStatusDouble.setVisibility(View.GONE);
                     seenStatusSingle.setVisibility(View.VISIBLE);
                 } else if (message.getMessageStatus() == 2) {
+                    seenStatusWaiting.setVisibility(View.GONE);
                     seenStatusDoubleBlue.setVisibility(View.GONE);
                     seenStatusSingle.setVisibility(View.GONE);
                     seenStatusDouble.setVisibility(View.VISIBLE);
                 } else if (message.getMessageStatus() == 3) {
+                    seenStatusWaiting.setVisibility(View.GONE);
                     seenStatusDoubleBlue.setVisibility(View.VISIBLE);
                     seenStatusDouble.setVisibility(View.GONE);
                     seenStatusSingle.setVisibility(View.GONE);
@@ -192,7 +202,9 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         TextView sentStatusSingle;
         TextView sentStatusSingleDouble;
         TextView sentStatusSingleDoubleBlue;
+        TextView sentStatusWaiting;
         TextView unseencount;
+
 
         public userViewHolder(View v) {
             super(v);
@@ -205,6 +217,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
             sentStatusSingleDouble = itemView.findViewById(R.id.sentStatusDouble);
             sentStatusSingleDoubleBlue = itemView.findViewById(R.id.sentStatusDoubleBlue);
 
+            sentStatusWaiting = itemView.findViewById(R.id.sentStatusWaiting);
             unseencount = itemView.findViewById(R.id.unseenCount);
         }
     }

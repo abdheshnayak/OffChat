@@ -186,15 +186,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public void deleteAllHistories() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from histories");
-    }
+//    public void deleteAllHistories() {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.execSQL("delete from histories");
+//    }
 
 
     public void deleteAllDatasOfTable() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from histories");
+//        db.execSQL("delete from histories");
         db.execSQL("delete from contacts");
         db.execSQL("delete from messages");
     }
