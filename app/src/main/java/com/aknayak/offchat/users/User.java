@@ -6,15 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.aknayak.offchat.MainActivity.receiverUsername;
-
 public class User implements Serializable {
     private String userName;
-    private Date lastMessageSentTime= Calendar.getInstance().getTime();
+    private Date lastMessageSentTime = Calendar.getInstance().getTime();
     private String lastMessage;
     private String dp_photoAddress;
     private int sentStatus;
-    public User(){
+
+    public User() {
 
     }
 
@@ -67,13 +66,13 @@ public class User implements Serializable {
         this.sentStatus = sentStatus;
     }
 
-    public Map<String, Object> toMap(){
-        Map<String,Object> userUpdates = new HashMap<>();
-        userUpdates.put("dp_photoAddress",dp_photoAddress);
+    public Map<String, Object> toMap() {
+        Map<String, Object> userUpdates = new HashMap<>();
+        userUpdates.put("dp_photoAddress", dp_photoAddress);
         userUpdates.put("lastMessage", lastMessage);
-        userUpdates.put("lastMessageSentTime",lastMessageSentTime);
-        userUpdates.put("sentStatus",sentStatus);
-        userUpdates.put("userName",userName);
+        userUpdates.put("lastMessageSentTime", lastMessageSentTime);
+        userUpdates.put("sentStatus", sentStatus);
+        userUpdates.put("userName", userName);
         return userUpdates;
     }
 }

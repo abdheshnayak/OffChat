@@ -1,7 +1,6 @@
 package com.aknayak.offchat;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,21 +28,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static com.aknayak.offchat.MainActivity.receiverUsername;
-import static com.aknayak.offchat.MainActivity.requestPermission;
-import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 
 public class phone_verification extends AppCompatActivity implements
         View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -86,14 +73,15 @@ public class phone_verification extends AppCompatActivity implements
     private Button mSignOutButton;
 
     private CountDownTimer cdt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        cdt=new CountDownTimer(60000, 1000) {
+        cdt = new CountDownTimer(60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                mTimeCount.setText(""+ millisUntilFinished / 1000);
+                mTimeCount.setText("" + millisUntilFinished / 1000);
                 //here you can have your logic to set text to edittext
 
             }
@@ -112,7 +100,6 @@ public class phone_verification extends AppCompatActivity implements
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
         }
-
 
 
         // Assign views
@@ -147,7 +134,6 @@ public class phone_verification extends AppCompatActivity implements
 
 
         mCountryCode.setOnItemSelectedListener(this);
-
 
 
         // Spinner Drop down elements
@@ -236,6 +222,7 @@ public class phone_verification extends AppCompatActivity implements
         // [END phone_auth_callbacks]
 
     }
+
     // [START on_start_check_user]
     @Override
     public void onStart() {
@@ -418,21 +405,10 @@ public class phone_verification extends AppCompatActivity implements
             // Signed in
 
 
-            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
 
             startActivity(i);
             finish();
-
-//            mPhoneNumberViews.setVisibility(View.GONE);
-//            mSignedInViews.setVisibility(View.VISIBLE);
-
-//            enableViews(mPhoneNumberField, mVerificationField);
-//            mPhoneNumberField.setText(null);
-//            mVerificationField.setText(null);
-
-
-//            mStatusText.setText(R.string.signed_in);
-//            mDetailText.setText(getString(R.string.firebase_status_fmt, user.getUid()));
         }
     }
 
@@ -448,7 +424,7 @@ public class phone_verification extends AppCompatActivity implements
 
     private void enableViews(View... views) {
         for (View v : views) {
-            if(v.equals(mVerificationField)){
+            if (v.equals(mVerificationField)) {
                 v.setVisibility(View.VISIBLE);
             }
             v.setEnabled(true);
@@ -458,7 +434,7 @@ public class phone_verification extends AppCompatActivity implements
     private void disableViews(View... views) {
         for (View v : views) {
 
-            if(v.equals(mVerificationField)){
+            if (v.equals(mVerificationField)) {
                 v.setVisibility(View.INVISIBLE);
             }
             v.setEnabled(false);
@@ -473,7 +449,7 @@ public class phone_verification extends AppCompatActivity implements
                     return;
                 }
 
-                startPhoneNumberVerification(mCountryCode.getSelectedItem().toString()+mPhoneNumberField.getText().toString());
+                startPhoneNumberVerification(mCountryCode.getSelectedItem().toString() + mPhoneNumberField.getText().toString());
                 break;
             case R.id.buttonVerifyPhone:
                 String code = mVerificationField.getText().toString();

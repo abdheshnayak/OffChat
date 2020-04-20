@@ -3,23 +3,13 @@ package com.aknayak.offchat.datas;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.User;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.io.Console;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,38 +21,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDBName.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
-    public static final String CONTACTS_COLUMN_ID = "id";
     public static final String CONTACTS_COLUMN_NAME = "name";
-    public static final String CONTACTS_COLUMN_EMAIL = "email";
-    public static final String CONTACTS_COLUMN_STREET = "street";
-    public static final String CONTACTS_COLUMN_CITY = "place";
     public static final String CONTACTS_COLUMN_PHONE = "phone";
-    private HashMap hp;
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 1);
-    }
-
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, CONTACTS_TABLE_NAME);
-        return numRows;
-    }
-
-    public boolean updateContact (Integer id, String name, String phone) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", name);
-        contentValues.put("phone", phone);
-        db.update("contacts", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
-        return true;
-    }
-
-    public Integer deleteContact (Integer id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("contacts",
-                "id = ? ",
-                new String[] { Integer.toString(id) });
+        super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
@@ -91,18 +54,18 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertContact (String name, String phone){
+    public boolean insertContact(String name, String phone) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
         contentValues.put("phone", phone);
 
-        Cursor res =  db.rawQuery( "select * from contacts where phone = '"+phone+"';", null );
+        Cursor res = db.rawQuery("select * from contacts where phone = '" + phone + "';", null);
         res.moveToFirst();
-        if(res.getCount()==0){
-                db.insert("contacts", null, contentValues);
+        if (res.getCount() == 0) {
+            db.insert("contacts", null, contentValues);
 //                Log.d("Inserted",name);
-        }else {
+        } else {
 //            Log.d("Already Inserted",name);
         }
         return true;
@@ -113,13 +76,11 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<contactsUser> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts where name like '%"+searchData+"%' or phone like '%"+searchData+"%' order by name asc", null );
+        Cursor res = db.rawQuery("select * from contacts where name like '%" + searchData + "%' or phone like '%" + searchData + "%' order by name asc", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
-            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)),res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)),""));
-
-//            Log.d("Retrived :",res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
+        while (res.isAfterLast() == false) {
+            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), ""));
             res.moveToNext();
         }
         return array_list;
@@ -133,26 +94,27 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
         if (res.getCount() == 0) {
             return searchData;
-        } else{
+        } else {
             return res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME));
         }
     }
 
-    public void deleteAllContact () {
+    public void deleteAllContact() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from contacts");
-        insertContact("Admin","+1");
+        insertContact("Admin", "+1");
     }
+
     public ArrayList<contactsUser> getAllCotacts() {
         ArrayList<contactsUser> array_list = new ArrayList<>();
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from contacts order by name desc", null );
+        Cursor res = db.rawQuery("select * from contacts order by name desc", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
-            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)),res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)),""));
+        while (res.isAfterLast() == false) {
+            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), ""));
 //            Log.d("Retrived :",res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
             res.moveToNext();
         }
@@ -161,154 +123,122 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public ArrayList<User> getAllHistories() throws ParseException {
         ArrayList<User> array_list = new ArrayList<>();
-
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from histories order by latmessagesenttime asc", null );
+        Cursor res = db.rawQuery("select * from histories order by latmessagesenttime asc", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
+        while (res.isAfterLast() == false) {
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-            array_list.add(new User(res.getString(res.getColumnIndex("phone")), simpleDateFormat.parse(res.getString(res.getColumnIndex("latmessagesenttime"))),res.getString(res.getColumnIndex("lastmessage"))," ",res.getInt(res.getColumnIndex("sentstatus"))));
-//            Log.d("Retrived :",res.getString(res.getColumnIndex("phone")));
+            array_list.add(new User(res.getString(res.getColumnIndex("phone")), simpleDateFormat.parse(res.getString(res.getColumnIndex("latmessagesenttime"))), res.getString(res.getColumnIndex("lastmessage")), " ", res.getInt(res.getColumnIndex("sentstatus"))));
             res.moveToNext();
         }
         return array_list;
     }
 
-    public boolean inserthistory ( String phone, String lastmessage, Date lastmessagesenttime, int sentstatus){
+    public boolean inserthistory(String phone, String lastmessage, Date lastmessagesenttime, int sentstatus) {
 //        Log.d("History :","Inserted");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("phone", phone);
-        contentValues.put("lastmessage",lastmessage);
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-        contentValues.put("latmessagesenttime",simpleDateFormat.format(lastmessagesenttime));
-        contentValues.put("sentstatus",sentstatus);
+        contentValues.put("lastmessage", lastmessage);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        contentValues.put("latmessagesenttime", simpleDateFormat.format(lastmessagesenttime));
+        contentValues.put("sentstatus", sentstatus);
 
-        Cursor res =  db.rawQuery( "select * from histories where phone = '"+phone+"';", null );
+        Cursor res = db.rawQuery("select * from histories where phone = '" + phone + "';", null);
         res.moveToFirst();
-        if(res.getCount()==0){
+        if (res.getCount() == 0) {
             db.insert("histories", null, contentValues);
 //                Log.d("Inserted",phone);
-        }else {
-            db.update("histories", contentValues, "phone = ? ", new String[] { phone } );
+        } else {
+            db.update("histories", contentValues, "phone = ? ", new String[]{phone});
 //            Log.d("Already Inserted",phone);
             return true;
         }
         return true;
     }
 
-    public void deleteAllHistories () {
+    public void deleteAllHistories() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from histories");
     }
 
 
-    public void deleteAllDatasOfTable(){
+    public void deleteAllDatasOfTable() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from histories");
         db.execSQL("delete from contacts");
         db.execSQL("delete from messages");
     }
-    public void CountUnseen(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from messages where messageStatus = '1'", null);
-        res.moveToFirst();
-        res.getCount();
-    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public boolean insertMessage (String Message, String messageSource,Date messageSentTime, int messageStatus,String messageId,String messageRoot){
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);
-        contentValues.put("messageId",messageId);
+        contentValues.put("messageId", messageId);
         contentValues.put("messagesource", messageSource);
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         contentValues.put("messagesenttime", simpleDateFormat.format(messageSentTime));
         contentValues.put("messageStatus", messageStatus);
         contentValues.put("messageRoot", messageRoot);
 
-        Cursor res =  db.rawQuery( "select * from messages where messageId = '"+messageId+"';", null );
+        Cursor res = db.rawQuery("select * from messages where messageId = '" + messageId + "';", null);
         res.moveToFirst();
-        if(res.getCount()==0){
+        if (res.getCount() == 0) {
             db.insert("messages", null, contentValues);
-//                Log.d("Inserted",name);
-        }else {
-            db.update("messages", contentValues, "messageId = ? ", new String[] { messageId } );
-//            Log.d("Already Inserted",name);
+        } else {
+            db.update("messages", contentValues, "messageId = ? ", new String[]{messageId});
         }
         return true;
     }
 
-
-
-
     public ArrayList<Message> getAllMessages(String messageRoot) throws ParseException {
         ArrayList<Message> array_list = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from messages where messageroot = '"+messageRoot+"' order by messagesenttime asc", null );
+        Cursor res = db.rawQuery("select * from messages where messageroot = '" + messageRoot + "' order by messagesenttime asc", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")),res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))),res.getInt(res.getColumnIndex("messageStatus")),res.getString(res.getColumnIndex("messageId"))));
-//            Log.d("Retrived :",res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
-
+        while (res.isAfterLast() == false) {
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId"))));
             res.moveToNext();
         }
         return array_list;
     }
 
 
-    public void deleteAllMessages () {
+    public void deleteAllMessages() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from messages");
     }
-    public void deleteAllMessagesOfUser(String messageSource){
+
+    public void deleteAllMessagesOfUser(String messageSource) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from messages where messagesource ='"+messageSource+"'");
+        db.execSQL("delete from messages where messagesource ='" + messageSource + "'");
     }
 
-    public int getUnseenCount(String messageRoot,String source){
+    public int getUnseenCount(String messageRoot, String source) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res =  db.rawQuery( "select * from messages where messageRoot = '"+messageRoot+"' and messagesource = '"+source+"' and ( messageStatus ='2' or messageStatus = '1') ;", null );
+        Cursor res = db.rawQuery("select * from messages where messageRoot = '" + messageRoot + "' and messagesource = '" + source + "' and ( messageStatus ='2' or messageStatus = '1') ;", null);
         res.moveToFirst();
         return res.getCount();
     }
 
-    public String getMessageId(String messageRoot, String source , Date sentTime){
-
+    public String getMessageId(String messageRoot, String source, Date sentTime) {
         SQLiteDatabase db = this.getWritableDatabase();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//        Cursor res =  db.rawQuery( "select * from messages where messageRoot = '"+messageRoot+"' and messagesource = '"+source+"' and messagesenttime = '"+simpleDateFormat.format(sentTime)+"' ;", null );
-        Cursor res = db.rawQuery("select * from messages;", null );
+        Cursor res = db.rawQuery("select * from messages;", null);
         res.moveToLast();
 
-//         Log.d("LLL",simpleDateFormat.format(sentTime)+" "+res.getString(res.getColumnIndex("messagesenttime")));
-
-        res =  db.rawQuery( "select * from messages where messageRoot = '"+messageRoot+"' and messagesource = '"+source+"' and messagesenttime = '"+simpleDateFormat.format(sentTime)+"' ;", null );
+        res = db.rawQuery("select * from messages where messageRoot = '" + messageRoot + "' and messagesource = '" + source + "' and messagesenttime = '" + simpleDateFormat.format(sentTime) + "' ;", null);
         res.moveToFirst();
-        if (res.getCount()!=0){
+        if (res.getCount() != 0) {
             return res.getString(res.getColumnIndex("messageId"));
-        }else {
+        } else {
             return null;
         }
     }
@@ -317,51 +247,48 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//        Cursor res =  db.rawQuery( "select * from messages where messageRoot = '"+messageRoot+"' and messagesource = '"+source+"' and messagesenttime = '"+simpleDateFormat.format(sentTime)+"' ;", null );
 
-
-        Cursor res =  db.rawQuery( "select * from messages where messageId = '"+messageID+"';", null );
+        Cursor res = db.rawQuery("select * from messages where messageId = '" + messageID + "';", null);
         res.moveToFirst();
-        if (res.getCount()!=0){
-            return new Message(res.getString(res.getColumnIndex("message")),res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))),res.getInt(res.getColumnIndex("messageStatus")),res.getString(res.getColumnIndex("messageId")));
-        }else {
+        if (res.getCount() != 0) {
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")));
+        } else {
             return null;
         }
     }
 
 
     public Message getlastMessages(String messageRoot) throws ParseException {
-        ArrayList<Message> array_list = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from messages where messageroot = '"+messageRoot+"' order by messagesenttime asc", null );
+        Cursor res = db.rawQuery("select * from messages where messageroot = '" + messageRoot + "' order by messagesenttime asc", null);
         res.moveToLast();
 
-        if (res.getCount()!=0){
-            return new Message(res.getString(res.getColumnIndex("message")),res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))),res.getInt(res.getColumnIndex("messageStatus")),res.getString(res.getColumnIndex("messageId")));
-        }
-        else {
+        if (res.getCount() != 0) {
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")));
+        } else {
             return null;
         }
     }
 
-    public ArrayList<Message> getAllMessagesByStatus(String messageRoot,int status,String Source) throws ParseException {
+    public ArrayList<Message> getAllMessagesByStatus(String messageRoot, int status, String Source) throws ParseException {
         ArrayList<Message> array_list = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from messages where messageroot = '"+messageRoot+"' and messagesource = '"+Source+"' and messageStatus = '"+status+"'  order by messagesenttime asc", null );
+        Cursor res = db.rawQuery("select * from messages where messageroot = '" + messageRoot + "' and messagesource = '" + Source + "' and messageStatus = '" + status + "'  order by messagesenttime asc", null);
         res.moveToFirst();
 
-        while(res.isAfterLast() == false){
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")),res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))),res.getInt(res.getColumnIndex("messageStatus")),res.getString(res.getColumnIndex("messageId"))));
-//            Log.d("Retrived :",res.getString(res.getColumnIndex("message")));
+        while (res.isAfterLast() == false) {
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId"))));
             res.moveToNext();
         }
         return array_list;
     }
 
+    public void deleteMessage(String messageId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from messages where messageId ='" + messageId + "'");
+    }
 }

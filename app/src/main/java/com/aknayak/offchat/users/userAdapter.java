@@ -2,7 +2,6 @@ package com.aknayak.offchat.users;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,18 +9,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.messages.Message;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,10 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,14 +34,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.notifyIt;
-import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
 public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder> {
 
-    String tempMessage;
     @NonNull
     @Override
     public userViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -60,7 +51,6 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         userView.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View v, MotionEvent event) {
-//                Log.d("kels","lksd");
                 return false;
             }
         });
@@ -72,14 +62,8 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                 int pos = rv.getChildLayoutPosition(v);
                 User user = mUser.get(pos);
 
-                TextView userNameView = userView.findViewById(R.id.uiUserName);
-//                TextView phoneNumberView = userView.findViewById(R.id.);
-                String stringUserName = userNameView.getText().toString().trim();
 
                 Intent i = new Intent(userView.getContext(), messageViewActivity.class);
-
-//                i.putExtra("userName","hello");
-//                i.putExtra("phoneNumber",stringUserName);
 
                 i.putExtra("phoneNumber", user.getUserName());
 
@@ -119,9 +103,9 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         String strDate = df.format(user.getLastMessageSentTime());
         textView.setText(strDate);
         final TextView unseenTextView = viewHolder.unseencount;
-        final String rootPath = getRoot(senderUserName,user.getUserName());
+        final String rootPath = getRoot(senderUserName, user.getUserName());
         unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
-        uiUpdate(user,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,lastMessageTextView,unseenTextView);
+        uiUpdate(user, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
 
 
         new Thread(new Runnable() {
@@ -131,26 +115,25 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                 fdbr.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (final DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                        for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Message message = snapshot.getValue(Message.class);
-                            if (message.getMessageStatus() == 1 && message.getMessageSource().equals(user.getUserName())){
+                            if (message.getMessageStatus() == 1 && message.getMessageSource().equals(user.getUserName())) {
                                 message.setMessageStatus(2);
                                 fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
-
-//                        mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),2,message.getMessageID(),rootPath);
 
                                 //                Updating History Of Sender
                                 DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(user.getUserName()).child(senderUserName).child("sentStatus");
                                 mFirebaseDatabaseReference.setValue(2);
-                                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hhmmss", Locale.ENGLISH);
-                                notifyIt(R.drawable.ic_launcher_empty,""+mydb.getUserName(message.getMessageSource()) ,message.getMessage(),parrentActivity.getApplicationContext(),Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
-                                Log.d("LLLL",""+Double.valueOf(message.getMessageSource()).intValue()+Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
+                                notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                             }
-                            mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),message.getMessageStatus(),snapshot.getKey(),rootPath);
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath);
                         }
                         unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
-                        uiUpdate(user,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,lastMessageTextView,unseenTextView);
+                        uiUpdate(user, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -163,8 +146,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
     }
 
     public void uiUpdate(User user, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView) {
-//        Toast.makeText(parrentActivity.getApplicationContext(),""+user.getSentStatus(),Toast.LENGTH_SHORT).show();
-        if (unseen == 0 ) {
+        if (unseen == 0) {
             if (user.getSentStatus() == 1) {
                 seenStatusDoubleBlue.setVisibility(View.GONE);
                 seenStatusDouble.setVisibility(View.GONE);
@@ -177,7 +159,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                 seenStatusDoubleBlue.setVisibility(View.VISIBLE);
                 seenStatusDouble.setVisibility(View.GONE);
                 seenStatusSingle.setVisibility(View.GONE);
-            }else if (user.getSentStatus() == 0 ){
+            } else if (user.getSentStatus() == 0) {
                 lastMessageTextView.setVisibility(View.VISIBLE);
                 lastMessageTextView.setTypeface(lastMessageTextView.getTypeface(), Typeface.NORMAL);
                 seenStatusDoubleBlue.setVisibility(View.GONE);
@@ -211,6 +193,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         TextView sentStatusSingleDouble;
         TextView sentStatusSingleDoubleBlue;
         TextView unseencount;
+
         public userViewHolder(View v) {
             super(v);
             usernameTextView = itemView.findViewById(R.id.uiUserName);
@@ -218,9 +201,9 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
             lastMessageTimeTextView = itemView.findViewById(R.id.time_detail);
             messengerImageView = itemView.findViewById(R.id.dp_user);
 
-            sentStatusSingle= itemView.findViewById(R.id.sentStatus);
-            sentStatusSingleDouble= itemView.findViewById(R.id.sentStatusDouble);
-            sentStatusSingleDoubleBlue= itemView.findViewById(R.id.sentStatusDoubleBlue);
+            sentStatusSingle = itemView.findViewById(R.id.sentStatus);
+            sentStatusSingleDouble = itemView.findViewById(R.id.sentStatusDouble);
+            sentStatusSingleDoubleBlue = itemView.findViewById(R.id.sentStatusDoubleBlue);
 
             unseencount = itemView.findViewById(R.id.unseenCount);
         }
@@ -228,6 +211,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
     private List<User> mUser;
     AppCompatActivity parrentActivity;
+
     public userAdapter(List<User> mUser, AppCompatActivity a) {
         this.mUser = mUser;
         this.parrentActivity = a;

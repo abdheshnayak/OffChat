@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,19 +14,15 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,14 +42,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
-import static android.app.Notification.VISIBILITY_PUBLIC;
 import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
@@ -63,10 +55,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final ArrayList<User> users = new ArrayList<User>();
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
-    int notificationId=5;
-    private static final String CHANNEL_ID ="MyNotification" ;
+    private static final String CHANNEL_ID = "MyNotification";
 
-    public static final String ROOT_CHILD="UserData";
+    public static final String ROOT_CHILD = "UserData";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mUsername;
@@ -97,12 +88,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         adapter.notifyDataSetChanged();
     }
+
     String notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
@@ -110,14 +102,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        mSignOutButton=findViewById(R.id.signOut);
-        mMenuButton=findViewById(R.id.menuButtonActivityMain);
-        getmMenuButtonClose=findViewById(R.id.menuCloseActivity_main);
-        menuLayout=findViewById(R.id.menuLayout);
-        mTouchSensors=findViewById(R.id.splashImageMainActivity);
+        mSignOutButton = findViewById(R.id.signOut);
+        mMenuButton = findViewById(R.id.menuButtonActivityMain);
+        getmMenuButtonClose = findViewById(R.id.menuCloseActivity_main);
+        menuLayout = findViewById(R.id.menuLayout);
+        mTouchSensors = findViewById(R.id.splashImageMainActivity);
         mImgButton = findViewById(R.id.floatButton);
-        settings =findViewById(R.id.settings);
-        checkAcess=findViewById(R.id.profileButton);
+        settings = findViewById(R.id.settings);
+        checkAcess = findViewById(R.id.profileButton);
 
         checkAcess.setOnClickListener(this);
         mTouchSensors.setOnClickListener(this);
@@ -142,14 +134,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         } else {
             mUsername = mFirebaseUser.getPhoneNumber();
-//            Toast.makeText(getApplicationContext(),mUsername,Toast.LENGTH_LONG).show();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
         }
 
 
-        senderUserName =mFirebaseUser.getPhoneNumber();
+        senderUserName = mFirebaseUser.getPhoneNumber();
 
         authUser = mFirebaseUser.getPhoneNumber();
 
@@ -157,23 +148,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         rvUser = findViewById(R.id.recyclerView);
 
-        adapter = new userAdapter(users,this);
+        adapter = new userAdapter(users, this);
 
         // Attach the adapter to the recyclerview to populate items
         rvUser.setAdapter(adapter);
         // Set layout manager to position the items
         rvUser.setLayoutManager(new LinearLayoutManager(this));
-        // That's all!
 
         final DBHelper mydb = new DBHelper(getApplicationContext());
 
         ArrayList<contactsUser> k = mydb.getAllCotacts();
-
-//        Toast.makeText(getApplicationContext(),""+k.size(),Toast.LENGTH_SHORT).show();
-
-//        if(k.size()<=1){
-//            startActivity(new Intent(MainActivity.this,AllConcacts.class));
-//        }
 
         adapter.notifyDataSetChanged();
 
@@ -183,24 +167,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvUser.setLayoutManager(linearLayoutManager);
 
         try {
-            if(mydb.getAllHistories().size()==0){
+            if (mydb.getAllHistories().size() == 0) {
                 FirebaseDatabase.getInstance().getReference().child("admin").child("welcome_notification").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         notification = dataSnapshot.getValue(String.class);
 
-                        Message message = new Message(notification, "+1",1,getRandString(15));
+                        Message message = new Message(notification, "+1", 1, getRandString(15));
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot("+1", senderUserName))
                                 .child(message.getMessageID()).updateChildren(message.toMap());
 
                         DatabaseReference mFirebaseRefrence = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child("+1");
 
-                        Date td= Calendar.getInstance(Locale.ENGLISH).getTime();
-                        User user = new User("+1",td,notification,"no",0);
+                        Date td = Calendar.getInstance(Locale.ENGLISH).getTime();
+                        User user = new User("+1", td, notification, "no", 0);
                         mFirebaseRefrence.updateChildren(user.toMap());
                         DBHelper mydb = new DBHelper(getApplicationContext());
                         mydb.inserthistory("+1", notification, Calendar.getInstance(Locale.ENGLISH).getTime(), 0);
+
+                        DatabaseReference o_status = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child("+1").child("online_status");
+                        o_status.setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                     }
 
                     @Override
@@ -213,13 +200,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        if(users.size()!=0){
+        if (users.size() != 0) {
             users.clear();
         }
         try {
             users.addAll(mydb.getAllHistories());
         } catch (ParseException e) {
-            Log.d("lskdf",e.getMessage());
+            Log.d("lskdf", e.getMessage());
         }
 
 //        History Fetcher
@@ -228,9 +215,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 users.clear();
                 mydb.deleteAllHistories();
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
+                    mydb.inserthistory(user.getUserName(), user.getLastMessage(), user.getLastMessageSentTime(), user.getSentStatus());
                 }
                 try {
                     users.addAll(mydb.getAllHistories());
@@ -255,19 +242,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Date currentTime;
-                        currentTime= Calendar.getInstance(Locale.ENGLISH).getTime();
+                        currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
                         long diff = 0;
 
                         Date dt = dataSnapshot.getValue(Date.class);
-                        if (dt != null){
-                            diff =currentTime.getTime() - dt.getTime();
-                        }else {
+                        if (dt != null) {
+                            diff = currentTime.getTime() - dt.getTime();
+                        } else {
                             historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                             diff = 5;
                         }
                         long diffSeconds = diff / 1000 % 60;
 
-                        if(diffSeconds>30){
+                        if (diffSeconds > 30) {
                             historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                         }
                     }
@@ -286,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
 
 
-        rvUser.scrollToPosition(users.size()-1);
+        rvUser.scrollToPosition(users.size() - 1);
     }
 
 
@@ -316,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.menuButtonActivityMain:
                 mTouchSensors.setVisibility(View.VISIBLE);
                 menuLayout.setTranslationY(-300);
@@ -349,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        Toast.makeText(getApplicationContext(),"Canceld",Toast.LENGTH_LONG).show();
                     }
                 });
                 alertDialogBuilder.setTitle("Sign Out?");
@@ -358,44 +344,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getmMenuButtonClose.performClick();
                 break;
             case R.id.floatButton:
-                startActivity(new Intent(getApplicationContext(),AllConcacts.class));
+                startActivity(new Intent(getApplicationContext(), AllConcacts.class));
                 break;
             case R.id.settings:
-                Toast.makeText(getApplicationContext(),"You don't have access now.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "You don't have access now.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
 
-                Intent i = new Intent(getApplicationContext(),myProfile.class);
-                i.putExtra("phone",senderUserName);
+                Intent i = new Intent(getApplicationContext(), myProfile.class);
+                i.putExtra("phone", senderUserName);
                 startActivity(i);
                 getmMenuButtonClose.performClick();
-//                Toast.makeText(getApplicationContext(),"Your Number: "+senderUserName,Toast.LENGTH_LONG).show();
-//                notifyIt(R.drawable.ic_launcher_empty, "Your Name","This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large 8888888888888text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text ",getApplicationContext(),55);
                 break;
             default:
                 break;
         }
     }
 
-    public static String getRoot(String first, String second){
-        Log.d("kk",""+Double.valueOf(first));
-        if(Double.valueOf(first)>Double.valueOf(second)){
-            return first+second;
-        }else {
-            return second+first;
+    public static String getRoot(String first, String second) {
+        Log.d("kk", "" + Double.valueOf(first));
+        if (Double.valueOf(first) > Double.valueOf(second)) {
+            return first + second;
+        } else {
+            return second + first;
         }
     }
-    public static String filterNumber(String number){
-        String temp="";
-        for (int i=0;i<number.length();i++){
-            if(number.charAt(i)=='+' || number.charAt(i)=='0' || number.charAt(i)=='1' || number.charAt(i)=='2' || number.charAt(i)=='3' ||number.charAt(i)=='4' ||number.charAt(i)=='5' ||number.charAt(i)=='6' ||number.charAt(i)=='7' ||number.charAt(i)=='8' || number.charAt(i)=='9' ){
-                temp=temp+ number.charAt(i);
-            }else {
+
+    public static String filterNumber(String number) {
+        String temp = "";
+        for (int i = 0; i < number.length(); i++) {
+            if (number.charAt(i) == '+' || number.charAt(i) == '0' || number.charAt(i) == '1' || number.charAt(i) == '2' || number.charAt(i) == '3' || number.charAt(i) == '4' || number.charAt(i) == '5' || number.charAt(i) == '6' || number.charAt(i) == '7' || number.charAt(i) == '8' || number.charAt(i) == '9') {
+                temp = temp + number.charAt(i);
+            } else {
                 continue;
             }
         }
-        if (temp.length()==10){
-            temp=authUser.substring(0,authUser.length()-10)+temp;
+        if (temp.length() == 10) {
+            temp = authUser.substring(0, authUser.length() - 10) + temp;
         }
         return temp;
     }
@@ -429,47 +414,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static void notifyIt(int icon, String title, String message, Context context,int notificationId){
+    public static void notifyIt(int icon, String title, String message, Context context, int notificationId) {
         String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-//        builder.setSmallIcon(icon);
-//        builder.setGroup(GROUP_KEY_WORK_EMAIL);
-//        builder.setContentTitle(title);
-//        builder.setStyle(new NotificationCompat.InboxStyle()
-//                .addLine("Alex Faarborg  Check this out")
-//                .addLine("Jeff Chang    Launch Party")
-//                .setBigContentTitle("2 new messages")
-//                .setSummaryText(title));
-////        builder.setContentText(message);
-//        if(message.length()>300){
-//            builder.setStyle(new NotificationCompat.InboxStyle()
-//                    .addLine(message.substring(0,300)+"...")
-//                    .addLine("Jeff Chang    Launch Party")
-//                    .setBigContentTitle("2 new messages")
-//                    .setSummaryText(title));
-////            builder.setStyle(new NotificationCompat.BigTextStyle()
-////                    .bigText(message.substring(0,300)+"..."));
-//        }else {
-////            builder.setStyle(new NotificationCompat.BigTextStyle()
-//
-//            builder.setStyle(new NotificationCompat.InboxStyle()
-//                    .addLine(message)
-//                    .addLine("Jeff Chang    Launch Party")
-//                    .setBigContentTitle("2 new messages")
-//                    .setSummaryText(title));
-////                    .bigText(message));
-//        }
-//        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-//        notificationManager.notify(notificationId++, builder.build());
-//
 
         //use constant ID for notification used as group summary
         String msg;
-        if(message.length()>300) {
-            msg=message.substring(0,300)+"...";
-        }else {
-            msg=message;
+        if (message.length() > 300) {
+            msg = message.substring(0, 300) + "...";
+        } else {
+            msg = message;
         }
 
         int SUMMARY_ID = 0;
@@ -499,8 +452,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setStyle(new NotificationCompat.InboxStyle()
                                 .addLine("")
                                 .setBigContentTitle("")
-//                                .setSummaryText("janedoe@example.com")
-                                )
+                        )
                         //specify which group this notification belongs to
                         .setGroup(GROUP_KEY_WORK_EMAIL)
                         //set this notification as the summary for the group
@@ -512,15 +464,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
 
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, newMessageNotification);
-//        notificationManager.notify(notificationId+1, newMessageNotification2);
         notificationManager.notify(SUMMARY_ID, summaryNotification);
 
 
     }
-    public static String getRandString(int n){
+
+    public static String getRandString(int n) {
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"
                 + "abcdefghijklmnopqrstuvxyz";
@@ -533,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // generate a random number between
             // 0 to AlphaNumericString variable length
             int index
-                    = (int)(AlphaNumericString.length()
+                    = (int) (AlphaNumericString.length()
                     * Math.random());
 
             // add Character one by one in end of sb

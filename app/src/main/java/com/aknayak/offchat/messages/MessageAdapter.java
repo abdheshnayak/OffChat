@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +19,10 @@ import com.aknayak.offchat.users.User;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,10 +50,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View messageView;
-        if(viewType == 1) {
+        if (viewType == 1) {
             // Inflate the custom layout
             messageView = inflater.inflate(R.layout.sender_messagebox, parent, false);
-        }else {
+        } else {
             messageView = inflater.inflate(R.layout.receiver_messagebox, parent, false);
         }
 
@@ -73,10 +72,34 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         TextView textView = viewHolder.Message;
         textView.setText(message.getMessage());
         textView = viewHolder.messageSentTime;
-        DateFormat df= new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
-        String strDate = df.format(message.getMessageSentTime());
-        textView.setText(strDate);
-        final String rootPath = getRoot(senderUserName,receiverUsername);
+//        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
+
+
+        Date date = message.getMessageSentTime();
+        if (date != null) {
+            Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+
+            int dayCheck = Double.valueOf(simpleDateFormat.format(currentTime.getTime())).intValue() - Double.valueOf(simpleDateFormat.format(date.getTime())).intValue();
+
+            String str;
+            if (dayCheck == 0) {
+                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                str = sf.format(date);
+            } else if (dayCheck == 1) {
+                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                str = sf.format(date);
+                str = "Yesterday " + str;
+            } else {
+                SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
+                str = sf.format(date);
+            }
+
+            String str2 = str.replace("AM", "am").replace("PM", "pm");
+            textView.setText(str2);
+        }
+        final String rootPath = getRoot(senderUserName, receiverUsername);
 
         final TextView waitingForSent = viewHolder.watitingForSent;
         final TextView seenStatusSingle = viewHolder.sentStatusSingle;
@@ -86,63 +109,40 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         final DBHelper mydb = new DBHelper(parentActivity);
 
-        if (message.getMessageStatus()==3 && message.getMessageSource().equals(senderUserName) ) {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-                    try {
-                        if (!message.getMessageID().equals(mydb.getlastMessages(rootPath).getMessageID())){
-                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-//                    }
+        if (message.getMessageStatus() == 3 && message.getMessageSource().equals(senderUserName)) {
+            try {
+                if (!message.getMessageID().equals(mydb.getlastMessages(rootPath).getMessageID())) {
+                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
                 }
-//            }).start();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        if (message.getMessageStatus()<3 && message.getMessageSource().equals(receiverUsername) ) {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-                    DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
-                    message.setMessageStatus(3);
-                    fdbr.updateChildren(message.toMap());
-//                        fdbr.setValue(3);
-//                        try {
-//                            if (!mydb.getlastMessages(rootPath).getMessageID().equals(message.getMessageID())){
-////                                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
-//                            }
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID()).removeValue();
+        if (message.getMessageStatus() < 3 && message.getMessageSource().equals(receiverUsername)) {
 
-                    DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                    User user = null;
-                    try {
-                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    mFirebaseDatabaseReference.updateChildren(user.toMap());
-                }
-//            }).start();
-//        }
+            DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
+            message.setMessageStatus(3);
+            fdbr.updateChildren(message.toMap());
 
-        if (message.getMessageSource().equals(receiverUsername)){
-            if (message.getMessageStatus()==1) {
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-                        message.setMessageStatus(2);
-                        DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
-                        fdbr.updateChildren(message.toMap());
-                    }
-//                }).start();
-//            }
+            DatabaseReference mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
+            User user = null;
+            try {
+                user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            mFirebaseDatabaseReference.updateChildren(user.toMap());
         }
-        if (message.getMessageSource().equals(senderUserName)){
-            uiUpdate(message,seenStatusSingle,seenStatusDouble,seenStatusDoubleBlue,waitingForSent);
+
+        if (message.getMessageSource().equals(receiverUsername)) {
+            if (message.getMessageStatus() == 1) {
+                message.setMessageStatus(2);
+                DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
+                fdbr.updateChildren(message.toMap());
+            }
+        }
+        if (message.getMessageSource().equals(senderUserName)) {
+            uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, waitingForSent);
         }
     }
 
@@ -173,9 +173,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             messageSentTime = itemView.findViewById(R.id.sentTime);
 
             watitingForSent = itemView.findViewById(R.id.waitingForSent);
-            sentStatusSingle= itemView.findViewById(R.id.sentStatus_message);
-            sentStatusSingleDouble= itemView.findViewById(R.id.sentStatusDouble_message);
-            sentStatusSingleDoubleBlue= itemView.findViewById(R.id.sentStatusDoubleBlue_message);
+            sentStatusSingle = itemView.findViewById(R.id.sentStatus_message);
+            sentStatusSingleDouble = itemView.findViewById(R.id.sentStatusDouble_message);
+            sentStatusSingleDoubleBlue = itemView.findViewById(R.id.sentStatusDoubleBlue_message);
 
         }
     }
@@ -190,6 +190,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView waitingForSent) {
         if (message.getMessageStatus() == 1) {
+            Log.d("abdhesh", message.getMessageStatus() + message.getMessage());
             seenStatusDoubleBlue.setVisibility(View.GONE);
             seenStatusDouble.setVisibility(View.GONE);
             seenStatusSingle.setVisibility(View.VISIBLE);
@@ -204,7 +205,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             seenStatusDouble.setVisibility(View.GONE);
             seenStatusSingle.setVisibility(View.GONE);
             waitingForSent.setVisibility(View.GONE);
-        }else if (message.getMessageStatus() == 0 ){
+        } else if (message.getMessageStatus() == 0) {
             waitingForSent.setVisibility(View.VISIBLE);
             seenStatusDoubleBlue.setVisibility(View.GONE);
             seenStatusDouble.setVisibility(View.GONE);

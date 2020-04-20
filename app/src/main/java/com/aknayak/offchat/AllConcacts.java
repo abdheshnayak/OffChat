@@ -39,11 +39,10 @@ import static com.aknayak.offchat.MainActivity.requestPermission;
 
 public class AllConcacts extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "AllConcats";
     public static final int REQUEST_READ_CONTACTS = 79;
-    public ArrayList<contactsUser> contactsUsers  = new ArrayList<contactsUser>();
-    public ArrayList<contactsUser> mobileArray=new ArrayList<>();
-    public RecyclerView rvUser ;
+    public ArrayList<contactsUser> contactsUsers = new ArrayList<contactsUser>();
+    public ArrayList<contactsUser> mobileArray = new ArrayList<>();
+    public RecyclerView rvUser;
     ProgressBar usersLoadProgressBar;
     ImageButton closeButton;
     EditText searchBox;
@@ -62,17 +61,17 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_all_contacts);
 
         mReloadButton = findViewById(R.id.reloadfloatButton);
-        usersLoadProgressBar =findViewById(R.id.progressBar);
+        usersLoadProgressBar = findViewById(R.id.progressBar);
         rvUser = findViewById(R.id.contactsRecyclerView);
         searchBox = findViewById(R.id.searchBox);
         closeButton = findViewById(R.id.closeButton);
         mSearchButton = findViewById(R.id.searchButton);
         mLogoLayout = findViewById(R.id.contact_info_logo);
         usersLoadProgressBar.setVisibility(View.INVISIBLE);
-        usersLoadProgressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(133,94,238), PorterDuff.Mode.MULTIPLY);
+        usersLoadProgressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(133, 94, 238), PorterDuff.Mode.MULTIPLY);
 
         mydb = new DBHelper(this);
-        mobileArray=mydb.getAllCotacts();
+        mobileArray = mydb.getAllCotacts();
 
         closeButton.setOnClickListener(this);
         mSearchButton.setOnClickListener(this);
@@ -94,7 +93,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
 
         });
 
-        if(mobileArray.size()<=1){
+        if (mobileArray.size() <= 1) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                     == PackageManager.PERMISSION_GRANTED) {
                 mReloadButton.performClick();
@@ -102,7 +101,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 requestPermission(this);
             }
 
-        }else {
+        } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
         }
@@ -120,17 +119,17 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setReverseLayout(false);
         rvUser.setLayoutManager(linearLayoutManager);
-        contactsUsers.addAll(mobileArray) ;
+        contactsUsers.addAll(mobileArray);
 
 
         adapter.notifyDataSetChanged();
 
     }
 
-    public void loadContacts(int x){
+    public void loadContacts(int x) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
                 == PackageManager.PERMISSION_GRANTED) {
-            if(x==1) {
+            if (x == 1) {
                 mobileArray.clear();
                 mobileArray.addAll(getAllContacts());
             }
@@ -138,9 +137,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
             requestPermission(this);
         }
 
-//        contacts = Contact.createContactsList(20);
-
-        adapter = new contactsUserAdapter(mobileArray,this);
+        adapter = new contactsUserAdapter(mobileArray, this);
         // Attach the adapter to the recyclerview to populate items
         rvUser.setAdapter(adapter);
         // Set layout manager to position the items
@@ -154,7 +151,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         linearLayoutManager.setReverseLayout(true);
         rvUser.setLayoutManager(linearLayoutManager);
 
-        contactsUsers.addAll(mobileArray) ;
+        contactsUsers.addAll(mobileArray);
 
 
         adapter.notifyDataSetChanged();
@@ -175,8 +172,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                         ContactsContract.Contacts.DISPLAY_NAME));
 
 
-//                nameList.add(name);
-                if (cur.getInt(cur.getColumnIndex( ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
+                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
                     Cursor pCur = cr.query(
                             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                             null,
@@ -188,21 +184,20 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
 
                         phoneNo = filterNumber(phoneNo);
 
-                        contactsUser uj = new contactsUser(name,phoneNo,"");
+                        contactsUser uj = new contactsUser(name, phoneNo, "");
 
-//                        Log.d("lskdf",phoneNo);
-                        if(phoneNo.length()>10){
-                            if(phoneNo.substring(0,4).equals("+977") && phoneNo.length()>=14){
-                                if(!UserList.contains(uj)){
+                        if (phoneNo.length() > 10) {
+                            if (phoneNo.substring(0, 4).equals("+977") && phoneNo.length() >= 14) {
+                                if (!UserList.contains(uj)) {
                                     UserList.add(uj);
                                 }
-                            }else if(phoneNo.substring(0,3).equals("+91") && phoneNo.length()>=13){
-                                if(!UserList.contains(uj)){
+                            } else if (phoneNo.substring(0, 3).equals("+91") && phoneNo.length() >= 13) {
+                                if (!UserList.contains(uj)) {
                                     UserList.add(uj);
                                 }
                             }
-                        }else if (phoneNo.length()==10){
-                            if(!UserList.contains(uj)){
+                        } else if (phoneNo.length() == 10) {
+                            if (!UserList.contains(uj)) {
                                 UserList.add(uj);
                             }
                         }
@@ -216,20 +211,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         }
         return UserList;
     }
-
-//    private void requestPermission() {
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_CONTACTS)) {
-//            // show UI part if you want here to show some rationale !!!
-//        } else {
-//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
-//                    REQUEST_READ_CONTACTS);
-//        }
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_CONTACTS)) {
-//        } else {
-//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS},
-//                    REQUEST_READ_CONTACTS);
-//        }
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -250,8 +231,8 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         InputMethodManager imm;
-        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        switch (v.getId()){
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        switch (v.getId()) {
             case R.id.closeButton:
                 searchBox.getText().clear();
                 imm.hideSoftInputFromWindow(searchBox.getWindowToken(),
@@ -281,27 +262,27 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 break;
             case R.id.reloadfloatButton:
-                t=new Thread(new Runnable() {
+                t = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(mobileArray!=null) {
+                        if (mobileArray != null) {
                             mobileArray.clear();
                         }
                         mobileArray.addAll(getAllContacts());
                         mydb.deleteAllContact();
-                        for (int i=0;i<mobileArray.size();i++) {
+                        for (int i = 0; i < mobileArray.size(); i++) {
                             mydb.insertContact(mobileArray.get(i).getUserName(), mobileArray.get(i).getPhoneNumber());
                         }
                     }
                 });
 
-                t2= new Thread(new Runnable() {
+                t2 = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             t.join();
                             usersLoadProgressBar.setVisibility(View.INVISIBLE);
-                            Intent i =new Intent(getApplicationContext(),AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             AllConcacts.super.finish();
                             startActivity(i);
                         } catch (InterruptedException e) {
@@ -312,7 +293,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 t.start();
                 t2.start();
 
-                Animation animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate);
+                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
                 mSearchButton.setEnabled(false);
                 mReloadButton.startAnimation(animation);
                 mReloadButton.setEnabled(false);

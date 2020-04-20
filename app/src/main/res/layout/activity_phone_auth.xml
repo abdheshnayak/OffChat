@@ -225,6 +225,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="25sp"
+            android:textColor="@color/black"
             android:text="@string/verification_phone_info"
             android:theme="@style/ThemeOverlay.MyTextDetail" />
 

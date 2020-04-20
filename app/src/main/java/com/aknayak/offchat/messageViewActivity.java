@@ -1,7 +1,6 @@
 package com.aknayak.offchat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,20 +23,18 @@ import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
 import com.aknayak.offchat.users.User;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Console;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +49,7 @@ import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 
-public class messageViewActivity extends AppCompatActivity implements View.OnClickListener{
+public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
     EditText mMessageBox;
     ImageButton mMessageSendButton;
     ImageButton mMessageBoxCloseButton;
@@ -65,11 +62,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     RecyclerView rvMessages;
     ConstraintLayout constraintLayout;
     Date lastSeenTime;
-    boolean menuButtonStatus=true;
+    boolean menuButtonStatus = true;
     public ArrayList<Message> messages = new ArrayList<Message>();
-    final MessageAdapter adapter = new MessageAdapter(messages,this);
+    final MessageAdapter adapter = new MessageAdapter(messages, this);
 
-    Boolean sendButtonStatus=false;
+    Boolean sendButtonStatus = false;
 
     private DatabaseReference mFirebaseDatabaseReference;
     private DatabaseReference o_status;
@@ -81,17 +78,18 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     private ValueEventListener v4;
 
     public static String MESSAGES_CHILD = "messages";
-    public static String MAINVIEW_CHILD ="history";
+    public static String MAINVIEW_CHILD = "history";
     public String rootPath;
     BroadcastReceiver networkStateReceiver;
     DBHelper mydb;
 
-    int cnt=0;
-    public Boolean isOnline(){
+    int cnt = 0;
+
+    public Boolean isOnline() {
         try {
-            Process p1= java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
             int returnVal = p1.waitFor();
-            boolean reachable = (returnVal==0);
+            boolean reachable = (returnVal == 0);
             return reachable;
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -101,9 +99,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         return false;
     }
 
-    private Boolean isNetworkAvailable(){
-        ConnectivityManager connectivityManager=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfoListener= connectivityManager.getActiveNetworkInfo();
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfoListener = connectivityManager.getActiveNetworkInfo();
         return networkInfoListener != null && networkInfoListener.isConnectedOrConnecting();
     }
 
@@ -123,20 +121,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_message_view);
 
         receiverUsername = getIntent().getStringExtra("phoneNumber");
-        rootPath = getRoot(senderUserName,receiverUsername);
+        rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
         rvMessages = findViewById(R.id.messageView);
         mMessageSendButton = findViewById(R.id.sendButton);
-        mMenuButton=findViewById(R.id.menuButton);
-        mMenuButtonClose =findViewById(R.id.menuClose);
-        menuLayout=findViewById(R.id.menuLayout);
-        mProfileButton=findViewById(R.id.profileButton_message);
+        mMenuButton = findViewById(R.id.menuButton);
+        mMenuButtonClose = findViewById(R.id.menuClose);
+        menuLayout = findViewById(R.id.menuLayout);
+        mProfileButton = findViewById(R.id.profileButton_message);
         mMessageBox = findViewById(R.id.messageBox);
         constraintLayout = findViewById(R.id.rootLayout);
-        userName=findViewById(R.id.msgUserName);
-        onlineStatusTextView =findViewById(R.id.onlineStatusTextView_in_MessageView);
+        userName = findViewById(R.id.msgUserName);
+        onlineStatusTextView = findViewById(R.id.onlineStatusTextView_in_MessageView);
 
 //        Add All the components into OnClickListner
         findViewById(R.id.splashImage).setOnClickListener(this);
@@ -150,7 +148,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.messageView).setOnClickListener(this);
 
 
-        if(receiverUsername.equals("+1")){
+        if (receiverUsername.equals("+1")) {
             findViewById(R.id.messageBoxContainer).setVisibility(View.GONE);
         }
 
@@ -160,22 +158,21 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName);
 
 
-
 //        Value Event Listners
         v1 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Date currentTime;
-                currentTime= Calendar.getInstance(Locale.ENGLISH).getTime();
+                currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
                 long diff = 0;
                 Date date = dataSnapshot.getValue(Date.class);
-                if (date == null){
+                if (date == null) {
                     historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
-                }else {
+                } else {
                     lastSeenTime = dataSnapshot.getValue(Date.class);
-                    diff =currentTime.getTime() - lastSeenTime.getTime();
+                    diff = currentTime.getTime() - lastSeenTime.getTime();
                     long diffSeconds = diff / 1000 % 60;
-                    if(diffSeconds>30){
+                    if (diffSeconds > 30) {
                         historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                     }
                 }
@@ -194,43 +191,40 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 historyRef.child("online_status").addListenerForSingleValueEvent(v1);
 
                 Date date = dataSnapshot.getValue(Date.class);
-                if (date != null){
+                if (date != null) {
                     Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
                     long diff = 0;
 
                     diff = currentTime.getTime() - date.getTime();
-                    long diffSeconds = diff / 1000 % 60;
                     long diffMinutes = diff / (60 * 1000) % 60;
-//                    long diffHours = diff / (60 * 60 * 1000);
-//                    System.out.println("Time in seconds: " + diffSeconds + " seconds.");
-//                    System.out.println("Time in minutes: " + diffMinutes + " minutes.");
-//                    System.out.println("Time in hours: " + diffHours + " hours.");
                     onlineStatusTextView.setVisibility(View.VISIBLE);
-                    if(diffMinutes<1){
+                    if (diffMinutes < 1) {
                         onlineStatusTextView.setText("online");
-                    }else {
-                        long dayCheck =date.getDay()-currentTime.getDay();
+                    } else {
+
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+
+                        int dayCheck = Double.valueOf(simpleDateFormat.format(currentTime.getTime())).intValue() - Double.valueOf(simpleDateFormat.format(date.getTime())).intValue();
+
                         String str;
-                        if (dayCheck==0){
-                            SimpleDateFormat sf= new SimpleDateFormat("hh:mm aa");
-                            str=sf.format(date);
-                            str="today "+str;
-                        }else if(dayCheck==1) {
-                            SimpleDateFormat sf= new SimpleDateFormat("hh:mm aa");
-                            str=sf.format(date);
-                            str ="yesterday "+str;
-                        }else {
-                            SimpleDateFormat sf= new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
-                            str=sf.format(date);
+                        if (dayCheck == 0) {
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                            str = sf.format(date);
+                        } else if (dayCheck == 1) {
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                            str = sf.format(date);
+                            str = "Yesterday " + str;
+                        } else {
+                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
+                            str = sf.format(date);
                         }
-//                                Toast.makeText(getApplicationContext(),""+dayCheck,Toast.LENGTH_SHORT).show();
-                        String str2 = str.replace("AM", "am").replace("PM","pm");
-                        str2="last seen "+str2;
+                        String str2 = str.replace("AM", "am").replace("PM", "pm");
+                        str2 = "last seen " + str2;
                         onlineStatusTextView.setText(str2);
                     }
-                }else {
+                } else {
                     onlineStatusTextView.setVisibility(View.VISIBLE);
-                    onlineStatusTextView.setText("Never Used");
+                    onlineStatusTextView.setText("Not on OffChat");
                 }
             }
 
@@ -246,27 +240,26 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-//                    if (dataSnapshot.getChildrenCount()!=mydb.getAllMessages(rootPath).size()){
-                        Log.d("Abdhesh","bb");
-                        messages.clear();
-                        for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                            Message message = snapshot.getValue(Message.class);
-//                    Log.d("MMM",message.getMessage());
-                            mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),message.getMessageStatus(),snapshot.getKey(),rootPath);
+                    Log.d("Abdhesh", "bb");
+                    messages.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Message message = snapshot.getValue(Message.class);
+                        if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath);
                         }
-                        messages.addAll(mydb.getAllMessages(rootPath));
-                        adapter.notifyDataSetChanged();
-//                    }
+                    }
+                    messages.addAll(mydb.getAllMessages(rootPath));
+                    adapter.notifyDataSetChanged();
 
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                if (messages.size()!=0) {
+                if (messages.size() != 0) {
                     try {
-                        if (cnt!=mydb.getAllMessages(rootPath).size()) {
+                        if (cnt != mydb.getAllMessages(rootPath).size()) {
                             cnt = mydb.getAllMessages(rootPath).size();
-                            rvMessages.scrollToPosition(messages.size()-1);
+                            rvMessages.scrollToPosition(messages.size() - 1);
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -281,32 +274,84 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         };
 
 //        Online Status Listner
-        cdt = new CountDownTimer(60000, 60000) {
+        cdt = new CountDownTimer(10000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 o_status.addListenerForSingleValueEvent(v2);
 
                 try {
-                    msg= mydb.getAllMessagesByStatus(rootPath,2,receiverUsername);
+                    msg = mydb.getAllMessagesByStatus(rootPath, 1, senderUserName);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
+
+                int n = msg.size();
+                if (n > 5) {
+                    for (int i = 5; i < n; i++) {
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                        mydb.deleteMessage(msg.get(i).getMessageID());
+                    }
+                    messages.clear();
+                    try {
+                        messages.addAll(mydb.getAllMessages(rootPath));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    adapter.notifyDataSetChanged();
+                    rvMessages.scrollToPosition(messages.size() - 1);
+                }
+
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
+
+                        try {
+                            msg = mydb.getAllMessagesByStatus(rootPath, 0, senderUserName);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         int n = msg.size();
 
-                        for (int i=0;i<n;i++){
+                        for (int i = 0; i < n; i++) {
                             DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
-                            Message msgvar=msg.get(i);
+                            final Message msgvar = msg.get(i);
+                            msgvar.setMessageStatus(1);
+                            fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(senderUserName, receiverUsername));
+                                    messages.clear();
+                                    try {
+                                        messages.addAll(mydb.getAllMessages(rootPath));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+
+
+                        try {
+                            msg = mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        n = msg.size();
+
+                        for (int i = 0; i < n; i++) {
+                            DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
+                            Message msgvar = msg.get(i);
                             msgvar.setMessageStatus(3);
                             fdbr.updateChildren(msgvar.toMap());
-//                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
                         }
 
                         try {
-                            msg=mydb.getAllMessagesByStatus(rootPath,3,senderUserName);
+                            msg = mydb.getAllMessagesByStatus(rootPath, 3, senderUserName);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -314,21 +359,21 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         n = msg.size();
                         Message lastMessage = null;
                         try {
-                            lastMessage= mydb.getlastMessages(rootPath);
+                            lastMessage = mydb.getlastMessages(rootPath);
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-                        Log.d("KKKK"," "+n);
-                        for (int i =0;i<n;i++){
-                            if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())){
+                        Log.d("KKKK", " " + n);
+                        for (int i = 0; i < n; i++) {
+                            if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())) {
                                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
                             }
                         }
                         try {
-                            if (messages.size()!=0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)){
-                                Log.d("MMM",mydb.getlastMessages(rootPath).getMessage());
+                            if (messages.size() != 0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)) {
+                                Log.d("MMM", mydb.getlastMessages(rootPath).getMessage());
                                 mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                                User user = new User(senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(),mydb.getlastMessages(rootPath).getMessage(),"no",3);
+                                User user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
                                 mFirebaseDatabaseReference.updateChildren(user.toMap());
                             }
                         } catch (ParseException e) {
@@ -337,12 +382,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
                     }
                 }).start();
-//                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFinish() {
-//                Toast.makeText(getApplicationContext(),"finished",Toast.LENGTH_SHORT).show();
                 cdt.start();
             }
         };
@@ -357,9 +400,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 boolean connectivity = isNetworkAvailable();
                 TextView netWorkStatus = findViewById(R.id.networkStatus);
                 if (connectivity) {
-                    if (isOnline()){
+                    if (isOnline()) {
                         netWorkStatus.setText("Online");
-                    }else {
+                    } else {
                         netWorkStatus.setText("Your Connection may Not Working");
                     }
                 } else {
@@ -372,10 +415,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         mydb = new DBHelper(getApplicationContext());
 
         try {
-//            Log.d("kk",rootPath);
             messages.addAll(mydb.getAllMessages(rootPath));
-            if (messages.size()>0){
-                rvMessages.scrollToPosition(messages.size()-1);
+            if (messages.size() > 0) {
+                rvMessages.scrollToPosition(messages.size() - 1);
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -406,9 +448,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus && !mMessageBox.getText().toString().equals("")) {
                     mMessageBoxCloseButton.setVisibility(View.VISIBLE);
-                }
-                else {
-                        mMessageBoxCloseButton.setVisibility(View.GONE);
+                } else {
+                    mMessageBoxCloseButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -418,21 +459,22 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(mMessageBox.getText().toString().trim().equals("") && sendButtonStatus){
-                    sendButtonStatus=false;
+                if (mMessageBox.getText().toString().trim().equals("") && sendButtonStatus) {
+                    sendButtonStatus = false;
                     mMessageBox.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-//                    mMessageSendButton.animate().translationY(-100);
                     mMessageSendButton.setEnabled(false);
-                }else if(!mMessageBox.getText().toString().trim().equals("") && !sendButtonStatus){
-                    sendButtonStatus=true;
+                } else if (!mMessageBox.getText().toString().trim().equals("") && !sendButtonStatus) {
+                    sendButtonStatus = true;
                     mMessageBox.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
                     mMessageSendButton.setVisibility(View.VISIBLE);
                     mMessageBoxCloseButton.setVisibility(View.VISIBLE);
                     mMessageSendButton.setEnabled(true);
                 }
             }
+
             @Override
             public void afterTextChanged(Editable s) {
 
@@ -448,9 +490,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 int screenHeight = constraintLayout.getRootView().getHeight();
                 int keypadHeight = screenHeight - r.bottom;
                 if (keypadHeight > screenHeight * 0.15) {
-                    Log.d("Typing","ON");
+                    Log.d("Typing", "ON");
                 } else {
-                    Log.d("Typing","OFF");
+                    Log.d("Typing", "OFF");
                 }
             }
         });
@@ -460,11 +502,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         rvMessages.setAdapter(adapter);
         // Set layout manager to position the items
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
-        // That's all!
+
         adapter.notifyDataSetChanged();
-        if (messages.size()!=0) {
+        if (messages.size() != 0) {
             try {
-                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath,2,receiverUsername).size()-1);
+                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername).size() - 1);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -472,14 +514,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-//    Listen Clicks
+    //    Listen Clicks
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.menuButton:
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
-                menuButtonStatus=false;
-//                findViewById(R.id.messageBoxContainer).setVisibility(View.GONE);
+                menuButtonStatus = false;
                 findViewById(R.id.messageBoxContainer).animate().translationY(300);
                 menuLayout.setTranslationY(-300);
                 menuLayout.setVisibility(View.VISIBLE);
@@ -489,7 +530,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.menuClose:
                 findViewById(R.id.splashImage).setVisibility(View.INVISIBLE);
-                menuButtonStatus=true;
+                menuButtonStatus = true;
                 findViewById(R.id.messageBoxContainer).animate().translationY(0);
                 menuLayout.animate().translationY(-300);
                 menuLayout.setVisibility(View.GONE);
@@ -498,41 +539,45 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.sendButton:
 //                Updating Message
-                String messageKey;
-                messageKey=getRandString(15);
-                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName,1,messageKey);
+                final String messageKey;
+                messageKey = getRandString(15);
+                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, 1, messageKey);
                 mMessageBox.getText().clear();
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,receiverUsername))
-                                .child(message.getMessageID()).updateChildren(message.toMap(), new DatabaseReference.CompletionListener() {
+
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(senderUserName, receiverUsername));
+                        messages.add(new Message(message.getMessage(), message.getMessageSource(), 0, message.getMessageID()));
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername))
+                                .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                if (databaseError!=null){
-                                    Log.d("MMM","Failed");
-                                    mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),0,message.getMessageID(),getRoot(senderUserName,receiverUsername));
-                                }else {
-                                    mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),1,message.getMessageID(),getRoot(senderUserName,receiverUsername));
+                            public void onSuccess(Void aVoid) {
+                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(senderUserName, receiverUsername));
+                                messages.clear();
+                                try {
+                                    messages.addAll(mydb.getAllMessages(rootPath));
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
+                                adapter.notifyDataSetChanged();
                             }
                         });
 
-                        messages.add(message);
 
 //                Updating The Data base
 
 //                Updating History Of Sender
                         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child(receiverUsername);
 
-                        User user = new User(receiverUsername,Calendar.getInstance(Locale.ENGLISH).getTime(),message.getMessage(),"no",1);
+                        User user = new User(receiverUsername, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 1);
 
                         mFirebaseDatabaseReference.updateChildren(user.toMap());
 
 //                Updating History Of Reciver
                         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
-                        user = new User(senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(),message.getMessage(),"no",0);
+                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 0);
 
                         mFirebaseDatabaseReference.updateChildren(user.toMap());
 
@@ -540,8 +585,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 }).start();
 
 //                Clearing MessageBox And moving the scroll positiion to he last message
-
-                mydb.insertMessage(message.getMessage(),message.getMessageSource(),message.getMessageSentTime(),0,message.getMessageID(),getRoot(senderUserName,receiverUsername));
 
                 rvMessages.scrollToPosition(messages.size());
 
@@ -553,14 +596,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 mMessageBox.getText().clear();
                 break;
             case R.id.userSpace:
-                Intent i = new Intent(getApplicationContext(),profileCard.class);
-                i.putExtra("phone",receiverUsername);
+                Intent i = new Intent(getApplicationContext(), profileCard.class);
+                i.putExtra("phone", receiverUsername);
                 startActivity(i);
-//                Toast.makeText(getApplicationContext(),"UserName : "+mydb.getUserName(receiverUsername)+"\nPhone Number : "+ receiverUsername,Toast.LENGTH_LONG).show();
                 break;
             case R.id.rootLayout:
             case R.id.splashImage:
-                if(!menuButtonStatus){
+                if (!menuButtonStatus) {
                     mMenuButtonClose.performClick();
                 }
             default:
@@ -581,6 +623,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-    ArrayList<Message> msg=null;
+    ArrayList<Message> msg = null;
 
 }
