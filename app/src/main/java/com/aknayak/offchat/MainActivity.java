@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -334,10 +336,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.rootLayout:
                 break;
             case R.id.signOut:
-                signOut();
-                mUsername = "ANONYMOUS";
-                startActivity(new Intent(getApplicationContext(), phone_verification.class));
-                finish();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        signOut();
+                        mUsername = "ANONYMOUS";
+                        startActivity(new Intent(getApplicationContext(), phone_verification.class));
+                        finish();
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        Toast.makeText(getApplicationContext(),"Canceld",Toast.LENGTH_LONG).show();
+                    }
+                });
+                alertDialogBuilder.setTitle("Sign Out?");
+                alertDialogBuilder.setMessage("We Don't store your chats. So if you Sign Out Your Account then you will loose your chats.\n\nAre You Sure to Sign Out ???");
+                alertDialogBuilder.show();
+                getmMenuButtonClose.performClick();
                 break;
             case R.id.floatButton:
                 startActivity(new Intent(getApplicationContext(),AllConcacts.class));
@@ -346,7 +364,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(),"You don't have access now.",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
-                Toast.makeText(getApplicationContext(),"Your Number: "+senderUserName,Toast.LENGTH_LONG).show();
+
+                Intent i = new Intent(getApplicationContext(),myProfile.class);
+                i.putExtra("phone",senderUserName);
+                startActivity(i);
+                getmMenuButtonClose.performClick();
+//                Toast.makeText(getApplicationContext(),"Your Number: "+senderUserName,Toast.LENGTH_LONG).show();
 //                notifyIt(R.drawable.ic_launcher_empty, "Your Name","This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large 8888888888888text This is message of large text This is message of large text This is message of large text This is message of large text This is message of large text ",getApplicationContext(),55);
                 break;
             default:
