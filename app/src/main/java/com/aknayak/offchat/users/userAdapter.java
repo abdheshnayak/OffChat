@@ -105,6 +105,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         final TextView unseenTextView = viewHolder.unseencount;
         final String rootPath = getRoot(senderUserName, user.getUserName());
         unseen = mydb.getUnseenCount(getRoot(senderUserName, user.getUserName()), user.getUserName());
+
         uiUpdate(user, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView);
 
 
