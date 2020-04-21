@@ -646,7 +646,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     protected void onPause() {
-        messageRef.removeEventListener(v3);
         super.onPause();
         cdt.cancel();
     }
