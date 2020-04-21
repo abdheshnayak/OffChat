@@ -165,6 +165,14 @@
                 android:textAllCaps="false"
                 android:theme="@style/ThemeOverlay.MyItemButton" />
 
+            <TextView
+                android:id="@+id/aboutButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="About"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:theme="@style/ThemeOverlay.MyItemButton" />
 
 
         </LinearLayout>

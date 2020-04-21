@@ -3,6 +3,8 @@ package com.aknayak.offchat.messages;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.users.connDetail;
 import com.google.firebase.database.DatabaseReference;
@@ -50,7 +53,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View messageView;
+        final View messageView;
         if (viewType == 1) {
             // Inflate the custom layout
             messageView = inflater.inflate(R.layout.sender_messagebox, parent, false);
@@ -73,6 +76,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         textView.setText(message.getMessage());
         textView = viewHolder.messageSentTime;
 //        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
+
 
 
         Date date = message.getMessageSentTime();
@@ -106,9 +110,57 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         final TextView seenStatusDouble = viewHolder.sentStatusSingleDouble;
         final TextView seenStatusDoubleBlue = viewHolder.sentStatusSingleDoubleBlue;
 
-
         final DBHelper mydb = new DBHelper(parentActivity);
 
+        final View messageView = viewHolder.itemView;
+
+        messageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (respData.selection){
+                    if (respData.delItem.contains(message.getMessageID())){
+                        messageView.setBackgroundColor(Color.argb(0,200,200,255));
+                        respData.delItem.remove(message.getMessageID());
+                    }else {
+                        messageView.setBackgroundColor(Color.argb(150,200,200,255));
+                        respData.delItem.add(message.getMessageID());
+                    }
+                }
+            }
+        });
+
+        messageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!respData.selection){
+                    respData.selection= true;
+                    Log.d("UUU","hello");
+                    parentActivity.dellButton();
+                    messageView.setBackgroundColor(Color.argb(150,200,200,255));
+                    respData.delItem.add(message.getMessageID());
+                }
+                return true;
+            }
+        });
+
+        Log.d("UUU","selected");
+        if (!respData.selection){
+            messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
+        }else{
+            if (respData.delItem.contains(message.getMessageID())) {
+                messageView.setBackgroundColor(Color.argb(150, 200, 200, 255));
+            }else {
+                messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
+            }
+        }
+        if (respData.delFlag){
+            if (respData.delItem.contains(message.getMessageID())) {
+                mydb.deleteMessage(message.getMessageID());
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,receiverUsername)).child(message.getMessageID()).removeValue();
+                messageView.setBackgroundColor(Color.argb(100, 255, 100, 100));
+                respData.delItem.remove(message.getMessageID());
+            }
+        }
 
         try {
             int k = mydb.getAllMessagesID(rootPath).indexOf(message.getMessageID());

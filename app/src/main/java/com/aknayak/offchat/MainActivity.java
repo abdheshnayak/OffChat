@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String mUsername;
     private String mPhotoUrl;
     private FirebaseAuth mAuth;
+    private TextView aboutButton;
 
     ImageButton mImgButton;
     ImageButton mMenuButton;
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         mSignOutButton = findViewById(R.id.signOut);
+        aboutButton = findViewById(R.id.aboutButton);
         mMenuButton = findViewById(R.id.menuButtonActivityMain);
         getmMenuButtonClose = findViewById(R.id.menuCloseActivity_main);
         menuLayout = findViewById(R.id.menuLayout);
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuLayout.setOnClickListener(this);
         mImgButton.setOnClickListener(this);
         settings.setOnClickListener(this);
-
+        aboutButton.setOnClickListener(this);
 
 
 //        Check Acess for read Contacts
@@ -448,6 +450,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent i = new Intent(getApplicationContext(), myProfile.class);
                 i.putExtra("phone", senderUserName);
                 startActivity(i);
+                getmMenuButtonClose.performClick();
+                break;
+            case R.id.aboutButton:
+                Intent j = new Intent(getApplicationContext(),aboutPage.class);
+                startActivity(j);
                 getmMenuButtonClose.performClick();
                 break;
             default:

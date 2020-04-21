@@ -15,7 +15,8 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".myProfile"></activity>
+        <activity android:name=".aboutPage"></activity>
+        <activity android:name=".myProfile" />
         <activity android:name=".profileCard" />
         <activity android:name=".AllConcacts" />
         <activity android:name=".messageViewActivity" />

@@ -1,5 +1,7 @@
 package com.aknayak.offchat;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -23,9 +25,11 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
 import com.aknayak.offchat.users.connDetail;
@@ -55,6 +59,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     EditText mMessageBox;
     ImageButton mMessageSendButton;
     ImageButton mMessageBoxCloseButton;
+    ImageButton mDeleteButton;
     ImageButton mMenuButton;
     ImageButton mMenuButtonClose;
     ConstraintLayout menuLayout;
@@ -91,6 +96,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     boolean flg = false;
 
+    public void dellButton(){
+        mDeleteButton.setVisibility(View.VISIBLE);
+        mMenuButton.setVisibility(View.GONE);
+        mMenuButton.setVisibility(View.GONE);
+    }
     public void scButton(int i) {
         if (i > 15) {
             if (!flg) {
@@ -146,11 +156,15 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
 
+        respData.delItem = new ArrayList<>();
+
         receiverUsername = getIntent().getStringExtra("phoneNumber");
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
+        mDeleteButton = findViewById(R.id.deleteButton);
+
         rvMessages = findViewById(R.id.messageView);
         mMessageSendButton = findViewById(R.id.sendButton);
         mMenuButton = findViewById(R.id.menuButton);
@@ -173,6 +187,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         mProfileButton.setOnClickListener(this);
         mMessageSendButton.setOnClickListener(this);
         mMessageBoxCloseButton.setOnClickListener(this);
+        mDeleteButton.setOnClickListener(this);
         findViewById(R.id.userSpace).setOnClickListener(this);
         findViewById(R.id.messageView).setOnClickListener(this);
 
@@ -535,7 +550,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             e.printStackTrace();
         }
 
+
     }
+
 
 
     //    Listen Clicks
@@ -559,6 +576,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 menuLayout.animate().translationY(-300);
                 menuLayout.setVisibility(View.GONE);
                 mMenuButtonClose.setVisibility(View.GONE);
+                mMenuButton.setVisibility(View.VISIBLE);
+                break;
+            case R.id.deleteButton:
+                respData.delFlag=true;
+                respData.selection=false;
+                adapter.notifyDataSetChanged();
+                messages.clear();
+                try {
+                    messages.addAll(mydb.getAllMessages(rootPath));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                adapter.notifyDataSetChanged();
+                mDeleteButton.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.sendButton:
@@ -641,7 +672,16 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (respData.selection){
+            respData.selection = false;
+            respData.delItem= new ArrayList<>();
+            adapter.notifyDataSetChanged();
+            mDeleteButton.setVisibility(View.GONE);
+            mMenuButton.setVisibility(View.VISIBLE);
+        }else {
+            super.onBackPressed();
+        }
+
     }
 
     @Override
@@ -649,7 +689,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         super.onPause();
         cdt.cancel();
     }
-
 
     ArrayList<Message> msg = null;
 

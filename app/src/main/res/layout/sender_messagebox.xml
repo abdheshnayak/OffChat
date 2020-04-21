@@ -1,135 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="3sp"
-    >
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/sender_messagebox_design"
-
-        android:maxWidth="320sp"
-        android:padding="5sp"
-        android:layout_marginTop="5sp"
-        android:layout_marginLeft="5sp"
-        android:layout_marginBottom="5sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
-
-        <TextView
-            android:padding="5sp"
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="270sp"
-            android:minWidth="100sp"
-            android:text="@string/textview"
-            android:textColor="#222222"
-            android:textIsSelectable="true"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="3sp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout5"
+            android:id="@+id/constraintLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+
+            android:layout_marginTop="5sp"
+            android:layout_marginBottom="5sp"
+            android:background="@drawable/sender_messagebox_design"
+            android:maxWidth="320sp"
+            android:padding="5sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toStartOf="@+id/textView5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0">
 
             <TextView
-                android:id="@+id/sentStatus_message"
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="1sp"
-                android:background="@drawable/singletick"
-                android:textColor="#A9ADB0"
+                android:maxWidth="270sp"
+                android:minWidth="100sp"
+                android:padding="5sp"
+                android:text="@string/textview"
+                android:textColor="#222222"
+                android:textIsSelectable="true"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/sentStatus_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
+                    android:background="@drawable/singletick"
+                    android:textColor="#A9ADB0"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/sentStatusDouble_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
+                    android:background="@drawable/doubletick"
+                    android:textColor="#A9ADB0"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/waitingForSent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
+                    android:background="@drawable/ic_access_time_black_24dp"
+                    android:textColor="#A9ADB0"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/sentStatusDoubleBlue_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
+                    android:background="@drawable/doubletickblue"
+                    android:textColor="#A9ADB0"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/sentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:paddingTop="2sp"
+                android:text="5:23 am"
+                android:textColor="#673AB7"
                 android:textSize="10sp"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/sentStatusDouble_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="1sp"
-                android:background="@drawable/doubletick"
-                android:textColor="#A9ADB0"
-                android:textSize="9sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            <TextView
-                android:id="@+id/waitingForSent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="1sp"
-                android:background="@drawable/ic_access_time_black_24dp"
-                android:textColor="#A9ADB0"
-                android:textSize="10sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/sentStatusDoubleBlue_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="1sp"
-                android:background="@drawable/doubletickblue"
-                android:textColor="#A9ADB0"
-                android:textSize="9sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/sentTime"
+            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="2sp"
-            android:text="5:23 am"
-            android:textColor="#673AB7"
-            android:textSize="10sp"
-            android:layout_marginRight="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            android:layout_marginTop="5sp"
+            android:layout_weight="1"
+            android:background="@drawable/sender_messagebox_design_helper"
+            android:paddingLeft="5sp"
+            android:paddingTop="6sp"
+            android:paddingRight="5sp"
+            android:paddingBottom="10sp"
+            android:textSize="8sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingTop="6sp"
-        android:layout_marginTop="5sp"
-        android:paddingBottom="10sp"
-        android:paddingLeft="5sp"
-        android:paddingRight="5sp"
-        android:background="@drawable/sender_messagebox_design_helper"
-        android:textSize="8sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
