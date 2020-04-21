@@ -15,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Delayed;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRandString;
@@ -64,7 +66,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     Date lastSeenTime;
     boolean menuButtonStatus = true;
     public ArrayList<Message> messages = new ArrayList<Message>();
-    final MessageAdapter adapter = new MessageAdapter(messages, this);
+    public ImageButton scrollButton;
+
+    MessageAdapter adapter = new MessageAdapter(messages, this);
 
     Boolean sendButtonStatus = false;
 
@@ -84,6 +88,27 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     DBHelper mydb;
 
     int cnt = 0;
+
+    boolean flg = false;
+
+    public void scButton(int i) {
+        if (i > 15) {
+            if (!flg) {
+                scrollButton.setVisibility(View.VISIBLE);
+                flg = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        flg=false;
+                        scrollButton.setVisibility(View.INVISIBLE);
+                    }
+                }, 2 * 1000); // wait for 5 seconds
+            }
+        } else {
+            scrollButton.setVisibility(View.INVISIBLE);
+            flg=false;
+        }
+    }
 
     public Boolean isOnline() {
         try {
@@ -114,6 +139,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
 
     CountDownTimer cdt;
+    boolean pnt = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,10 +160,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         mMessageBox = findViewById(R.id.messageBox);
         constraintLayout = findViewById(R.id.rootLayout);
         userName = findViewById(R.id.msgUserName);
+        scrollButton = findViewById(R.id.scrollbutton);
+
         onlineStatusTextView = findViewById(R.id.onlineStatusTextView_in_MessageView);
 
 //        Add All the components into OnClickListner
         findViewById(R.id.splashImage).setOnClickListener(this);
+        scrollButton.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
         mMenuButton.setOnClickListener(this);
         mMenuButtonClose.setOnClickListener(this);
@@ -151,6 +180,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         if (receiverUsername.equals("+1")) {
             findViewById(R.id.messageBoxContainer).setVisibility(View.GONE);
         }
+
+
+        mydb = new DBHelper(getApplicationContext());
+
 
 
 //        Refrences
@@ -240,12 +273,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
-//                    Log.d("Abdhesh", "bb");
                     messages.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
-                        if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath,message.getMessageFor());
+                        if ((message != null && message.getMessageSource().equals(message.getMessageFor())) || message.getMessageStatus() != 1) {
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), "me1");
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -255,7 +287,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
 
-                if (messages.size() != 0) {
+                if (messages.size() != 0 ) {
+                    adapter.notifyDataSetChanged();
                     try {
                         if (cnt != mydb.getAllMessages(rootPath).size()) {
                             cnt = mydb.getAllMessages(rootPath).size();
@@ -273,115 +306,110 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
+
+
 //        Online Status Listner
-        cdt = new CountDownTimer(10000, 10000) {
+        cdt = new CountDownTimer(5000, 5000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 o_status.addListenerForSingleValueEvent(v2);
-
-                try {
-                    msg = mydb.getAllMessagesByStatus(rootPath, 1, senderUserName);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-
-                int n = msg.size();
-                if (n > 5) {
-                    for (int i = 5; i < n; i++) {
-                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
-                        mydb.deleteMessage(msg.get(i).getMessageID());
-                    }
-                    messages.clear();
-                    try {
-                        messages.addAll(mydb.getAllMessages(rootPath));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    adapter.notifyDataSetChanged();
-                    rvMessages.scrollToPosition(messages.size() - 1);
-                }
 
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-
                         try {
-                            msg = mydb.getAllMessagesByStatus(rootPath, 0, senderUserName);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        int n = msg.size();
+                            msg = mydb.getAllMessagesByStatus(rootPath, 1, senderUserName);
 
-                        for (int i = 0; i < n; i++) {
-                            DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
-                            final Message msgvar = msg.get(i);
-                            msgvar.setMessageStatus(1);
-                            fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(senderUserName, receiverUsername), msgvar.getMessageFor());
-                                    messages.clear();
-                                    try {
-                                        messages.addAll(mydb.getAllMessages(rootPath));
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                    adapter.notifyDataSetChanged();
+
+                            int n = msg.size();
+                            if (n > 50) {
+                                for (int i = 50; i < n; i++) {
+                                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                                    mydb.deleteMessage(msg.get(i).getMessageID());
                                 }
-                            });
-                        }
-
-
-                        try {
-                            msg = mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        n = msg.size();
-
-                        for (int i = 0; i < n; i++) {
-                            DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
-                            Message msgvar = msg.get(i);
-                            msgvar.setMessageStatus(3);
-                            fdbr.updateChildren(msgvar.toMap());
-                        }
-
-                        try {
-                            msg = mydb.getAllMessagesByStatus(rootPath, 3, senderUserName);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        n = msg.size();
-                        Message lastMessage = null;
-                        try {
-                            lastMessage = mydb.getlastMessages(rootPath);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-//                        Log.d("KKKK", " " + n);
-                        for (int i = 0; i < n; i++) {
-                            if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())) {
-                                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                                pnt = false;
                             }
-                        }
-                        try {
+
+                            msg = mydb.getAllMessagesByStatus(rootPath, 0, senderUserName);
+                            n = msg.size();
+
+                            for (int i = 0; i < n; i++) {
+                                DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
+                                final Message msgvar = msg.get(i);
+                                msgvar.setMessageStatus(1);
+                                fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), "me2");
+                                        messages.clear();
+                                        try {
+                                            messages.addAll(mydb.getAllMessages(rootPath));
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                pnt = false;
+                            }
+
+
+                            msg = mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername);
+
+                            n = msg.size();
+
+                            for (int i = 0; i < n; i++) {
+                                DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID());
+                                Message msgvar = msg.get(i);
+                                msgvar.setMessageStatus(3);
+                                fdbr.updateChildren(msgvar.toMap());
+                                pnt = false;
+                            }
+
+
+                            msg = mydb.getAllMessagesByStatus(rootPath, 3, senderUserName);
+
+                            n = msg.size();
+                            Message lastMessage = null;
+
+                            lastMessage = mydb.getlastMessages(rootPath);
+
+                            for (int i = 0; i < n; i++) {
+                                if (!lastMessage.getMessageID().equals(msg.get(i).getMessageID())) {
+                                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(msg.get(i).getMessageID()).removeValue();
+                                }
+                                pnt = false;
+                            }
                             if (messages.size() != 0 && mydb.getlastMessages(rootPath).getMessageSource().equals(receiverUsername)) {
-//                                Log.d("MMM", mydb.getlastMessages(rootPath).getMessage());
                                 mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName);
 //                                User user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), mydb.getlastMessages(rootPath).getMessage(), "no", 3);
                                 mFirebaseDatabaseReference.setValue(new connDetail(true));
+                                pnt = false;
                             }
+
+//                            messages.addAll(mydb.getAllMessages(rootPath));
+
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
 
                     }
+
                 }).start();
+                if (pnt) {
+                    pnt = true;
+                    try {
+                        messages.clear();
+                        messages.addAll(mydb.getAllMessages(rootPath));
+//                        rvMessages.scrollToPosition(messages.size() - 1);
+
+//                        adapter.notifyDataSetChanged();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             @Override
@@ -412,16 +440,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-        mydb = new DBHelper(getApplicationContext());
-
-        try {
-            messages.addAll(mydb.getAllMessages(rootPath));
-            if (messages.size() > 0) {
-                rvMessages.scrollToPosition(messages.size() - 1);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
 
         IntentFilter filter = new IntentFilter(
@@ -433,12 +451,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }
 
         messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                messageRef.addValueEventListener(v3);
-            }
-        }).start();
+
+        messageRef.addValueEventListener(v3);
 
 
         userName.setText(mydb.getUserName(receiverUsername));
@@ -503,14 +517,24 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         // Set layout manager to position the items
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter.notifyDataSetChanged();
-        if (messages.size() != 0) {
-            try {
-                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername).size() - 1);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+//        adapter.notifyDataSetChanged();
+//        if (messages.size() != 0) {
+//            try {
+//                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername).size() - 1);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        try {
+            messages.clear();
+            messages.addAll(mydb.getAllMessages(rootPath));
+            adapter.notifyDataSetChanged();
+            rvMessages.scrollToPosition(messages.size()-1);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
     }
 
 
@@ -541,35 +565,33 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating Message
                 final String messageKey;
                 messageKey = getRandString(15);
-                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName,Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey,receiverUsername);
+                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
+                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), "me3");
+                messages.add(new Message(message.getMessage(), message.getMessageSource(), Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(), message.getMessageFor()));
+//                adapter.notifyDataSetChanged();
 
-                new Thread(new Runnable() {
+
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
+                        .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void run() {
-
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(senderUserName, receiverUsername), message.getMessageFor());
-                        messages.add(new Message(message.getMessage(), message.getMessageSource(),Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(),message.getMessageFor()));
-                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername))
-                                .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(senderUserName, receiverUsername), message.getMessageFor());
-                                messages.clear();
-                                try {
-                                    messages.addAll(mydb.getAllMessages(rootPath));
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
+                    public void onSuccess(Void aVoid) {
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), "me4");
+                        messages.clear();
+                        try {
+                            messages.addAll(mydb.getAllMessages(rootPath));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
 
 
 //                Updating The Data base
 
 //                Updating History Of Sender
-                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child(receiverUsername).setValue(new connDetail(true));
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageSource()).child(message.getMessageFor()).setValue(new connDetail(true));
 
 //                        User user = new User(receiverUsername, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 1);
 
@@ -577,18 +599,16 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                        mFirebaseDatabaseReference.updateChildren(user.toMap());
 
 //                Updating History Of Reciver
-                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(receiverUsername).child(senderUserName).setValue(new connDetail(true));
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageFor()).child(message.getMessageSource()).setValue(new connDetail(true));
 //                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 0);
 
 //                        mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
 //                        mFirebaseDatabaseReference.updateChildren(user.toMap());
 
-                    }
-                }).start();
 
 //                Clearing MessageBox And moving the scroll positiion to he last message
 
-                rvMessages.scrollToPosition(messages.size());
+//                rvMessages.scrollToPosition(messages.size());
 
                 break;
             case R.id.profileButton_message:
@@ -606,6 +626,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             case R.id.splashImage:
                 if (!menuButtonStatus) {
                     mMenuButtonClose.performClick();
+                }
+                break;
+            case R.id.scrollbutton:
+                try {
+                    rvMessages.smoothScrollToPosition(mydb.getAllMessages(rootPath).size() - 1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             default:
                 break;

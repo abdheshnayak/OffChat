@@ -33,6 +33,7 @@
             android:background="@drawable/receiver_messagebox_design"
             android:maxWidth="320sp"
             android:padding="5sp"
+            android:elevation="3dp"
             android:shadowColor="#000000"
             android:text="@string/textview"
             android:textSize="18sp"

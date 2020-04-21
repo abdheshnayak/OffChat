@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
@@ -200,7 +201,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor) {
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor,String callfrom) {
+        Log.d("kkkInsert",messageSource+messageStatus+Message+callfrom);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);
@@ -231,6 +233,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         while (res.isAfterLast() == false) {
             array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor"))));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+
+    public ArrayList<String> getAllMessagesID(String messageRoot) throws ParseException {
+        ArrayList<String> array_list = new ArrayList<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select * from messages where messageroot = '" + messageRoot + "' order by messagesenttime asc", null);
+        res.moveToFirst();
+
+        while (res.isAfterLast() == false) {
+            array_list.add( res.getString(res.getColumnIndex("messageId")));
             res.moveToNext();
         }
         return array_list;

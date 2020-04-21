@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.users.connDetail;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -57,11 +58,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             messageView = inflater.inflate(R.layout.receiver_messagebox, parent, false);
         }
 
+
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(messageView);
         return viewHolder;
-
-
     }
 
     @Override
@@ -109,6 +109,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         final DBHelper mydb = new DBHelper(parentActivity);
 
+
+        try {
+            int k = mydb.getAllMessagesID(rootPath).indexOf(message.getMessageID());
+//            Log.d("UUUU","--"+k);
+            parentActivity.scButton(mydb.getAllMessages(rootPath).size()-k);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (message.getMessageStatus() == 3 && message.getMessageSource().equals(senderUserName)) {
             try {
                 if (!message.getMessageID().equals(mydb.getlastMessages(rootPath).getMessageID())) {
@@ -177,10 +185,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     private List<Message> mMessage;
-    private Activity parentActivity;
+    private messageViewActivity parentActivity;
 
     public MessageAdapter(List<Message> mMessage, Activity a) {
-        this.parentActivity = a;
+        this.parentActivity = (messageViewActivity) a;
         this.mMessage = mMessage;
     }
 

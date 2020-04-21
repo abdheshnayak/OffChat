@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/sender_messagebox_design"
 
+        android:elevation="3dp"
         android:maxWidth="320sp"
         android:padding="5sp"
         android:layout_marginTop="5sp"

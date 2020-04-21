@@ -14,12 +14,15 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -54,6 +57,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     Thread t;
     Thread t2;
 
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         mLogoLayout = findViewById(R.id.contact_info_logo);
         usersLoadProgressBar.setVisibility(View.INVISIBLE);
         usersLoadProgressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(133, 94, 238), PorterDuff.Mode.MULTIPLY);
+
 
         mydb = new DBHelper(this);
         mobileArray = mydb.getAllCotacts();
@@ -105,6 +110,8 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
         }
+
+
 
     }
 
@@ -234,6 +241,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()) {
             case R.id.closeButton:
+                mReloadButton.setVisibility(View.VISIBLE);
                 searchBox.getText().clear();
                 imm.hideSoftInputFromWindow(searchBox.getWindowToken(),
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
@@ -248,6 +256,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 mSearchButton.animate().translationX(0);
                 break;
             case R.id.searchButton:
+                mReloadButton.setVisibility(View.GONE);
                 mLogoLayout.setVisibility(View.GONE);
                 mLogoLayout.animate().translationX(-200);
                 mSearchButton.animate().translationX(-200);

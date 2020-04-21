@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String senderUserName;
     public static String receiverUsername;
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -131,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuLayout.setOnClickListener(this);
         mImgButton.setOnClickListener(this);
         settings.setOnClickListener(this);
+
+
 
 //        Check Acess for read Contacts
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
@@ -271,7 +275,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor());
+                            Log.d("KKK",message.getMessage());
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor(),"me5");
                         }
                     }
                     messages.addAll(mydb.getHist());
