@@ -134,7 +134,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             public boolean onLongClick(View v) {
                 if (!respData.selection){
                     respData.selection= true;
-                    Log.d("UUU","hello");
+//                    Log.d("UUU","hello");
                     parentActivity.dellButton();
                     messageView.setBackgroundColor(Color.argb(150,200,200,255));
                     respData.delItem.add(message.getMessageID());
@@ -143,7 +143,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
         });
 
-        Log.d("UUU","selected");
+//        Log.d("UUU","selected");
         if (!respData.selection){
             messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
         }else{

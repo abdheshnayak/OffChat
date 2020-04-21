@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -32,6 +33,9 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -107,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         mydb = new DBHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
@@ -403,13 +409,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menuButtonActivityMain:
                 mTouchSensors.setVisibility(View.VISIBLE);
                 menuLayout.setTranslationY(-300);
+                menuLayout.setTranslationX(300);
                 menuLayout.setVisibility(View.VISIBLE);
+                menuLayout.animate().translationX(0);
                 menuLayout.animate().translationY(0);
                 mMenuButton.setVisibility(View.GONE);
                 getmMenuButtonClose.setVisibility(View.VISIBLE);
                 break;
             case R.id.menuCloseActivity_main:
             case R.id.splashImageMainActivity:
+                menuLayout.animate().translationX(300);
                 menuLayout.animate().translationY(-300);
                 mTouchSensors.setVisibility(View.INVISIBLE);
                 menuLayout.setVisibility(View.GONE);

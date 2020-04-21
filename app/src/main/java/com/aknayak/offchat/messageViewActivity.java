@@ -33,6 +33,13 @@ import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
 import com.aknayak.offchat.users.connDetail;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -96,6 +103,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     boolean flg = false;
 
+
+    AdView adView;
+
+
     public void dellButton(){
         mDeleteButton.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.GONE);
@@ -155,6 +166,31 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
+
+
+        adView = findViewById(R.id.adView);
+//        adView.setAdSize(AdSize.BANNER);
+//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d("UUUU","Initialized");
+            }
+        });
+
+        adView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        adView.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.d("UUUU","Add Loaded");
+            }
+        });
 
         respData.delItem = new ArrayList<>();
 
@@ -563,8 +599,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
                 menuButtonStatus = false;
                 findViewById(R.id.messageBoxContainer).animate().translationY(300);
+                menuLayout.setTranslationX(300);
                 menuLayout.setTranslationY(-300);
                 menuLayout.setVisibility(View.VISIBLE);
+                menuLayout.animate().translationX(0);
                 menuLayout.animate().translationY(0);
                 mMenuButton.setVisibility(View.GONE);
                 mMenuButtonClose.setVisibility(View.VISIBLE);
@@ -573,6 +611,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.splashImage).setVisibility(View.INVISIBLE);
                 menuButtonStatus = true;
                 findViewById(R.id.messageBoxContainer).animate().translationY(0);
+                menuLayout.animate().translationX(300);
                 menuLayout.animate().translationY(-300);
                 menuLayout.setVisibility(View.GONE);
                 mMenuButtonClose.setVisibility(View.GONE);

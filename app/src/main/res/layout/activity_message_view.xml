@@ -9,17 +9,31 @@
     android:animateLayoutChanges="true">
 
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-8544705398164686/1484682615"
+        app:layout_constraintEnd_toEndOf="@+id/frameLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.google.android.gms.ads.AdView>
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:background="@drawable/rectangle_design"
-        android:padding="10sp"
+        android:padding="5sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/adView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,9 +44,9 @@
                 android:id="@+id/userSpace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:animateLayoutChanges="true"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -49,7 +63,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/onlineStatusTextView_in_MessageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,6 +70,7 @@
                     android:textColor="#AAFFFF"
                     android:textSize="10sp"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/imageView" />
 
@@ -83,6 +97,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_menu_white_24dp"
+                tools:ignore="VectorDrawableCompat" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:contentDescription="TODO"
+                android:padding="5sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_delete_white_24dp"
                 tools:ignore="VectorDrawableCompat" />
 
             <ImageButton
@@ -120,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/circle_design_primary"
-            android:padding="8sp"
+            android:padding="5sp"
             android:layout_margin="5sp"
             android:src="@drawable/ic_arrow_upward_white_24dp"
             android:visibility="gone"
@@ -145,7 +173,7 @@
                 android:id="@+id/constraintLayout4"
                 android:layout_width="0sp"
                 android:layout_height="wrap_content"
-                android:layout_margin="7sp"
+                android:layout_margin="4sp"
                 android:layout_weight="1"
                 android:background="@drawable/circle_design_white"
                 android:ems="10"
@@ -251,12 +279,11 @@
         android:id="@+id/menuLayout"
         android:layout_width="250sp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5sp"
-        android:layout_marginTop="5sp"
-        android:theme="@style/ThemeOverlay.MyMenu"
+        android:layout_margin="5sp"
         android:visibility="gone"
+        android:theme="@style/ThemeOverlay.MyMenu"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/adView">
 
         <LinearLayout
             android:layout_width="match_parent"

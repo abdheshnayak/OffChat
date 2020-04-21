@@ -11,7 +11,8 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
+        
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -42,6 +43,8 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:25.1.0')
 
+    implementation 'com.android.support:multidex:1.0.3'
+
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-auth'
@@ -51,6 +54,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:6.2.0'
 
     implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
 
 }

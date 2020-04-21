@@ -6,23 +6,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -36,8 +28,8 @@ import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
 import java.util.ArrayList;
 
-import static com.aknayak.offchat.MainActivity.filterNumber;
 import static com.aknayak.offchat.MainActivity.requestPermission;
+import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 
 
 public class AllConcacts extends AppCompatActivity implements View.OnClickListener {
@@ -58,7 +50,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     Thread t2;
 
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +129,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 == PackageManager.PERMISSION_GRANTED) {
             if (x == 1) {
                 mobileArray.clear();
-                mobileArray.addAll(getAllContacts());
+                mobileArray.addAll(getAllContacts(getContentResolver()));
             }
         } else {
             requestPermission(this);
@@ -149,8 +140,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         rvUser.setAdapter(adapter);
         // Set layout manager to position the items
         rvUser.setLayoutManager(new LinearLayoutManager(this));
-        // That's all!
-
 
         // Start long running operation in a background thread
 
@@ -166,58 +155,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    private ArrayList getAllContacts() {
-        ArrayList<contactsUser> UserList = new ArrayList<>();
-        ContentResolver cr = getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-        if ((cur != null ? cur.getCount() : 0) > 0) {
-            while (cur != null && cur.moveToNext()) {
-                String id = cur.getString(
-                        cur.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cur.getString(cur.getColumnIndex(
-                        ContactsContract.Contacts.DISPLAY_NAME));
-
-
-                if (cur.getInt(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
-                    Cursor pCur = cr.query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                            new String[]{id}, null);
-                    while (pCur.moveToNext()) {
-                        String phoneNo = pCur.getString(pCur.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-                        phoneNo = filterNumber(phoneNo);
-
-                        contactsUser uj = new contactsUser(name, phoneNo, "");
-
-                        if (phoneNo.length() > 10) {
-                            if (phoneNo.substring(0, 4).equals("+977") && phoneNo.length() >= 14) {
-                                if (!UserList.contains(uj)) {
-                                    UserList.add(uj);
-                                }
-                            } else if (phoneNo.substring(0, 3).equals("+91") && phoneNo.length() >= 13) {
-                                if (!UserList.contains(uj)) {
-                                    UserList.add(uj);
-                                }
-                            }
-                        } else if (phoneNo.length() == 10) {
-                            if (!UserList.contains(uj)) {
-                                UserList.add(uj);
-                            }
-                        }
-                    }
-                    pCur.close();
-                }
-            }
-        }
-        if (cur != null) {
-            cur.close();
-        }
-        return UserList;
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -277,7 +214,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                         if (mobileArray != null) {
                             mobileArray.clear();
                         }
-                        mobileArray.addAll(getAllContacts());
+                        mobileArray.addAll(getAllContacts(getContentResolver()));
                         mydb.deleteAllContact();
                         for (int i = 0; i < mobileArray.size(); i++) {
                             mydb.insertContact(mobileArray.get(i).getUserName(), mobileArray.get(i).getPhoneNumber());
@@ -310,15 +247,5 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 usersLoadProgressBar.setVisibility(View.VISIBLE);
                 break;
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 }
