@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.AESHelper;
 import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.messages.Message;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,7 @@ import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.notifyIt;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
 /**
@@ -95,11 +97,12 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         final DBHelper mydb = new DBHelper(parrentActivity);
         textView.setText(mydb.getUserName(message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource()));
         final TextView lastMessageTextView = viewHolder.lastMessageTextView;
+        String messagedec = decrypt(message.getMessage());
         try {
-            if (message.getMessage().length() > 25) {
-                lastMessageTextView.setText(message.getMessage().substring(0, 25) + "...");
+            if (messagedec.length() > 25) {
+                lastMessageTextView.setText(messagedec.substring(0, 25) + "...");
             } else {
-                lastMessageTextView.setText(message.getMessage());
+                lastMessageTextView.setText(messagedec);
             }
         } catch (Exception e) {
 //            Log.d("Info", e.getMessage());
@@ -132,7 +135,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 //                        mFirebaseDatabaseReference.setValue(2);
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 
-                        notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                        notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                         Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                     }
                     if (message != null && (message.getMessageSource().equals(message.getMessageFor()) || message.getMessageStatus() != 1)) {

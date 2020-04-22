@@ -38,6 +38,7 @@ import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
@@ -83,7 +84,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         // Set item views based on your views and data model
         final TextView messageboxView = viewHolder.Message;
-        messageboxView.setText(message.getMessage());
+        messageboxView.setText(decrypt(message.getMessage()));
         TextView textView = viewHolder.messageSentTime;
 //        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
 

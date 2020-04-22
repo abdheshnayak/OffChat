@@ -3,6 +3,7 @@ package com.aknayak.offchat.globaldata;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.aknayak.offchat.MainActivity.filterNumber;
+import static com.aknayak.offchat.MainActivity.notifyIt;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 
 
@@ -54,14 +56,19 @@ public class respData {
                         contactsUser uj = new contactsUser(name, phoneNo, "");
 
                         if (phoneNo.length() > 10) {
-                            String contCode = phoneNo.substring(0, phoneNo.length() - 10);
-                            contCode = cntCode.contains(Double.valueOf(contCode).intValue()) ? ("+" + Double.valueOf(contCode).intValue()) : null;
-                            if (contCode != null) {
-                                phoneNo = contCode + phoneNo.substring(phoneNo.length() - 10);
-                                uj.setPhoneNumber(phoneNo);
-                                if (!UserList.contains(uj)) {
-                                    UserList.add(uj);
+                            String contCode = null;
+                            contCode = phoneNo.substring(0, phoneNo.length() - 10);
+                            try {
+                                contCode = cntCode.contains(Double.valueOf(contCode).intValue()) ? ("+" + Double.valueOf(contCode).intValue()) : null;
+                                if (contCode != null) {
+                                    phoneNo = contCode + phoneNo.substring(phoneNo.length() - 10);
+                                    uj.setPhoneNumber(phoneNo);
+                                    if (!UserList.contains(uj)) {
+                                        UserList.add(uj);
+                                    }
                                 }
+                            } catch (Exception e) {
+                                Log.d("Contact Loading error :", e.getMessage());
                             }
                         } else if (phoneNo.length() == 10) {
                             phoneNo = senderUserName.substring(0, phoneNo.length() - 10);

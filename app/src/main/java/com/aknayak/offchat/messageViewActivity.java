@@ -27,8 +27,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.AESHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
@@ -56,11 +58,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.Delayed;
 
+import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRandString;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 
 /**
  * OffChat
@@ -649,7 +653,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating Message
                 final String messageKey;
                 messageKey = getRandString(15);
-                final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
+                final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
                 mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
                 messages.add(new Message(message.getMessage(), message.getMessageSource(), Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(), message.getMessageFor()));

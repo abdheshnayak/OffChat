@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -30,9 +31,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.AESHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
+import com.aknayak.offchat.versionInfo.appVersion;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String CHANNEL_ID = "MyNotification";
 
     public static final String ROOT_CHILD = "UserData";
+    public static final String INSTANCE_ID = "instance";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mUsername;
@@ -91,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView settings;
     TextView checkAcess;
 
+    public static final String normalupdateVersion = "1";
+    public static final String forceUpdateVersion = "1";
+    public static String updateLink;
     CountDownTimer cdt;
 
     public static String authUser;
@@ -226,7 +233,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSignOutButton.setOnClickListener(this);
 
 
-        if (mydb.getUserInfo("instance") != null) {
+//        FirebaseDatabase.getInstance().getReference().child("admin").child("offchat_version_control").updateChildren(new appVersion("1","1").toMap());
+
+
+        FirebaseDatabase.getInstance().getReference().child("admin").child("offchat_version_control").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                appVersion appVer = dataSnapshot.getValue(appVersion.class);
+                if (appVer != null) {
+                    checkUpdate(appVer.getForceupdateVersion(), appVer.getNormalUpdateVersion(), 0);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        if (mydb.getUserInfo(INSTANCE_ID) != null) {
             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -242,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                mydb.insertuserInfo("instance", inst);
+                                mydb.insertuserInfo(INSTANCE_ID, inst);
                             }
                         });
                     }
@@ -258,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    mydb.insertuserInfo("instance", inst);
+                    mydb.insertuserInfo(INSTANCE_ID, inst);
                 }
             });
 
@@ -275,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         String notification = dataSnapshot.getValue(String.class);
                         Log.d("UUUU", notification);
 
-                        Message message = new Message(notification, "+1", Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15), senderUserName);
+                        Message message = new Message(AESHelper.encrypt(notification), "+1", Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15), senderUserName);
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot("+1", senderUserName))
                                 .child(message.getMessageID()).updateChildren(message.toMap());
 
@@ -644,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public boolean verifyUser(final String string, final int count) {
-        if (!string.equals(mydb.getUserInfo("instance"))) {
+        if (!string.equals(mydb.getUserInfo(INSTANCE_ID))) {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
             alertDialogBuilder.setPositiveButton("Verify", new DialogInterface.OnClickListener() {
                 @Override
@@ -671,8 +696,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (count >= 1) {
+                                Toast.makeText(MainActivity.this.getApplicationContext(), "Exit from OffChat.", Toast.LENGTH_LONG).show();
                                 MainActivity.this.finish();
+                                return;
                             }
+                            Toast.makeText(MainActivity.this.getApplicationContext(), "You will be exit.", Toast.LENGTH_SHORT).show();
                             verifyUser(string, count + 1);
                         }
                     });
@@ -698,6 +726,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(getApplicationContext(), "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
         } else {
             return true;
+        }
+        return false;
+    }
+
+
+    public boolean checkUpdate(final String varforceUpdate, final String varnormalUpdate, final int count) {
+        if (!varforceUpdate.equals(MainActivity.forceUpdateVersion)) {
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    FirebaseDatabase.getInstance().getReference().child("admin").child("update_link").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            updateLink = dataSnapshot.getValue(String.class);
+                            if (updateLink != null) {
+                                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(updateLink));
+                                startActivity(i);
+                                Toast.makeText(MainActivity.this.getApplicationContext(), updateLink, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(MainActivity.this.getApplicationContext(), "Link Not Available ask with about admin.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    checkUpdate(varforceUpdate, varnormalUpdate, 0);
+                }
+            });
+
+            alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (count >= 1) {
+                        Toast.makeText(MainActivity.this.getApplicationContext(), "Exit from OffChat.", Toast.LENGTH_LONG).show();
+                        MainActivity.this.finish();
+                        return;
+                    }
+                    Toast.makeText(MainActivity.this.getApplicationContext(), "You will be exit.", Toast.LENGTH_SHORT).show();
+                    checkUpdate(varforceUpdate, varnormalUpdate, count + 1);
+                }
+            });
+            alertDialogBuilder.setTitle("Compulsory Update");
+            alertDialogBuilder.setMessage("This Version of OffChat App is no longer Supported so please update it.");
+            alertDialogBuilder.show();
+
+        } else if (!varnormalUpdate.equals(MainActivity.normalupdateVersion)) {
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    FirebaseDatabase.getInstance().getReference().child("admin").child("update_link").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            updateLink = dataSnapshot.getValue(String.class);
+                            if (updateLink != null) {
+                                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(updateLink));
+                                startActivity(i);
+                                Toast.makeText(MainActivity.this.getApplicationContext(), updateLink, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(MainActivity.this.getApplicationContext(), "Link Not Available ask with about admin.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            });
+            alertDialogBuilder.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    return;
+                }
+            });
+            alertDialogBuilder.setTitle("Update Found !!!");
+            alertDialogBuilder.setMessage("A newer Version Of OffChat app found.");
+            alertDialogBuilder.show();
+
         }
         return false;
     }
