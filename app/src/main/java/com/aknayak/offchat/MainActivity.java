@@ -312,30 +312,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("lskdf", e.getMessage());
         }
 
-//        History Fetcher
-//        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                messages.clear();
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    User user = snapshot.getValue(User.class);
-//                    mydb.inserthistory(user.getUserName(), user.getLastMessage(), user.getLastMessageSentTime(), user.getSentStatus());
-//                }
-//                try {
-//                    messages.addAll(mydb.getHist());
-//                    adapter.notifyDataSetChanged();
-//                    rvUser.scrollToPosition(messages.size());
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
 
         final ValueEventListener v3 = new ValueEventListener() {
             @Override
