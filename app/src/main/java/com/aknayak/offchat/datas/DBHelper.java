@@ -45,8 +45,42 @@ public class DBHelper extends SQLiteOpenHelper {
                 "create table messages " +
                         "(message text,messageId text primary key,messagesource text ,messagesenttime date, messageStatus number,messageRoot text,messageFor)"
         );
-
+        db.execSQL(
+                "create table userInfo " +
+                        "(varName text primary key, varData text)"
+        );
     }
+
+    public boolean insertuserInfo(String varName, String varData) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("varName", varName);
+        contentValues.put("varData", varData);
+
+        Cursor res = db.rawQuery("select * from userInfo where varName = '" + varName + "';", null);
+        res.moveToFirst();
+        if (res.getCount() == 0) {
+            db.insert("userInfo", null, contentValues);
+//                Log.d("Inserted",name);
+        } else {
+            db.update("userInfo", contentValues, "varName = ? ", new String[]{varName});
+//            Log.d("Already Inserted",name);
+        }
+        return true;
+    }
+
+    public String getUserInfo(String varName){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("select * from userInfo where varName = '"+varName+"'",null);
+        res.moveToFirst();
+        if (res.getCount()!=0){
+            return res.getString(res.getColumnIndex("varData"));
+        }else {
+            return null;
+        }
+    }
+
 
     public ArrayList<Message> getHist() throws ParseException {
         ArrayList<Message> array_list = new ArrayList<>();
@@ -335,5 +369,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteMessage(String messageId) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from messages where messageId ='" + messageId + "'");
+    }
+
+    public void deleteuserInfo() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from userInfo where 1 = 1");
     }
 }

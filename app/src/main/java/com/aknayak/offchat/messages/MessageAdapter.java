@@ -3,6 +3,7 @@ package com.aknayak.offchat.messages;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.provider.CalendarContract;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aknayak.offchat.MainActivity;
@@ -20,6 +22,8 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.users.connDetail;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -68,13 +72,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(MessageAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final MessageAdapter.ViewHolder viewHolder, int position) {
         final Message message = mMessage.get(position);
 
         // Set item views based on your views and data model
-        TextView textView = viewHolder.Message;
-        textView.setText(message.getMessage());
-        textView = viewHolder.messageSentTime;
+        final TextView messageboxView = viewHolder.Message;
+        messageboxView.setText(message.getMessage());
+        TextView textView = viewHolder.messageSentTime;
 //        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
 
 
@@ -155,10 +159,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
         if (respData.delFlag){
             if (respData.delItem.contains(message.getMessageID())) {
-                mydb.deleteMessage(message.getMessageID());
-                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,receiverUsername)).child(message.getMessageID()).removeValue();
-                messageView.setBackgroundColor(Color.argb(100, 255, 100, 100));
                 respData.delItem.remove(message.getMessageID());
+//                messageView.setBackgroundColor(Color.argb(100, 255, 100, 100));
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,receiverUsername)).child(message.getMessageID()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        mydb.deleteMessage(message.getMessageID());
+                        messageboxView.setText("\u2425 You deleted this message");
+                        messageboxView.setTextColor(Color.argb(100,0,0,0));
+//                        messageboxView.setBackgroundColor(Color.argb(100, 255, 100, 100));
+//                        messageView.findViewById(R.id.backgroundLayout).setBackground(ContextCompat.getDrawable(parentActivity, R.drawable.deleted_messagebox_design) );
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        mydb.deleteMessage(message.getMessageID());
+                        messageboxView.setText("\u2425 deleted this message");
+                        messageboxView.setTextColor(Color.argb(100,0,0,0));
+//                        messageboxView.setBackgroundColor(Color.argb(100, 255, 100, 100));
+//                        messageView.findViewById(R.id.backgroundLayout).setBackground(ContextCompat.getDrawable(parentActivity, R.drawable.deleted_messagebox_design) );
+                    }
+                });
+                return;
             }
         }
 

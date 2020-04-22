@@ -7,13 +7,16 @@ import android.provider.ContactsContract;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.aknayak.offchat.MainActivity.filterNumber;
+import static com.aknayak.offchat.MainActivity.senderUserName;
 
 public class respData {
     public static boolean selection=false;
     public static boolean delFlag=false;
     public static ArrayList<String> delItem= new ArrayList<>();
+    public static ArrayList<Integer> cntCode = new ArrayList<>(Arrays.asList(886,93,355,213,376,244,672,54,374,297,61,43,994,973,880,375,32,501,229,975,591,599,387,267,47,55,246,673,359,226,257,238,855,237,1,236,235,56,86,852,853,61,61,57,269,242,682,506,385,53,599,357,420,225,850,243,45,253,593,20,503,240,291,372,268,251,500,298,679,358,33,594,689,262,241,220,995,49,233,350,30,299,590,502,44,224,245,592,509,672,504,36,354,91,62,98,964,353,44,972,39,81,44,962,7,254,686,965,996,856,371,961,266,231,218,423,370,352,261,265,60,960,223,356,692,596,222,230,262,52,691,377,976,382,212,258,95,264,674,977,31,687,64,505,227,234,683,672,47,968,92,680,507,675,595,51,63,870,48,351,1,974,82,373,40,7,250,262,590,290,590,508,685,378,239,966,221,381,248,232,65,421,386,677,252,27,500,211,34,94,970,249,597,47,46,41,963,992,66,389,670,228,690,676,216,90,993,688,256,380,971,44,255,1,598,998,678,58,84,681,212,967,260,263,358));
 
     public static ArrayList getAllContacts(ContentResolver cr) {
         ArrayList<contactsUser> UserList = new ArrayList<>();
@@ -43,16 +46,19 @@ public class respData {
                         contactsUser uj = new contactsUser(name, phoneNo, "");
 
                         if (phoneNo.length() > 10) {
-                            if (phoneNo.substring(0, 4).equals("+977") && phoneNo.length() >= 14) {
-                                if (!UserList.contains(uj)) {
-                                    UserList.add(uj);
-                                }
-                            } else if (phoneNo.substring(0, 3).equals("+91") && phoneNo.length() >= 13) {
-                                if (!UserList.contains(uj)) {
+                            String contCode = phoneNo.substring(0,phoneNo.length()-10);
+                            contCode=cntCode.contains(Double.valueOf(contCode).intValue())?("+"+Double.valueOf(contCode).intValue()): null;
+                            if (contCode!=null){
+                                phoneNo=contCode+phoneNo.substring(phoneNo.length()-10);
+                                uj.setPhoneNumber(phoneNo);
+                                if (!UserList.contains(uj)){
                                     UserList.add(uj);
                                 }
                             }
-                        } else if (phoneNo.length() == 10) {
+                        }
+                        else if (phoneNo.length() == 10) {
+                            phoneNo=senderUserName.substring(0,phoneNo.length()-10);
+                            uj.setPhoneNumber(phoneNo);
                             if (!UserList.contains(uj)) {
                                 UserList.add(uj);
                             }

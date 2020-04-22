@@ -13,11 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.aknayak.offchat.datas.DBHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
@@ -28,10 +31,16 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
+import com.hbb20.CountryCodePicker;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
+import static com.aknayak.offchat.MainActivity.getRandString;
+import static com.aknayak.offchat.MainActivity.senderUserName;
 
 public class phone_verification extends AppCompatActivity implements
         View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -47,9 +56,12 @@ public class phone_verification extends AppCompatActivity implements
     private static final int STATE_SIGNIN_FAILED = 5;
     private static final int STATE_SIGNIN_SUCCESS = 6;
 
+    private String globPhone=null;
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
+
+    CountryCodePicker ccp;
 
     private boolean mVerificationInProgress = false;
     private String mVerificationId;
@@ -60,7 +72,7 @@ public class phone_verification extends AppCompatActivity implements
     private ViewGroup mPhoneNumberViews;
     private ViewGroup mSignedInViews;
 
-    private Spinner mCountryCode;
+//    private Spinner mCountryCode;
     private TextView mStatusText;
     private TextView mDetailText;
 
@@ -77,6 +89,7 @@ public class phone_verification extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         cdt = new CountDownTimer(60000, 1000) {
 
@@ -107,7 +120,9 @@ public class phone_verification extends AppCompatActivity implements
         mPhoneNumberViews = findViewById(R.id.phoneAuthFields);
         mSignedInViews = findViewById(R.id.signedInButtons);
 
-        mCountryCode = findViewById(R.id.countryCodeSpinner);
+//        mCountryCode = findViewById(R.id.countryCodeSpinner);
+        ccp = (CountryCodePicker) findViewById(R.id.ccp);
+
         mStatusText = findViewById(R.id.status);
         mDetailText = findViewById(R.id.detail);
 
@@ -133,7 +148,7 @@ public class phone_verification extends AppCompatActivity implements
         // [END initialize_auth]
 
 
-        mCountryCode.setOnItemSelectedListener(this);
+//        mCountryCode.setOnItemSelectedListener(this);
 
 
         // Spinner Drop down elements
@@ -147,7 +162,7 @@ public class phone_verification extends AppCompatActivity implements
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        mCountryCode.setAdapter(dataAdapter);
+//        mCountryCode.setAdapter(dataAdapter);
 
         // Initialize phone auth callbacks
         // [START phone_auth_callbacks]
@@ -405,10 +420,28 @@ public class phone_verification extends AppCompatActivity implements
             // Signed in
 
 
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
 
-            startActivity(i);
-            finish();
+            final DBHelper mydb = new DBHelper(getApplicationContext());
+
+            if (senderUserName!=null){
+                if (!senderUserName.equals(globPhone)){
+                    Toast.makeText(phone_verification.this.getApplicationContext(),"hklsdf",Toast.LENGTH_LONG).show();
+                    mydb.deleteAllMessages();
+                    mydb.deleteuserInfo();
+                }
+            }
+
+            final String inst = getRandString(10);
+            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(globPhone).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mydb.insertuserInfo("instance", inst);
+                    Intent i = new Intent(phone_verification.this, MainActivity.class);
+                    startActivity(i);
+                    finish();
+                }
+            });
+
         }
     }
 
@@ -449,7 +482,8 @@ public class phone_verification extends AppCompatActivity implements
                     return;
                 }
 
-                startPhoneNumberVerification(mCountryCode.getSelectedItem().toString() + mPhoneNumberField.getText().toString());
+                globPhone = ccp.getFullNumberWithPlus() + mPhoneNumberField.getText().toString();
+                startPhoneNumberVerification(globPhone);
                 break;
             case R.id.buttonVerifyPhone:
                 String code = mVerificationField.getText().toString();

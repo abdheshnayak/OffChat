@@ -25,10 +25,15 @@ import android.widget.ProgressBar;
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
+import com.hbb20.CountryCodePicker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.aknayak.offchat.MainActivity.requestPermission;
+import static com.aknayak.offchat.globaldata.respData.cntCode;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 
 
@@ -54,6 +59,8 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_contacts);
+
+
 
         mReloadButton = findViewById(R.id.reloadfloatButton);
         usersLoadProgressBar = findViewById(R.id.progressBar);

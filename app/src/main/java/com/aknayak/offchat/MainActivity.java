@@ -33,13 +33,12 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
-import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +59,7 @@ import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    public final ArrayList<Message> messages  = new ArrayList<Message>();
+    public final ArrayList<Message> messages = new ArrayList<Message>();
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
     private static final String CHANNEL_ID = "MyNotification";
@@ -93,14 +92,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String receiverUsername;
 
 
-
     @Override
     protected void onResume() {
         super.onResume();
         messages.clear();
-        ArrayList<Message> arrayList= null;
+        ArrayList<Message> arrayList = null;
         try {
-            arrayList=mydb.getHist();
+            arrayList = mydb.getHist();
             messages.addAll(arrayList);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -109,15 +107,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvUser.scrollToPosition(arrayList.size());
     }
 
-    String notification;
-    DBHelper mydb ;
+    DBHelper mydb;
 
     AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         mydb = new DBHelper(getApplicationContext());
@@ -128,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU","Initialized");
+                Log.d("UUUU", "Initialized");
             }
         });
 
@@ -153,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         checkAcess.setOnClickListener(this);
         mTouchSensors.setOnClickListener(this);
-        mSignOutButton.setOnClickListener(this);
         mMenuButton.setOnClickListener(this);
         getmMenuButtonClose.setOnClickListener(this);
         menuLayout.setOnClickListener(this);
@@ -200,17 +195,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        rvUser.setLayoutManager(new LinearLayoutManager(this));
 
 
-        ArrayList<Message> msg=null;
-        int n=0;
+        ArrayList<Message> msg = null;
+        int n = 0;
         try {
-             msg= mydb.getHist();
+            msg = mydb.getHist();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-        n=msg.size();
-        for (int i = 0;i < n ;i++) {
-            Log.d("BBBB"+msg.get(i).getMessageFor(),simpleDateFormat.format(msg.get(i).getMessageSentTime()));
+        n = msg.size();
+        for (int i = 0; i < n; i++) {
+            Log.d("BBBB" + msg.get(i).getMessageFor(), simpleDateFormat.format(msg.get(i).getMessageSentTime()));
         }
 
         adapter.notifyDataSetChanged();
@@ -220,32 +215,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        linearLayoutManager.setReverseLayout(true);
         rvUser.setLayoutManager(linearLayoutManager);
 
+        mSignOutButton.setOnClickListener(this);
+
+
+        if (mydb.getUserInfo("instance") != null) {
+            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String string = dataSnapshot.getValue(String.class);
+                    if (string!=null) {
+                        rvUser.setVisibility(View.GONE);
+                        boolean check = MainActivity.this.verifyUser(string, 0);
+                        if (check) {
+                            rvUser.setVisibility(View.VISIBLE);
+                        }
+                    }else {
+                        final String inst = getRandString(10);
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mydb.insertuserInfo("instance", inst);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            final String inst = getRandString(10);
+            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    mydb.insertuserInfo("instance", inst);
+                }
+            });
+
+        }
+
+
         try {
             if (mydb.getHist().size() == 0) {
+                Log.d("UUUU", "add");
                 FirebaseDatabase.getInstance().getReference().child("admin").child("welcome_notification").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        notification = dataSnapshot.getValue(String.class);
+                        String notification = dataSnapshot.getValue(String.class);
+                        Log.d("UUUU", notification);
 
-                        Message message = new Message(notification, "+1",Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15),senderUserName);
+                        Message message = new Message(notification, "+1", Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15), senderUserName);
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot("+1", senderUserName))
                                 .child(message.getMessageID()).updateChildren(message.toMap());
 
                         DatabaseReference mFirebaseRefrence = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child("+1");
 
-
                         messages.clear();
 
-//                        Date td = Calendar.getInstance(Locale.ENGLISH).getTime();
-//                        User user = new User("+1", td, notification, "no", 0);
-//                        mFirebaseRefrence.updateChildren(user.toMap());
                         mFirebaseRefrence.setValue(new connDetail(true));
-//                        DBHelper mydb = new DBHelper(getApplicationContext());
-//                        mydb.inserthistory("+1", notification, Calendar.getInstance(Locale.ENGLISH).getTime(), 0);
 
                         DatabaseReference o_status = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child("+1").child("online_status");
                         o_status.setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
+
                     }
 
                     @Override
@@ -303,8 +337,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
-                            Log.d("KKK",message.getMessage());
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor());
+                            Log.d("KKK", message.getMessage());
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor());
                         }
                     }
                     messages.addAll(mydb.getHist());
@@ -333,15 +367,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
 
 
-
         ValueEventListener v1 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot:dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     connDetail check = snapshot.getValue(connDetail.class);
-                    if (check.getConnected()){
-                        String user= snapshot.getKey();
-                        DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,user));
+                    if (check.getConnected()) {
+                        String user = snapshot.getKey();
+                        DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, user));
                         messageRef.addValueEventListener(v3);
                     }
                 }
@@ -482,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getmMenuButtonClose.performClick();
                 break;
             case R.id.aboutButton:
-                Intent j = new Intent(getApplicationContext(),aboutPage.class);
+                Intent j = new Intent(getApplicationContext(), aboutPage.class);
                 startActivity(j);
                 getmMenuButtonClose.performClick();
                 break;
@@ -623,5 +656,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return sb.toString();
+    }
+
+
+    public boolean verifyUser(final String string, final int count){
+        if (!string.equals(mydb.getUserInfo("instance"))) {
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setPositiveButton("Verify", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mUsername = "ANONYMOUS";
+                    mAuth.signOut();
+                    startActivity(new Intent(MainActivity.this, phone_verification.class));
+                    finish();
+                }
+            });
+            alertDialogBuilder.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(MainActivity.this);
+                    alertDialogBuilder2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            signOut();
+                            mUsername = "ANONYMOUS";
+                            startActivity(new Intent(getApplicationContext(), phone_verification.class));
+                        }
+                    });
+                    alertDialogBuilder2.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (count>=1){
+                                MainActivity.this.finish();
+                            }
+                            verifyUser(string,count+1);
+                        }
+                    });
+                    alertDialogBuilder2.setTitle("Sign Out?");
+                    alertDialogBuilder2.setMessage("We Don't store your chats. So if you Sign Out Your Account then you will loose your chats.\n\nAre You Sure to Sign Out ???");
+                    alertDialogBuilder2.show();
+                }
+            });
+
+            alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if (count>=1){
+                        MainActivity.this.finish();
+                    }
+                    verifyUser(string,count+1);
+                }
+            });
+            alertDialogBuilder.setTitle("Verify Your Account");
+            alertDialogBuilder.setMessage("We Found another instance started with your phone number. If it is not yout then please verify else signout.");
+            alertDialogBuilder.show();
+
+            Toast.makeText(getApplicationContext(), "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
+        }
+        else {
+            return true;
+        }
+        return false;
     }
 }

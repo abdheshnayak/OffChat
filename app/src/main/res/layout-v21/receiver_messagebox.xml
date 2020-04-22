@@ -25,15 +25,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/backgroundLayout"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5sp"
-            android:layout_marginRight="5sp"
             android:layout_marginBottom="5sp"
             android:background="@drawable/receiver_messagebox_design"
+            android:elevation="3dp"
             android:maxWidth="320sp"
             android:padding="5sp"
-            android:elevation="3dp"
             android:shadowColor="#000000"
             android:text="@string/textview"
             android:textSize="18sp"

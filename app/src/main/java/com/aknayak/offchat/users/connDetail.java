@@ -1,6 +1,8 @@
 package com.aknayak.offchat.users;
 
-public class connDetail {
+import java.io.Serializable;
+
+public class connDetail implements Serializable {
     private Boolean Connected;
 
     public connDetail(Boolean connected) {

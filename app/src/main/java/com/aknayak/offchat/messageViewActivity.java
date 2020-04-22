@@ -637,13 +637,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 respData.delFlag=true;
                 respData.selection=false;
                 adapter.notifyDataSetChanged();
-                messages.clear();
-                try {
-                    messages.addAll(mydb.getAllMessages(rootPath));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyDataSetChanged();
                 mDeleteButton.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
                 break;
