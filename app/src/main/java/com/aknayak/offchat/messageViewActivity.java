@@ -169,8 +169,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
 
         adView = findViewById(R.id.adView);
-//        adView.setAdSize(AdSize.BANNER);
-//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -180,7 +178,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        adView = findViewById(R.id.adView);
+//        adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
@@ -189,6 +187,24 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             public void onAdLoaded() {
                 super.onAdLoaded();
                 Log.d("UUUU","Add Loaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                Log.d("UUUU","Add Loaded failed"+i);
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+                Log.d("UUUU","Add Imper");
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                Log.d("UUUU","Add Opend");
             }
         });
 
@@ -328,7 +344,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(message.getMessageFor())) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), "me1");
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor());
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -393,7 +409,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), "me2");
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor());
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -599,11 +615,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
                 menuButtonStatus = false;
                 findViewById(R.id.messageBoxContainer).animate().translationY(300);
-                menuLayout.setTranslationX(300);
-                menuLayout.setTranslationY(-300);
+//                menuLayout.setTranslationX(300);
+//                menuLayout.setTranslationY(-300);
                 menuLayout.setVisibility(View.VISIBLE);
-                menuLayout.animate().translationX(0);
-                menuLayout.animate().translationY(0);
+//                menuLayout.animate().translationX(0);
+//                menuLayout.animate().translationY(0);
                 mMenuButton.setVisibility(View.GONE);
                 mMenuButtonClose.setVisibility(View.VISIBLE);
                 break;
@@ -611,8 +627,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.splashImage).setVisibility(View.INVISIBLE);
                 menuButtonStatus = true;
                 findViewById(R.id.messageBoxContainer).animate().translationY(0);
-                menuLayout.animate().translationX(300);
-                menuLayout.animate().translationY(-300);
+//                menuLayout.animate().translationX(300);
+//                menuLayout.animate().translationY(-300);
                 menuLayout.setVisibility(View.GONE);
                 mMenuButtonClose.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
@@ -637,16 +653,15 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 messageKey = getRandString(15);
                 final Message message = new Message(mMessageBox.getText().toString().trim(), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
-                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), "me3");
+                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
                 messages.add(new Message(message.getMessage(), message.getMessageSource(), Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(), message.getMessageFor()));
-//                adapter.notifyDataSetChanged();
 
 
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
                         .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), "me4");
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
                         messages.clear();
                         try {
                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -663,22 +678,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating History Of Sender
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageSource()).child(message.getMessageFor()).setValue(new connDetail(true));
 
-//                        User user = new User(receiverUsername, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 1);
-
-//                        mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
-//                        mFirebaseDatabaseReference.updateChildren(user.toMap());
-
 //                Updating History Of Reciver
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageFor()).child(message.getMessageSource()).setValue(new connDetail(true));
-//                        user = new User(senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), message.getMessage(), "no", 0);
-
-//                        mydb.inserthistory(user.getUserName(),user.getLastMessage(),user.getLastMessageSentTime(),user.getSentStatus());
-//                        mFirebaseDatabaseReference.updateChildren(user.toMap());
-
-
-//                Clearing MessageBox And moving the scroll positiion to he last message
-
-//                rvMessages.scrollToPosition(messages.size());
 
                 break;
             case R.id.profileButton_message:
@@ -720,7 +721,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }else {
             super.onBackPressed();
         }
-
     }
 
     @Override

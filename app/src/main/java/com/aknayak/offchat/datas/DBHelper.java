@@ -114,9 +114,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public String getUserName(String searchData) {
-        ArrayList<contactsUser> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
+        if (searchData.equals("+1")){
+            return "Admin";
+        }
         Cursor res = db.rawQuery("select * from contacts where phone = '" + searchData + "'", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
@@ -129,7 +131,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public void deleteAllContact() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from contacts");
-        insertContact("Admin", "+1");
     }
 
     public ArrayList<contactsUser> getAllCotacts() {
@@ -201,8 +202,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor,String callfrom) {
-        Log.d("kkkInsert",messageSource+messageStatus+Message+callfrom);
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor) {
+//        Log.d("kkkInsert",messageSource+messageStatus+Message+callfrom);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);

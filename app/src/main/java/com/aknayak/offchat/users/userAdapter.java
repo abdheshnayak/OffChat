@@ -130,7 +130,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                         Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                     }
                     if (message != null && ( message.getMessageSource().equals(message.getMessageFor()) || message.getMessageStatus() != 1)) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), "me6");
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor());
                     }
                 }
                 unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());

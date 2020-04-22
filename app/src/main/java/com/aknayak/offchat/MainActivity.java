@@ -33,6 +33,9 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -108,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String notification;
     DBHelper mydb ;
 
+    AdView adView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +121,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mydb = new DBHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+
+        adView = findViewById(R.id.adView);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d("UUUU","Initialized");
+            }
+        });
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -217,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         DatabaseReference mFirebaseRefrence = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName).child("+1");
 
 
+                        messages.clear();
+
 //                        Date td = Calendar.getInstance(Locale.ENGLISH).getTime();
 //                        User user = new User("+1", td, notification, "no", 0);
 //                        mFirebaseRefrence.updateChildren(user.toMap());
@@ -284,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
                             Log.d("KKK",message.getMessage());
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor(),"me5");
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(),getRoot(message.getMessageFor(),message.getMessageSource()),message.getMessageFor());
                         }
                     }
                     messages.addAll(mydb.getHist());
@@ -408,18 +427,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.menuButtonActivityMain:
                 mTouchSensors.setVisibility(View.VISIBLE);
-                menuLayout.setTranslationY(-300);
-                menuLayout.setTranslationX(300);
+//                menuLayout.setTranslationY(-300);
+//                menuLayout.setTranslationX(300);
                 menuLayout.setVisibility(View.VISIBLE);
-                menuLayout.animate().translationX(0);
-                menuLayout.animate().translationY(0);
+//                menuLayout.animate().translationX(0);
+//                menuLayout.animate().translationY(0);
                 mMenuButton.setVisibility(View.GONE);
                 getmMenuButtonClose.setVisibility(View.VISIBLE);
                 break;
             case R.id.menuCloseActivity_main:
             case R.id.splashImageMainActivity:
-                menuLayout.animate().translationX(300);
-                menuLayout.animate().translationY(-300);
+//                menuLayout.animate().translationX(300);
+//                menuLayout.animate().translationY(-300);
                 mTouchSensors.setVisibility(View.INVISIBLE);
                 menuLayout.setVisibility(View.GONE);
                 getmMenuButtonClose.setVisibility(View.GONE);

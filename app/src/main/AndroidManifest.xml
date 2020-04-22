@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-8544705398164686~5915522846"/>
+            android:value="ca-app-pub-7481473691227014~3893856552"/>
         <activity android:name=".aboutPage"></activity>
         <activity android:name=".myProfile" />
         <activity android:name=".profileCard" />
