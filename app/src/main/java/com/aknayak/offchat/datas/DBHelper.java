@@ -69,14 +69,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public String getUserInfo(String varName){
+    public String getUserInfo(String varName) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from userInfo where varName = '"+varName+"'",null);
+        Cursor res = db.rawQuery("select * from userInfo where varName = '" + varName + "'", null);
         res.moveToFirst();
-        if (res.getCount()!=0){
+        if (res.getCount() != 0) {
             return res.getString(res.getColumnIndex("varData"));
-        }else {
+        } else {
             return null;
         }
     }
@@ -150,7 +150,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public String getUserName(String searchData) {
 
         SQLiteDatabase db = this.getReadableDatabase();
-        if (searchData.equals("+1")){
+        if (searchData.equals("+1")) {
             return "Admin";
         }
         Cursor res = db.rawQuery("select * from contacts where phone = '" + searchData + "'", null);
@@ -236,7 +236,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot , String messageFor) {
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot, String messageFor) {
 //        Log.d("kkkInsert",messageSource+messageStatus+Message+callfrom);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -247,7 +247,7 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("messagesenttime", simpleDateFormat.format(messageSentTime));
         contentValues.put("messageStatus", messageStatus);
         contentValues.put("messageRoot", messageRoot);
-        contentValues.put("messageFor",messageFor);
+        contentValues.put("messageFor", messageFor);
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageId + "';", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
@@ -267,7 +267,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor"))));
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor"))));
             res.moveToNext();
         }
         return array_list;
@@ -283,7 +283,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add( res.getString(res.getColumnIndex("messageId")));
+            array_list.add(res.getString(res.getColumnIndex("messageId")));
             res.moveToNext();
         }
         return array_list;
@@ -330,7 +330,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageID + "';", null);
         res.moveToFirst();
         if (res.getCount() != 0) {
-            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor")));
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor")));
         } else {
             return null;
         }
@@ -345,7 +345,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToLast();
 
         if (res.getCount() != 0) {
-            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor")));
+            return new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor")));
         } else {
             return null;
         }
@@ -360,7 +360,7 @@ public class DBHelper extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")),res.getString(res.getColumnIndex("messageFor"))));
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor"))));
             res.moveToNext();
         }
         return array_list;

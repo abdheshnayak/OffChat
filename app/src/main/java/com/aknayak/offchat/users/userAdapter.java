@@ -65,7 +65,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
 
                 Intent i = new Intent(userView.getContext(), messageViewActivity.class);
 
-                i.putExtra("phoneNumber", message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
+                i.putExtra("phoneNumber", message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource());
 
                 parrentActivity.startActivity(i);
             }
@@ -87,7 +87,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         final TextView seenStatusDoubleBlue = viewHolder.sentStatusSingleDoubleBlue;
         TextView textView = viewHolder.usernameTextView;
         final DBHelper mydb = new DBHelper(parrentActivity);
-        textView.setText(mydb.getUserName(message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()));
+        textView.setText(mydb.getUserName(message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource()));
         final TextView lastMessageTextView = viewHolder.lastMessageTextView;
         try {
             if (message.getMessage().length() > 25) {
@@ -105,11 +105,11 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         textView.setText(strDate);
         final TextView unseenTextView = viewHolder.unseencount;
 
-        final String rootPath = getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
-        unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
+        final String rootPath = getRoot(senderUserName, message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource());
+        unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource()), message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource());
 
 //        Log.d("BBBB","kk"+unseen);
-        uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView,seenStatusWaiting);
+        uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView, seenStatusWaiting);
 
         final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath);
         fdbr.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -117,7 +117,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Message message = snapshot.getValue(Message.class);
-                    if (message.getMessageStatus() == 1 && message.getMessageSource().equals(message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource())) {
+                    if (message.getMessageStatus() == 1 && message.getMessageSource().equals(message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource())) {
                         message.setMessageStatus(2);
                         fdbr.child(snapshot.getKey()).child("messageStatus").setValue(2);
 
@@ -129,11 +129,11 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                         notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), message.getMessage(), parrentActivity.getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                         Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                     }
-                    if (message != null && ( message.getMessageSource().equals(message.getMessageFor()) || message.getMessageStatus() != 1)) {
+                    if (message != null && (message.getMessageSource().equals(message.getMessageFor()) || message.getMessageStatus() != 1)) {
                         mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor());
                     }
                 }
-                unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource()), message.getMessageSource().equals(senderUserName)?message.getMessageFor():message.getMessageSource());
+                unseen = mydb.getUnseenCount(getRoot(senderUserName, message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource()), message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource());
                 uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, lastMessageTextView, unseenTextView, seenStatusWaiting);
             }
 
@@ -144,19 +144,18 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         });
 
 
-
     }
 
     public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView lastMessageTextView, TextView unseenTextView, TextView seenStatusWaiting) {
         if (unseen == 0) {
-            if (message.getMessageSource().equals(senderUserName)){
+            if (message.getMessageSource().equals(senderUserName)) {
                 if (message.getMessageStatus() == 0) {
 //                    Log.d("kkk"+message.getMessage(),""+message.getMessageStatus());
                     seenStatusWaiting.setVisibility(View.VISIBLE);
                     seenStatusDoubleBlue.setVisibility(View.GONE);
                     seenStatusDouble.setVisibility(View.GONE);
                     seenStatusSingle.setVisibility(View.GONE);
-                }else if (message.getMessageStatus() == 1) {
+                } else if (message.getMessageStatus() == 1) {
                     seenStatusWaiting.setVisibility(View.GONE);
                     seenStatusDoubleBlue.setVisibility(View.GONE);
                     seenStatusDouble.setVisibility(View.GONE);
@@ -172,7 +171,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
                     seenStatusDouble.setVisibility(View.GONE);
                     seenStatusSingle.setVisibility(View.GONE);
                 }
-            }else {
+            } else {
                 lastMessageTextView.setVisibility(View.VISIBLE);
                 lastMessageTextView.setTypeface(lastMessageTextView.getTypeface(), Typeface.NORMAL);
                 seenStatusDoubleBlue.setVisibility(View.GONE);

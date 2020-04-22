@@ -26,7 +26,7 @@ public class Message implements Serializable {
         this.messageFor = messageFor;
     }
 
-    public Message(String message, String messageSource,Date messageSentTime, int messageStatus, String messageID, String messageFor) {
+    public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor) {
         this.messageSentTime = messageSentTime;
         this.Message = message;
         this.messageSource = messageSource;
@@ -86,7 +86,7 @@ public class Message implements Serializable {
         userUpdates.put("messageSource", messageSource);
         userUpdates.put("messageStatus", messageStatus);
         userUpdates.put("messageId", messageID);
-        userUpdates.put("messageFor",messageFor);
+        userUpdates.put("messageFor", messageFor);
         return userUpdates;
     }
 }

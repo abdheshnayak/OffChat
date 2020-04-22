@@ -82,7 +82,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 //        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
 
 
-
         Date date = message.getMessageSentTime();
         if (date != null) {
             Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
@@ -121,12 +120,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         messageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (respData.selection){
-                    if (respData.delItem.contains(message.getMessageID())){
-                        messageView.setBackgroundColor(Color.argb(0,200,200,255));
+                if (respData.selection) {
+                    if (respData.delItem.contains(message.getMessageID())) {
+                        messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
                         respData.delItem.remove(message.getMessageID());
-                    }else {
-                        messageView.setBackgroundColor(Color.argb(150,200,200,255));
+                    } else {
+                        messageView.setBackgroundColor(Color.argb(150, 200, 200, 255));
                         respData.delItem.add(message.getMessageID());
                     }
                 }
@@ -136,11 +135,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         messageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!respData.selection){
-                    respData.selection= true;
+                if (!respData.selection) {
+                    respData.selection = true;
 //                    Log.d("UUU","hello");
                     parentActivity.dellButton();
-                    messageView.setBackgroundColor(Color.argb(150,200,200,255));
+                    messageView.setBackgroundColor(Color.argb(150, 200, 200, 255));
                     respData.delItem.add(message.getMessageID());
                 }
                 return true;
@@ -148,25 +147,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         });
 
 //        Log.d("UUU","selected");
-        if (!respData.selection){
+        if (!respData.selection) {
             messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
-        }else{
+        } else {
             if (respData.delItem.contains(message.getMessageID())) {
                 messageView.setBackgroundColor(Color.argb(150, 200, 200, 255));
-            }else {
+            } else {
                 messageView.setBackgroundColor(Color.argb(0, 200, 200, 255));
             }
         }
-        if (respData.delFlag){
+        if (respData.delFlag) {
             if (respData.delItem.contains(message.getMessageID())) {
                 respData.delItem.remove(message.getMessageID());
 //                messageView.setBackgroundColor(Color.argb(100, 255, 100, 100));
-                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName,receiverUsername)).child(message.getMessageID()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(message.getMessageID()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         mydb.deleteMessage(message.getMessageID());
                         messageboxView.setText("\u2425 You deleted this message");
-                        messageboxView.setTextColor(Color.argb(100,0,0,0));
+                        messageboxView.setTextColor(Color.argb(100, 0, 0, 0));
 //                        messageboxView.setBackgroundColor(Color.argb(100, 255, 100, 100));
 //                        messageView.findViewById(R.id.backgroundLayout).setBackground(ContextCompat.getDrawable(parentActivity, R.drawable.deleted_messagebox_design) );
                     }
@@ -175,7 +174,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     public void onFailure(@NonNull Exception e) {
                         mydb.deleteMessage(message.getMessageID());
                         messageboxView.setText("\u2425 deleted this message");
-                        messageboxView.setTextColor(Color.argb(100,0,0,0));
+                        messageboxView.setTextColor(Color.argb(100, 0, 0, 0));
 //                        messageboxView.setBackgroundColor(Color.argb(100, 255, 100, 100));
 //                        messageView.findViewById(R.id.backgroundLayout).setBackground(ContextCompat.getDrawable(parentActivity, R.drawable.deleted_messagebox_design) );
                     }
@@ -187,7 +186,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         try {
             int k = mydb.getAllMessagesID(rootPath).indexOf(message.getMessageID());
 //            Log.d("UUUU","--"+k);
-            parentActivity.scButton(mydb.getAllMessages(rootPath).size()-k);
+            parentActivity.scButton(mydb.getAllMessages(rootPath).size() - k);
         } catch (ParseException e) {
             e.printStackTrace();
         }

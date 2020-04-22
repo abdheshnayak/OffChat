@@ -24,7 +24,7 @@
     <!-- Dark Buttons -->
     <style name="ThemeOverlay.MyItemButton" parent="AppTheme">
         <item name="android:background">@drawable/button_pressed_color</item>
-       <item name="colorButtonNormal">@color/button_color</item>
+        <item name="colorButtonNormal">@color/button_color</item>
         <item name="colorAccent">@color/black</item>
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
@@ -35,7 +35,7 @@
     </style>
 
     <!-- Light EditTexts -->
-    <style name="ThemeOverlay.MyLightEditText" parent="AppTheme"/>
+    <style name="ThemeOverlay.MyLightEditText" parent="AppTheme" />
 
     <style name="ThemeOverlay.MyTextDetail" parent="AppTheme">
         <item name="android:layout_width">wrap_content</item>

@@ -223,13 +223,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String string = dataSnapshot.getValue(String.class);
-                    if (string!=null) {
+                    if (string != null) {
                         rvUser.setVisibility(View.GONE);
                         boolean check = MainActivity.this.verifyUser(string, 0);
                         if (check) {
                             rvUser.setVisibility(View.VISIBLE);
                         }
-                    }else {
+                    } else {
                         final String inst = getRandString(10);
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -659,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public boolean verifyUser(final String string, final int count){
+    public boolean verifyUser(final String string, final int count) {
         if (!string.equals(mydb.getUserInfo("instance"))) {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
             alertDialogBuilder.setPositiveButton("Verify", new DialogInterface.OnClickListener() {
@@ -686,10 +686,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     alertDialogBuilder2.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (count>=1){
+                            if (count >= 1) {
                                 MainActivity.this.finish();
                             }
-                            verifyUser(string,count+1);
+                            verifyUser(string, count + 1);
                         }
                     });
                     alertDialogBuilder2.setTitle("Sign Out?");
@@ -701,10 +701,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    if (count>=1){
+                    if (count >= 1) {
                         MainActivity.this.finish();
                     }
-                    verifyUser(string,count+1);
+                    verifyUser(string, count + 1);
                 }
             });
             alertDialogBuilder.setTitle("Verify Your Account");
@@ -712,8 +712,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             alertDialogBuilder.show();
 
             Toast.makeText(getApplicationContext(), "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             return true;
         }
         return false;

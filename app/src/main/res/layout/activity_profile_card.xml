@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".profileCard">
 
-    <include layout="@layout/navbar_default"/>
+    <include layout="@layout/navbar_default" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -19,8 +19,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:animateLayoutChanges="true"
-            >
+            android:animateLayoutChanges="true">
 
             <ImageButton
                 android:layout_width="match_parent"
@@ -32,12 +31,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:textColor="@color/black"
                 android:id="@+id/lastSeen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="16dp"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -45,11 +44,11 @@
 
             <TextView
                 android:id="@+id/name"
-                android:textColor="@color/black"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="8dp"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/lastSeen"
@@ -60,27 +59,26 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_margin="5dp"
-        android:background="@drawable/user_item_design"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/user_item_design"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <TextView
-            android:textColor="@color/black"
             android:id="@+id/number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:textColor="@color/black"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:textColor="@color/black"
             android:id="@+id/mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,6 +86,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="Mobile"
+            android:textColor="@color/black"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

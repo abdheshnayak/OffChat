@@ -9,9 +9,10 @@ public class connDetail implements Serializable {
         Connected = connected;
     }
 
-    public connDetail(){
+    public connDetail() {
 
     }
+
     public Boolean getConnected() {
         return Connected;
     }

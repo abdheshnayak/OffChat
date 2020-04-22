@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="@integer/fadeDuration"
-    android:exitFadeDuration="@integer/fadeDuration">
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="@integer/fadeDuration" android:exitFadeDuration="@integer/fadeDuration">
     <item android:state_pressed="true">
         <layer-list>
-            <item  android:left="-5dp" android:right="-5dp">
-                <shape >
-                    <solid android:color="#FFA0D0FF"/>
-                    <stroke android:color="#00ffffff" android:width="5dp"/>
+            <item android:left="-5dp" android:right="-5dp">
+                <shape>
+                    <solid android:color="#FFA0D0FF" />
+                    <stroke android:width="5dp" android:color="#00ffffff" />
                 </shape>
             </item>
         </layer-list>
     </item>
     <item android:state_pressed="false">
         <shape>
-            <solid android:color="#00ffffff"/>
+            <solid android:color="#00ffffff" />
         </shape>
     </item>
 </selector>

@@ -82,12 +82,12 @@
             app:layout_constraintTop_toBottomOf="@+id/titleText">
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/country_info_phone_auth"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimaryDark"
+                android:visibility="gone" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,15 +104,13 @@
                     app:layout_constraintTop_toTopOf="parent">
 
 
-
                     <com.hbb20.CountryCodePicker
                         android:id="@+id/ccp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
                         android:id="@+id/fieldPhoneNumber"

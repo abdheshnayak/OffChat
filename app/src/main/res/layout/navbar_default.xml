@@ -17,10 +17,10 @@
         android:animateLayoutChanges="true">
 
         <TextView
-            android:layout_margin="2sp"
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="2sp"
             android:text="ffchat"
             android:textColor="#FFFFFF"
             android:textSize="24dp"
@@ -30,10 +30,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:layout_margin="5sp"
             android:id="@+id/imageView"
             android:layout_width="32sp"
             android:layout_height="32sp"
+            android:layout_margin="5sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

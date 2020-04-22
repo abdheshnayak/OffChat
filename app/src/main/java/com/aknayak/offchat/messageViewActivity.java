@@ -107,11 +107,12 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     AdView adView;
 
 
-    public void dellButton(){
+    public void dellButton() {
         mDeleteButton.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.GONE);
         mMenuButton.setVisibility(View.GONE);
     }
+
     public void scButton(int i) {
         if (i > 15) {
             if (!flg) {
@@ -120,14 +121,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        flg=false;
+                        flg = false;
                         scrollButton.setVisibility(View.INVISIBLE);
                     }
                 }, 2 * 1000); // wait for 5 seconds
             }
         } else {
             scrollButton.setVisibility(View.INVISIBLE);
-            flg=false;
+            flg = false;
         }
     }
 
@@ -174,7 +175,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU","Initialized");
+                Log.d("UUUU", "Initialized");
             }
         });
 
@@ -182,29 +183,29 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
-        adView.setAdListener(new AdListener(){
+        adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                Log.d("UUUU","Add Loaded");
+                Log.d("UUUU", "Add Loaded");
             }
 
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
-                Log.d("UUUU","Add Loaded failed"+i);
+                Log.d("UUUU", "Add Loaded failed" + i);
             }
 
             @Override
             public void onAdImpression() {
                 super.onAdImpression();
-                Log.d("UUUU","Add Imper");
+                Log.d("UUUU", "Add Imper");
             }
 
             @Override
             public void onAdOpened() {
                 super.onAdOpened();
-                Log.d("UUUU","Add Opend");
+                Log.d("UUUU", "Add Opend");
             }
         });
 
@@ -250,7 +251,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
 
         mydb = new DBHelper(getApplicationContext());
-
 
 
 //        Refrences
@@ -354,7 +354,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
 
-                if (messages.size() != 0 ) {
+                if (messages.size() != 0) {
                     adapter.notifyDataSetChanged();
                     try {
                         if (cnt != mydb.getAllMessages(rootPath).size()) {
@@ -372,7 +372,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
-
 
 
 //        Online Status Listner
@@ -508,7 +507,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         };
 
 
-
         IntentFilter filter = new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION);
         try {
@@ -597,14 +595,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             messages.clear();
             messages.addAll(mydb.getAllMessages(rootPath));
             adapter.notifyDataSetChanged();
-            rvMessages.scrollToPosition(messages.size()-1);
+            rvMessages.scrollToPosition(messages.size() - 1);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
 
     }
-
 
 
     //    Listen Clicks
@@ -634,8 +631,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 mMenuButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.deleteButton:
-                respData.delFlag=true;
-                respData.selection=false;
+                respData.delFlag = true;
+                respData.selection = false;
                 adapter.notifyDataSetChanged();
                 mDeleteButton.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
@@ -705,13 +702,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onBackPressed() {
-        if (respData.selection){
+        if (respData.selection) {
             respData.selection = false;
-            respData.delItem= new ArrayList<>();
+            respData.delItem = new ArrayList<>();
             adapter.notifyDataSetChanged();
             mDeleteButton.setVisibility(View.GONE);
             mMenuButton.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

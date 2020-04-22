@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLayout"
-    android:background="#11008800"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:animateLayoutChanges="true">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="#11008800">
 
 
     <com.google.android.gms.ads.AdView
@@ -136,9 +136,9 @@
         android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:layout_margin="5sp"
+        android:animateLayoutChanges="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:animateLayoutChanges="true"
         app:layout_constraintStart_toStartOf="parent">
 
 
@@ -146,10 +146,10 @@
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5sp"
             android:layout_weight="1"
             android:background="@drawable/circle_design_primary"
             android:padding="5sp"
-            android:layout_margin="5sp"
             android:src="@drawable/ic_arrow_upward_white_24dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -158,11 +158,11 @@
             app:maxImageSize="30sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginRight="4sp"
             android:id="@+id/typeMessageContainer"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
+            android:layout_marginRight="4sp"
             android:background="@drawable/circle_design_primary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendButton"
@@ -183,9 +183,6 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
-                    android:scrollbarThumbVertical="@color/colorButtonPressed"
-                    android:scrollbars="vertical"
-                    android:verticalScrollbarPosition="right"
                     android:id="@+id/messageBox"
                     android:layout_width="0sp"
                     android:layout_height="wrap_content"
@@ -199,7 +196,10 @@
                     android:paddingTop="7sp"
                     android:paddingRight="0sp"
                     android:paddingBottom="7sp"
+                    android:scrollbarThumbVertical="@color/colorButtonPressed"
+                    android:scrollbars="vertical"
                     android:textAlignment="center"
+                    android:verticalScrollbarPosition="right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/messageBox_closeButton"
                     app:layout_constraintStart_toStartOf="parent"
@@ -240,8 +240,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello"
-            android:textSize="10sp"
             android:textAlignment="center"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -251,12 +251,12 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:scrollbars="vertical"
-        android:scrollbarSize="5sp"
         android:id="@+id/messageView"
         android:layout_width="0sp"
         android:layout_height="0sp"
         android:paddingBottom="5sp"
+        android:scrollbarSize="5sp"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/messageBoxContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -280,8 +280,8 @@
         android:layout_width="250sp"
         android:layout_height="wrap_content"
         android:layout_margin="5sp"
-        android:visibility="gone"
         android:theme="@style/ThemeOverlay.MyMenu"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/adView">
 
@@ -310,14 +310,13 @@
         android:layout_height="wrap_content"
         android:layout_margin="20sp"
         android:layout_weight="1"
-        android:visibility="invisible"
         android:background="@drawable/circle_design_primary_transparrent"
         android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:visibility="invisible"
 
         app:layout_constraintBottom_toTopOf="@+id/messageBoxContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="30sp"
-        />
+        app:maxImageSize="30sp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

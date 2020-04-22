@@ -56,7 +56,7 @@ public class phone_verification extends AppCompatActivity implements
     private static final int STATE_SIGNIN_FAILED = 5;
     private static final int STATE_SIGNIN_SUCCESS = 6;
 
-    private String globPhone=null;
+    private String globPhone = null;
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
@@ -72,7 +72,7 @@ public class phone_verification extends AppCompatActivity implements
     private ViewGroup mPhoneNumberViews;
     private ViewGroup mSignedInViews;
 
-//    private Spinner mCountryCode;
+    //    private Spinner mCountryCode;
     private TextView mStatusText;
     private TextView mDetailText;
 
@@ -420,12 +420,11 @@ public class phone_verification extends AppCompatActivity implements
             // Signed in
 
 
-
             final DBHelper mydb = new DBHelper(getApplicationContext());
 
-            if (senderUserName!=null){
-                if (!senderUserName.equals(globPhone)){
-                    Toast.makeText(phone_verification.this.getApplicationContext(),"hklsdf",Toast.LENGTH_LONG).show();
+            if (senderUserName != null) {
+                if (!senderUserName.equals(globPhone)) {
+                    Toast.makeText(phone_verification.this.getApplicationContext(), "hklsdf", Toast.LENGTH_LONG).show();
                     mydb.deleteAllMessages();
                     mydb.deleteuserInfo();
                 }

@@ -39,9 +39,9 @@ public class myProfile extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String UserName = dataSnapshot.getValue(String.class);
-                if (UserName != null){
+                if (UserName != null) {
                     userName.setText(UserName);
-                }else {
+                } else {
                     userName.setText("");
                 }
 
@@ -60,16 +60,16 @@ public class myProfile extends AppCompatActivity {
         findViewById(R.id.profileSaveButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"profile updating",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "profile updating", Toast.LENGTH_LONG).show();
                 userNameRef.setValue(userName.getText().toString().trim()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(getApplicationContext(),"profile updated",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "profile updated", Toast.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(),"Failed to update\nTry Again Later...",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Failed to update\nTry Again Later...", Toast.LENGTH_LONG).show();
                     }
                 });
             }
