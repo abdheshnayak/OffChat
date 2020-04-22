@@ -4,6 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
+
 public class NetworkUtil {
     public static final int TYPE_WIFI = 1;
     public static final int TYPE_MOBILE = 2;

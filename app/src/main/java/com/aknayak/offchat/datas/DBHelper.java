@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
@@ -15,6 +14,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
+
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
 
 public class DBHelper extends SQLiteOpenHelper {
 

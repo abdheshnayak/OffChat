@@ -58,6 +58,14 @@ import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
+
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public final ArrayList<Message> messages = new ArrayList<Message>();
     private static final String TAG = "MainActivity";

@@ -12,6 +12,14 @@ import java.util.Arrays;
 import static com.aknayak.offchat.MainActivity.filterNumber;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 
+
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
+
 public class respData {
     public static boolean selection = false;
     public static boolean delFlag = false;

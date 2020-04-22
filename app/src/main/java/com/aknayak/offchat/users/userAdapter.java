@@ -35,8 +35,14 @@ import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.notifyIt;
 import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
+
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
 
 public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder> {
 

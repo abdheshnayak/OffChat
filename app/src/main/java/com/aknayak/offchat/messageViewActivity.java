@@ -62,6 +62,14 @@ import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 
+/**
+ * OffChat
+ * Created by Abdhesh Nayak on 3/18/20
+ * abdheshnayak@gmail.com
+ * Copyright (c) 2020 OffChat All rights reserved.
+ **/
+
+
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
     EditText mMessageBox;
     ImageButton mMessageSendButton;
