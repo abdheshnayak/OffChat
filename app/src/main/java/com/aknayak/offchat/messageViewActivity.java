@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +24,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -42,6 +45,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -80,6 +84,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     ImageButton mMessageBoxCloseButton;
     ImageButton mDeleteButton;
     ImageButton mMenuButton;
+    CheckBox selectAllcheckBox;
     ImageButton mMenuButtonClose;
     ConstraintLayout menuLayout;
     TextView mProfileButton;
@@ -88,6 +93,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     RecyclerView rvMessages;
     ConstraintLayout constraintLayout;
     Date lastSeenTime;
+    TextView selectCount;
     boolean menuButtonStatus = true;
     public ArrayList<Message> messages = new ArrayList<Message>();
     public ImageButton scrollButton;
@@ -122,9 +128,19 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     public void dellButton() {
         mDeleteButton.setVisibility(View.VISIBLE);
         mMenuButton.setVisibility(View.GONE);
-        mMenuButton.setVisibility(View.GONE);
+        findViewById(R.id.userSpace).setVisibility(View.GONE);
+        findViewById(R.id.selectAllBoxContainer).setVisibility(View.VISIBLE);
     }
 
+    public void refreshSelectCount(){
+        Log.d("sel","kk");
+        selectCount.setText(respData.delItem.size()+"/"+messages.size());
+        if (respData.delItem.size()!=messages.size()){
+            selectAllcheckBox.setChecked(false);
+        }else if (respData.delItem.size() == messages.size()){
+            selectAllcheckBox.setChecked(true);
+        }
+    }
     public void scButton(int i) {
         if (i > 15) {
             if (!flg) {
@@ -227,9 +243,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
+        selectAllcheckBox = findViewById(R.id.selectAllBox);
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
         mDeleteButton = findViewById(R.id.deleteButton);
 
+        selectCount = findViewById(R.id.selectedCount);
         rvMessages = findViewById(R.id.messageView);
         mMessageSendButton = findViewById(R.id.sendButton);
         mMenuButton = findViewById(R.id.menuButton);
@@ -261,6 +279,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             findViewById(R.id.messageBoxContainer).setVisibility(View.GONE);
         }
 
+
+        selectAllcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    respData.delItem = new ArrayList<>();
+                    for(Message msg : messages){
+                        respData.delItem.add(msg.getMessageID());
+                    }
+                    refreshSelectCount();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
 
         mydb = new DBHelper(getApplicationContext());
 
@@ -643,11 +675,46 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 mMenuButton.setVisibility(View.VISIBLE);
                 break;
             case R.id.deleteButton:
-                respData.delFlag = true;
                 respData.selection = false;
+                for (final String st : respData.delItem) {
+                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(st).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            mydb.deleteMessage(st);
+                            messages.clear();
+                            try {
+                                messages.addAll(mydb.getAllMessages(rootPath));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            mydb.deleteMessage(st);
+                            messages.clear();
+                            try {
+                                messages.addAll(mydb.getAllMessages(rootPath));
+                            } catch (ParseException ex) {
+                                ex.printStackTrace();
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+                respData.delItem= new ArrayList<>();
+                messages.clear();
+                try {
+                    messages.addAll(mydb.getAllMessages(rootPath));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 adapter.notifyDataSetChanged();
                 mDeleteButton.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
+                findViewById(R.id.selectAllBoxContainer).setVisibility(View.GONE);
+                findViewById(R.id.userSpace).setVisibility(View.VISIBLE);
                 break;
             case R.id.sendButton:
 //                Updating Message
@@ -656,7 +723,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
                 mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
-                messages.add(new Message(message.getMessage(), message.getMessageSource(), Calendar.getInstance(Locale.ENGLISH).getTime(), 0, message.getMessageID(), message.getMessageFor()));
+
+                messages.clear();
+                try {
+                    messages.addAll(mydb.getAllMessages(rootPath));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                adapter.notifyDataSetChanged();
 
 
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
@@ -720,6 +794,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             adapter.notifyDataSetChanged();
             mDeleteButton.setVisibility(View.GONE);
             mMenuButton.setVisibility(View.VISIBLE);
+            findViewById(R.id.selectAllBoxContainer).setVisibility(View.GONE);
+            findViewById(R.id.userSpace).setVisibility(View.VISIBLE);
         } else {
             super.onBackPressed();
         }

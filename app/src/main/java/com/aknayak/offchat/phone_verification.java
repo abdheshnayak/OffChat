@@ -194,6 +194,7 @@ public class phone_verification extends AppCompatActivity implements
                 updateUI(STATE_VERIFY_SUCCESS, credential);
                 // [END_EXCLUDE]
                 signInWithPhoneAuthCredential(credential);
+                signInWithPhoneAuthCredential(credential);
             }
 
             @Override

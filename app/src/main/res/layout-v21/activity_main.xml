@@ -31,9 +31,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2sp"
-                android:text="ffchat"
+                android:text="@string/ffchat"
                 android:textColor="#FFFFFF"
-                android:textSize="24dp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -44,6 +44,7 @@
                 android:layout_width="32sp"
                 android:layout_height="32sp"
                 android:layout_margin="5sp"
+                android:contentDescription="@string/todo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -54,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:padding="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -67,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:padding="10sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +90,7 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-7481473691227014/1810618693"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout">
@@ -121,6 +122,7 @@
         android:layout_marginEnd="16sp"
         android:layout_marginBottom="16sp"
         android:background="@drawable/circle_design_primary"
+        android:contentDescription="@string/todo"
         android:elevation="3sp"
         android:padding="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -133,6 +135,7 @@
         android:id="@+id/splashImageMainActivity"
         android:layout_width="0sp"
         android:layout_height="0sp"
+        android:contentDescription="@string/todo"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/recyclerViewCont"
@@ -144,7 +147,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0sp"
         android:layout_marginTop="5sp"
-        android:layout_marginRight="5sp"
+        android:layout_marginEnd="5sp"
         android:elevation="5sp"
         android:theme="@style/ThemeOverlay.MyMenu"
         android:visibility="gone"
@@ -163,7 +166,7 @@
                 android:id="@+id/profileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
                 android:theme="@style/ThemeOverlay.MyItemButton" />
@@ -173,7 +176,7 @@
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Settings"
+                android:text="@string/settings"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
                 android:theme="@style/ThemeOverlay.MyItemButton" />
@@ -191,11 +194,46 @@
                 android:id="@+id/aboutButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="About"
+                android:text="@string/about"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
                 android:theme="@style/ThemeOverlay.MyItemButton" />
 
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/userMenuLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0sp"
+        android:layout_marginTop="5sp"
+        android:layout_marginEnd="5sp"
+        android:elevation="5sp"
+        android:theme="@style/ThemeOverlay.MyMenu"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="250sp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/userDelete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:theme="@style/ThemeOverlay.MyItemButton" />
 
         </LinearLayout>
 

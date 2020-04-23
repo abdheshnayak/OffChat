@@ -542,20 +542,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static String filterNumber(String number) {
-        String temp = "";
-        for (int i = 0; i < number.length(); i++) {
-            if (number.charAt(i) == '+' || number.charAt(i) == '0' || number.charAt(i) == '1' || number.charAt(i) == '2' || number.charAt(i) == '3' || number.charAt(i) == '4' || number.charAt(i) == '5' || number.charAt(i) == '6' || number.charAt(i) == '7' || number.charAt(i) == '8' || number.charAt(i) == '9') {
-                temp = temp + number.charAt(i);
-            } else {
-                continue;
-            }
-        }
-        if (temp.length() == 10) {
-            temp = authUser.substring(0, authUser.length() - 10) + temp;
-        }
-        return temp;
-    }
 
 
     @Override

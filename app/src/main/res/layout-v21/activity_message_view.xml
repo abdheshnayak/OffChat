@@ -18,7 +18,7 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-7481473691227014/1810618693"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -43,6 +43,53 @@
             android:animateLayoutChanges="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/selectAllBoxContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="8sp"
+                android:paddingLeft="10sp"
+                android:paddingTop="5sp"
+                android:paddingRight="10sp"
+                android:paddingBottom="5sp"
+
+                android:visibility="gone"
+
+                android:background="@drawable/receiver_messagebox_design"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                >
+
+                <TextView
+                    android:id="@+id/selectedCount"
+                    android:layout_width="wrap_content"
+
+                    android:layout_height="wrap_content"
+                    android:text="@string/todo"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <CheckBox
+                    android:id="@+id/selectAllBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_all"
+
+                    android:layout_marginStart="10sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/selectedCount"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/userSpace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,8 +102,8 @@
                     android:id="@+id/msgUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="Alex Pardian"
+                    android:layout_marginStart="8sp"
+                    android:text="@string/alex_pardian"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -68,9 +115,10 @@
                     android:id="@+id/onlineStatusTextView_in_MessageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="12sp"
+                    android:layout_marginStart="8sp"
+                    android:layout_marginBottom="5sp"
                     android:textColor="#AAFFFF"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -80,6 +128,7 @@
                     android:id="@+id/imageView"
                     android:layout_width="50sp"
                     android:layout_height="50sp"
+                    android:contentDescription="@string/todo"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -93,7 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:padding="5sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +155,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:padding="5sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -120,7 +169,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
-                android:contentDescription="TODO"
+                android:contentDescription="@string/todo"
                 android:padding="5sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -165,7 +214,7 @@
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_margin="5sp"
-            android:layout_marginRight="4sp"
+            android:layout_marginEnd="4sp"
             android:background="@drawable/circle_design_primary"
             android:elevation="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -196,9 +245,8 @@
                     android:inputType="textMultiLine"
                     android:maxLines="6"
                     android:paddingStart="15sp"
-                    android:paddingLeft="7sp"
                     android:paddingTop="7sp"
-                    android:paddingRight="0sp"
+                    android:paddingEnd="0sp"
                     android:paddingBottom="7sp"
                     android:scrollbarThumbVertical="@color/colorButtonPressed"
                     android:scrollbars="vertical"
@@ -243,9 +291,9 @@
             android:id="@+id/networkStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello"
+            android:text="@string/todo"
             android:textAlignment="center"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -271,6 +319,7 @@
         android:id="@+id/splashImage"
         android:layout_width="0sp"
         android:layout_height="0sp"
+        android:contentDescription="@string/todo"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/messageBoxContainer"
         app:layout_constraintEnd_toEndOf="parent"
@@ -302,7 +351,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:requiresFadingEdge="horizontal"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:theme="@style/ThemeOverlay.MyItemButton" />
 
         </LinearLayout>

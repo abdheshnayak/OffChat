@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,12 +14,12 @@
             android:id="@+id/backgroundLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5sp"
+            android:layout_marginStart="5sp"
 
+            android:elevation="3dp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:background="@drawable/sender_messagebox_design"
-            android:elevation="3dp"
             android:maxWidth="320sp"
             android:padding="5sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -110,11 +111,10 @@
                 android:id="@+id/sentTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:paddingTop="2sp"
-                android:text="5:23 am"
+                android:layout_marginEnd="5dp"
+                android:text="@string/time"
                 android:textColor="#673AB7"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
