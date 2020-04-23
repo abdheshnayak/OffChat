@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.getRandString;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.globaldata.respData.getRandString;
 
 /**
  * OffChat

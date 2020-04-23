@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.AESHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
@@ -58,6 +59,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.respData.*;
+import static com.aknayak.offchat.globaldata.respData.getRandString;
+import static com.aknayak.offchat.globaldata.respData.verifyUser;
 import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
 import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
@@ -73,13 +77,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final ArrayList<Message> messages = new ArrayList<Message>();
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
-    private static final String CHANNEL_ID = "MyNotification";
 
     public static final String ROOT_CHILD = "UserData";
     public static final String INSTANCE_ID = "instance";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
-    private String mUsername;
     private String mPhotoUrl;
     private FirebaseAuth mAuth;
     private TextView aboutButton;
@@ -196,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         authUser = mFirebaseUser.getPhoneNumber();
 
-        createNotificationChannel();
+        createNotificationChannel(this);
 
         rvUser = findViewById(R.id.recyclerView);
 
@@ -241,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 appVersion appVer = dataSnapshot.getValue(appVersion.class);
                 if (appVer != null) {
-                    checkUpdate(appVer.getForceupdateVersion(), appVer.getNormalUpdateVersion(), 0);
+                    checkUpdate(appVer.getForceupdateVersion(), appVer.getNormalUpdateVersion(), 0,MainActivity.this);
                 }
             }
 
@@ -258,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String string = dataSnapshot.getValue(String.class);
                     if (string != null) {
                         rvUser.setVisibility(View.GONE);
-                        boolean check = MainActivity.this.verifyUser(string, 0);
+                        boolean check = verifyUser(string, 0,MainActivity.this);
                         if (check) {
                             rvUser.setVisibility(View.VISIBLE);
                         }
@@ -446,10 +448,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         moveTaskToBack(true);
     }
 
-    private void signOut() {
-        new DBHelper(getApplicationContext()).deleteAllDatasOfTable();
-        mAuth.signOut();
-    }
 
     public static void requestPermission(Activity activity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
@@ -494,13 +492,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        signOut();
+                        signOut(MainActivity.this);
                         mUsername = "ANONYMOUS";
                         startActivity(new Intent(getApplicationContext(), phone_verification.class));
                         finish();
                     }
-                });
-                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -554,249 +551,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
         cdt.start();
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    public static void notifyIt(int icon, String title, String message, Context context, int notificationId) {
-        String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
-
-        //use constant ID for notification used as group summary
-        String msg;
-        if (message.length() > 300) {
-            msg = message.substring(0, 300) + "...";
-        } else {
-            msg = message;
-        }
-
-        int SUMMARY_ID = 0;
-
-        PendingIntent contentIntent =
-                PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
-
-        Notification newMessageNotification =
-                new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setSmallIcon(icon)
-                        .setContentTitle(title)
-                        .setContentText(msg)
-                        .setGroup(GROUP_KEY_WORK_EMAIL)
-                        .setContentIntent(contentIntent)
-                        .setAutoCancel(true)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .build();
-
-
-        Notification summaryNotification =
-                new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setContentTitle(title)
-                        //set content text to support devices running API level < 24
-                        .setContentText("")
-                        .setSmallIcon(icon)
-                        //build summary info into InboxStyle template
-                        .setStyle(new NotificationCompat.InboxStyle()
-                                .addLine("")
-                                .setBigContentTitle("")
-                        )
-                        //specify which group this notification belongs to
-                        .setGroup(GROUP_KEY_WORK_EMAIL)
-                        //set this notification as the summary for the group
-                        .setGroupSummary(true)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setContentIntent(contentIntent)
-                        .setPriority(Notification.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .build();
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, newMessageNotification);
-        notificationManager.notify(SUMMARY_ID, summaryNotification);
-
-
-    }
-
-    public static String getRandString(int n) {
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "0123456789"
-                + "abcdefghijklmnopqrstuvxyz";
-
-        // create StringBuffer size of AlphaNumericString
-        StringBuilder sb = new StringBuilder(n);
-
-        for (int i = 0; i < n; i++) {
-
-            // generate a random number between
-            // 0 to AlphaNumericString variable length
-            int index
-                    = (int) (AlphaNumericString.length()
-                    * Math.random());
-
-            // add Character one by one in end of sb
-            sb.append(AlphaNumericString
-                    .charAt(index));
-        }
-
-        return sb.toString();
-    }
-
-
-    public boolean verifyUser(final String string, final int count) {
-        if (!string.equals(mydb.getUserInfo(INSTANCE_ID))) {
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setPositiveButton("Verify", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mUsername = "ANONYMOUS";
-                    mAuth.signOut();
-                    startActivity(new Intent(MainActivity.this, phone_verification.class));
-                    finish();
-                }
-            });
-            alertDialogBuilder.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(MainActivity.this);
-                    alertDialogBuilder2.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            signOut();
-                            mUsername = "ANONYMOUS";
-                            startActivity(new Intent(getApplicationContext(), phone_verification.class));
-                        }
-                    });
-                    alertDialogBuilder2.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (count >= 1) {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Exit from OffChat.", Toast.LENGTH_LONG).show();
-                                MainActivity.this.finish();
-                                return;
-                            }
-                            Toast.makeText(MainActivity.this.getApplicationContext(), "You will be exit.", Toast.LENGTH_SHORT).show();
-                            verifyUser(string, count + 1);
-                        }
-                    });
-                    alertDialogBuilder2.setTitle("Sign Out?");
-                    alertDialogBuilder2.setMessage("We Don't store your chats. So if you Sign Out Your Account then you will loose your chats.\n\nAre You Sure to Sign Out ???");
-                    alertDialogBuilder2.show();
-                }
-            });
-
-            alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    if (count >= 1) {
-                        MainActivity.this.finish();
-                    }
-                    verifyUser(string, count + 1);
-                }
-            });
-            alertDialogBuilder.setTitle("Verify Your Account");
-            alertDialogBuilder.setMessage("We Found another instance started with your phone number. If it is not yout then please verify else signout.");
-            alertDialogBuilder.show();
-
-            Toast.makeText(getApplicationContext(), "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
-        } else {
-            return true;
-        }
-        return false;
-    }
-
-
-    public boolean checkUpdate(final String varforceUpdate, final String varnormalUpdate, final int count) {
-        if (!varforceUpdate.equals(MainActivity.forceUpdateVersion)) {
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    FirebaseDatabase.getInstance().getReference().child("admin").child("update_link").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            updateLink = dataSnapshot.getValue(String.class);
-                            if (updateLink != null) {
-                                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(updateLink));
-                                startActivity(i);
-                                Toast.makeText(MainActivity.this.getApplicationContext(), updateLink, Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Link Not Available ask with about admin.", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    checkUpdate(varforceUpdate, varnormalUpdate, 0);
-                }
-            });
-
-            alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    if (count >= 1) {
-                        Toast.makeText(MainActivity.this.getApplicationContext(), "Exit from OffChat.", Toast.LENGTH_LONG).show();
-                        MainActivity.this.finish();
-                        return;
-                    }
-                    Toast.makeText(MainActivity.this.getApplicationContext(), "You will be exit.", Toast.LENGTH_SHORT).show();
-                    checkUpdate(varforceUpdate, varnormalUpdate, count + 1);
-                }
-            });
-            alertDialogBuilder.setTitle("Compulsory Update");
-            alertDialogBuilder.setMessage("This Version of OffChat App is no longer Supported so please update it.");
-            alertDialogBuilder.show();
-
-        } else if (!varnormalUpdate.equals(MainActivity.normalupdateVersion)) {
-            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    FirebaseDatabase.getInstance().getReference().child("admin").child("update_link").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            updateLink = dataSnapshot.getValue(String.class);
-                            if (updateLink != null) {
-                                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(updateLink));
-                                startActivity(i);
-                                Toast.makeText(MainActivity.this.getApplicationContext(), updateLink, Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Link Not Available ask with about admin.", Toast.LENGTH_LONG).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            });
-            alertDialogBuilder.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    return;
-                }
-            });
-            alertDialogBuilder.setTitle("Update Found !!!");
-            alertDialogBuilder.setMessage("A newer Version Of OffChat app found.");
-            alertDialogBuilder.show();
-
-        }
-        return false;
     }
 }

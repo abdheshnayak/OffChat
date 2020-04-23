@@ -64,11 +64,11 @@ import java.util.concurrent.Delayed;
 
 import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.getRandString;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
+import static com.aknayak.offchat.globaldata.respData.getRandString;
 
 /**
  * OffChat
