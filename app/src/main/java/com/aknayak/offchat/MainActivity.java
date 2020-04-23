@@ -511,10 +511,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), AllConcacts.class));
                 break;
             case R.id.settings:
-                BroadcastReceiver br = new MyBroadcastReceiver();
-                IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-                filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-                this.registerReceiver(br, filter);
                 Toast.makeText(getApplicationContext(), "You don't have access now.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
