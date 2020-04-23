@@ -32,6 +32,7 @@ import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
 import com.aknayak.offchat.users.connDetail;
+import com.aknayak.offchat.users.typingDetails;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -60,6 +61,7 @@ import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
+import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 /**
  * OffChat
@@ -104,6 +106,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     public static String MESSAGES_CHILD = "messages";
     public static String MAINVIEW_CHILD = "history";
+    public static String TYPING_CHILD = "typing";
     public String rootPath;
     BroadcastReceiver networkStateReceiver;
     DBHelper mydb;
@@ -123,15 +126,16 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         findViewById(R.id.selectAllBoxContainer).setVisibility(View.VISIBLE);
     }
 
-    public void refreshSelectCount(){
-        Log.d("sel","kk");
-        selectCount.setText(respData.delItem.size()+"/"+messages.size());
-        if (respData.delItem.size()!=messages.size()){
+    public void refreshSelectCount() {
+        Log.d("sel", "kk");
+        selectCount.setText(respData.delItem.size() + "/" + messages.size());
+        if (respData.delItem.size() != messages.size()) {
             selectAllcheckBox.setChecked(false);
-        }else if (respData.delItem.size() == messages.size()){
+        } else if (respData.delItem.size() == messages.size()) {
             selectAllcheckBox.setChecked(true);
         }
     }
+
     public void scButton(int i) {
         if (i > 15) {
             if (!flg) {
@@ -274,9 +278,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         selectAllcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     respData.delItem = new ArrayList<>();
-                    for(Message msg : messages){
+                    for (Message msg : messages) {
                         respData.delItem.add(msg.getMessageID());
                     }
                     refreshSelectCount();
@@ -307,7 +311,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     lastSeenTime = dataSnapshot.getValue(Date.class);
                     diff = currentTime.getTime() - lastSeenTime.getTime();
                     long diffSeconds = diff / 1000 % 60;
-                    if (diffSeconds > 30) {
+                    if (diffSeconds > 15) {
                         historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                     }
                 }
@@ -318,6 +322,33 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
+
+
+        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                typingDetails tpDetail = dataSnapshot.getValue(typingDetails.class);
+                if (tpDetail != null && tpDetail.isTyping() && tpDetail.getTime() != null) {
+                    Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
+                    long diff = 0;
+
+                    diff = currentTime.getTime() - tpDetail.getTime().getTime();
+                    long diffSeconds2 = diff / 1000 % 60;
+                    if (diffSeconds2 < 10) {
+                        onlineStatusTextView.setText("Typing...");
+                    } else {
+                        onlineStatusTextView.setText("online");
+                    }
+                } else {
+                    onlineStatusTextView.setText("online");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         v2 = new ValueEventListener() {
@@ -331,10 +362,35 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     long diff = 0;
 
                     diff = currentTime.getTime() - date.getTime();
-                    long diffMinutes = diff / (60 * 1000) % 60;
+                    long diffSeconds = diff / 1000 % 60;
                     onlineStatusTextView.setVisibility(View.VISIBLE);
-                    if (diffMinutes < 1) {
-                        onlineStatusTextView.setText("online");
+                    if (diffSeconds < 20) {
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                typingDetails tpDetail = dataSnapshot.getValue(typingDetails.class);
+                                if (tpDetail != null && tpDetail.isTyping() && tpDetail.getTime() != null) {
+                                    Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
+                                    long diff = 0;
+
+                                    diff = currentTime.getTime() - tpDetail.getTime().getTime();
+                                    long diffSeconds2 = diff / 1000 % 60;
+                                    if (diffSeconds2 < 10) {
+                                        onlineStatusTextView.setText("Typing...");
+                                    } else {
+                                        onlineStatusTextView.setText("online");
+                                    }
+                                } else {
+                                    onlineStatusTextView.setText("online");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                     } else {
 
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
@@ -378,7 +434,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     messages.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
-                        if ((message != null && message.getMessageSource().equals(message.getMessageFor())) || message.getMessageStatus() != 1) {
+                        if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
+                            Log.d("UUUU", "kl");
                             mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor());
                         }
                     }
@@ -599,14 +656,35 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         constraintLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+
                 Rect r = new Rect();
                 constraintLayout.getWindowVisibleDisplayFrame(r);
                 int screenHeight = constraintLayout.getRootView().getHeight();
                 int keypadHeight = screenHeight - r.bottom;
                 if (keypadHeight > screenHeight * 0.15) {
-                    Log.d("Typing", "ON");
+                    if (tdtls.isTyping() != true) {
+                        tdtls = new typingDetails(true,Calendar.getInstance(Locale.ENGLISH).getTime());
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
+                    } else {
+                        long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
+                        long diffSeconds = diff / 1000 % 60;
+                        if (diffSeconds > 5) {
+                            tdtls = new typingDetails(true,Calendar.getInstance(Locale.ENGLISH).getTime());
+                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
+                        }
+                    }
                 } else {
-                    Log.d("Typing", "OFF");
+                    if ( tdtls.isTyping() != false) {
+                        tdtls = new typingDetails(false,Calendar.getInstance(Locale.ENGLISH).getTime());
+                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
+                    } else {
+                        long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
+                        long diffSeconds = diff / 1000 % 60;
+                        if (diffSeconds > 5) {
+                            tdtls = new typingDetails(false,Calendar.getInstance(Locale.ENGLISH).getTime());
+                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
+                        }
+                    }
                 }
             }
         });
@@ -617,14 +695,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         // Set layout manager to position the items
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
 
-//        adapter.notifyDataSetChanged();
-//        if (messages.size() != 0) {
-//            try {
-//                rvMessages.scrollToPosition(messages.size() - mydb.getAllMessagesByStatus(rootPath, 2, receiverUsername).size() - 1);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         try {
             messages.clear();
@@ -694,7 +764,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         }
                     });
                 }
-                respData.delItem= new ArrayList<>();
+                respData.delItem = new ArrayList<>();
                 messages.clear();
                 try {
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -800,4 +870,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     ArrayList<Message> msg = null;
 
+    @Override
+    protected void onResume() {
+        messageRef.addValueEventListener(v3);
+        super.onResume();
+    }
 }

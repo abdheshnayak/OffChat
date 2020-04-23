@@ -23,6 +23,7 @@ import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.phone_verification;
+import com.aknayak.offchat.users.typingDetails;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,8 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.aknayak.offchat.MainActivity.ANONYMOUS;
@@ -53,6 +54,7 @@ public class respData {
     public static ArrayList<String> delItem = new ArrayList<>();
     private static final String CHANNEL_ID = "MyNotification";
     public static String mUsername;
+    public static typingDetails tdtls= new typingDetails(false, Calendar.getInstance().getTime());
 
     public static String filterNumber(String number) {
         String temp = "";
@@ -378,5 +380,8 @@ public class respData {
         }
         return false;
     }
+
+
+
 
 }

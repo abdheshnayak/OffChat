@@ -4,23 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -32,8 +27,8 @@ import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.AESHelper;
-import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
+import com.aknayak.offchat.services.mainService;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
 import com.aknayak.offchat.versionInfo.appVersion;
@@ -131,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
 
         mydb = new DBHelper(getApplicationContext());
@@ -343,12 +339,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final ValueEventListener v3 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("KKK", "ll");
                 try {
                     messages.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
-                            Log.d("KKK", message.getMessage());
                             mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor());
                         }
                     }
@@ -381,9 +377,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ValueEventListener v1 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("kkkk","ll");
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     connDetail check = snapshot.getValue(connDetail.class);
-                    if (check.getConnected()) {
+                    if (check != null && check.getConnected()) {
                         String user = snapshot.getKey();
                         DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, user));
                         messageRef.addValueEventListener(v3);
@@ -400,7 +397,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName);
         historyRef.addValueEventListener(v1);
 
-        cdt = new CountDownTimer(50000, 50000) {
+        Intent i = new Intent(MainActivity.this, mainService.class);
+        startService(i);
+
+        cdt = new CountDownTimer(25000, 25000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 final DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName);
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         long diffSeconds = diff / 1000 % 60;
 
-                        if (diffSeconds > 30) {
+                        if (diffSeconds > 10) {
                             historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                         }
                     }
@@ -511,6 +511,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), AllConcacts.class));
                 break;
             case R.id.settings:
+                BroadcastReceiver br = new MyBroadcastReceiver();
+                IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+                filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+                this.registerReceiver(br, filter);
                 Toast.makeText(getApplicationContext(), "You don't have access now.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
@@ -552,4 +556,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStart();
         cdt.start();
     }
+
+
 }

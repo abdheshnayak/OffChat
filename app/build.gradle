@@ -51,7 +51,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
 
 
-    compile 'com.hbb20:ccp:1.7.1'
+    implementation 'com.hbb20:ccp:1.7.1'
 
     // Firebase UI
     implementation 'com.firebaseui:firebase-ui-database:6.2.0'
