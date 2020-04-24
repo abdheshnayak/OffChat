@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -47,7 +46,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,7 +58,15 @@ import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
+import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
+import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
+import static com.aknayak.offchat.globaldata.respData.TYPING_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
+import static com.aknayak.offchat.globaldata.respData.isOnline;
+import static com.aknayak.offchat.globaldata.respData.mUsername;
+import static com.aknayak.offchat.globaldata.respData.playSound;
+import static com.aknayak.offchat.globaldata.respData.sound_sent;
+import static com.aknayak.offchat.globaldata.respData.sound_waiting;
 import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 /**
@@ -72,6 +78,7 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
+
     EditText mMessageBox;
     ImageButton mMessageSendButton;
     ImageButton mMessageBoxCloseButton;
@@ -102,110 +109,24 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     private ValueEventListener v1;
     private ValueEventListener v2;
     private ValueEventListener v3;
-    private ValueEventListener v4;
-
-    public static String MESSAGES_CHILD = "messages";
-    public static String MAINVIEW_CHILD = "history";
-    public static String TYPING_CHILD = "typing";
     public String rootPath;
     BroadcastReceiver networkStateReceiver;
     DBHelper mydb;
-
     int cnt = 0;
-
     boolean flg = false;
-
-
     AdView adView;
-
-
-    public void dellButton() {
-        mDeleteButton.setVisibility(View.VISIBLE);
-        mMenuButton.setVisibility(View.GONE);
-        findViewById(R.id.userSpace).setVisibility(View.GONE);
-        findViewById(R.id.selectAllBoxContainer).setVisibility(View.VISIBLE);
-    }
-
-    public void refreshSelectCount() {
-        Log.d("sel", "kk");
-        selectCount.setText(respData.delItem.size() + "/" + messages.size());
-        if (respData.delItem.size() != messages.size()) {
-            selectAllcheckBox.setChecked(false);
-        } else if (respData.delItem.size() == messages.size()) {
-            selectAllcheckBox.setChecked(true);
-        }
-    }
-
-    public void scButton(int i) {
-        if (i > 15) {
-            if (!flg) {
-                scrollButton.setVisibility(View.VISIBLE);
-                flg = true;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        flg = false;
-                        scrollButton.setVisibility(View.INVISIBLE);
-                    }
-                }, 2 * 1000); // wait for 5 seconds
-            }
-        } else {
-            scrollButton.setVisibility(View.INVISIBLE);
-            flg = false;
-        }
-    }
-
-    public Boolean isOnline() {
-        try {
-            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
-            int returnVal = p1.waitFor();
-            boolean reachable = (returnVal == 0);
-            return reachable;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfoListener = connectivityManager.getActiveNetworkInfo();
-        return networkInfoListener != null && networkInfoListener.isConnectedOrConnecting();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(networkStateReceiver);
-    }
-
 
     CountDownTimer cdt;
     boolean pnt = true;
+    ArrayList<Message> msg = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
 
-
         adView = findViewById(R.id.adView);
-
-
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU", "Initialized");
-            }
-        });
-
-//        adView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
@@ -233,15 +154,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         });
 
         respData.delItem = new ArrayList<>();
-
         receiverUsername = getIntent().getStringExtra("phoneNumber");
+        MainActivity.temp = receiverUsername;
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
         selectAllcheckBox = findViewById(R.id.selectAllBox);
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
         mDeleteButton = findViewById(R.id.deleteButton);
-
         selectCount = findViewById(R.id.selectedCount);
         rvMessages = findViewById(R.id.messageView);
         mMessageSendButton = findViewById(R.id.sendButton);
@@ -436,7 +356,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
                             Log.d("UUUU", "kl");
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor());
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(),4);
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -500,7 +420,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor());
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(),5);
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -583,7 +503,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                boolean connectivity = isNetworkAvailable();
+                boolean connectivity = respData.isNetworkAvailable(messageViewActivity.this);
                 TextView netWorkStatus = findViewById(R.id.networkStatus);
                 if (connectivity) {
                     if (isOnline()) {
@@ -706,6 +626,19 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }
 
 
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d("UUUU", "Initialized");
+            }
+        });
+
+//        adView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+
     }
 
 
@@ -737,6 +670,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.deleteButton:
                 respData.selection = false;
+                playSound(messageViewActivity.this,sound_sent);
                 for (final String st : respData.delItem) {
                     FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(st).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -783,7 +717,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 messageKey = getRandString(15);
                 final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
-                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
+                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(),6);
+
 
                 messages.clear();
                 try {
@@ -792,13 +727,16 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
                 adapter.notifyDataSetChanged();
+                rvMessages.smoothScrollToPosition(messages.size()-1);
+                playSound(messageViewActivity.this,sound_waiting);
 
 
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
                         .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor());
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(),7);
+                        playSound(messageViewActivity.this,sound_sent);
                         messages.clear();
                         try {
                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -858,21 +796,70 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             findViewById(R.id.selectAllBoxContainer).setVisibility(View.GONE);
             findViewById(R.id.userSpace).setVisibility(View.VISIBLE);
         } else {
+            MainActivity.temp=null;
             super.onBackPressed();
         }
     }
 
+
+
+
+    public void dellButton() {
+        mDeleteButton.setVisibility(View.VISIBLE);
+        mMenuButton.setVisibility(View.GONE);
+        findViewById(R.id.userSpace).setVisibility(View.GONE);
+        findViewById(R.id.selectAllBoxContainer).setVisibility(View.VISIBLE);
+    }
+
+    public void refreshSelectCount() {
+        Log.d("sel", "kk");
+        selectCount.setText(respData.delItem.size() + "/" + messages.size());
+        if (respData.delItem.size() != messages.size()) {
+            selectAllcheckBox.setChecked(false);
+        } else if (respData.delItem.size() == messages.size()) {
+            selectAllcheckBox.setChecked(true);
+        }
+    }
+
+    public void scButton(int i) {
+        if (i > 15) {
+            if (!flg) {
+                scrollButton.setVisibility(View.VISIBLE);
+                flg = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        flg = false;
+                        scrollButton.setVisibility(View.INVISIBLE);
+                    }
+                }, 2 * 1000); // wait for 5 seconds
+            }
+        } else {
+            scrollButton.setVisibility(View.INVISIBLE);
+            flg = false;
+        }
+    }
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(networkStateReceiver);
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
+        MainActivity.temp=null;
         cdt.cancel();
     }
-
-    ArrayList<Message> msg = null;
 
     @Override
     protected void onResume() {
         messageRef.addValueEventListener(v3);
+        MainActivity.temp =mUsername;
         super.onResume();
     }
 }

@@ -5,15 +5,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.aknayak.offchat.globaldata.AESHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.aknayak.offchat.MainActivity.temp;
+import static com.aknayak.offchat.globaldata.respData.playSound;
+import static com.aknayak.offchat.globaldata.respData.sound_incoming_message;
+import static com.aknayak.offchat.globaldata.respData.sound_notification;
 
 
 /**
@@ -23,15 +32,17 @@ import java.util.Locale;
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
 
-public class DBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper implements Serializable {
 
     public static final String DATABASE_NAME = "MyDBName.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
     public static final String CONTACTS_COLUMN_NAME = "name";
     public static final String CONTACTS_COLUMN_PHONE = "phone";
 
+    private Context context;
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
+        this.context = context;
     }
 
     @Override
@@ -190,22 +201,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
-//    public ArrayList<User> getAllHistories() throws ParseException {
-//        ArrayList<User> array_list = new ArrayList<>();
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor res = db.rawQuery("select * from histories order by latmessagesenttime desc", null);
-//        res.moveToFirst();
-//
-//        while (res.isAfterLast() == false) {
-//
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//
-//            array_list.add(new User(res.getString(res.getColumnIndex("phone")), simpleDateFormat.parse(res.getString(res.getColumnIndex("latmessagesenttime"))), res.getString(res.getColumnIndex("lastmessage")), " ", res.getInt(res.getColumnIndex("sentstatus"))));
-//            res.moveToNext();
-//        }
-//        return array_list;
-//    }
-
     public boolean inserthistory(String phone, String lastmessage, Date lastmessagesenttime, int sentstatus) {
 //        Log.d("History :","Inserted");
         SQLiteDatabase db = this.getWritableDatabase();
@@ -243,8 +238,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot, String messageFor) {
-//        Log.d("kkkInsert",messageSource+messageStatus+Message+callfrom);
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot, String messageFor,int tag) {
+        Log.d("Message Insert"," "+messageSource+" "+messageStatus+"  "+ AESHelper.decrypt(Message)+" " +tag);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);
@@ -258,10 +253,18 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageId + "';", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
+            if (messageFor.equals(respData.mUsername) && messageStatus == 2){
+                if (temp != null && temp.equals(messageSource)){
+                    playSound(context,sound_incoming_message);
+                }else {
+                    playSound(context,sound_notification);
+                }
+            }
             db.insert("messages", null, contentValues);
         } else {
             db.update("messages", contentValues, "messageId = ? ", new String[]{messageId});
         }
+
         return true;
     }
 

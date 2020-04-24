@@ -10,16 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,8 +29,8 @@ import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.AESHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
-import com.aknayak.offchat.services.mainService;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
 import com.aknayak.offchat.versionInfo.appVersion;
@@ -38,6 +40,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -57,8 +60,6 @@ import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.*;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.verifyUser;
-import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
-import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
 
 /**
  * OffChat
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public final ArrayList<Message> messages = new ArrayList<Message>();
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
+
+
 
     public static final String ROOT_CHILD = "UserData";
     public static final String INSTANCE_ID = "instance";
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String senderUserName;
     public static String receiverUsername;
 
+    public static String temp;
 
     @Override
     protected void onResume() {
@@ -131,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mydb = new DBHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
+
+        MainActivity.receiverUsername=null;
 
 
         adView = findViewById(R.id.adView);
@@ -188,6 +194,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
             }
         }
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "My Notification", importance);
+//            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
 
 
         senderUserName = mFirebaseUser.getPhoneNumber();
@@ -345,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor());
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),1);
                         }
                     }
                     messages.addAll(mydb.getHist());
@@ -397,7 +417,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(senderUserName);
         historyRef.addValueEventListener(v1);
 
-        Intent i = new Intent(MainActivity.this, mainService.class);
+//        FirebaseApp.initializeApp(this);
+
+        Intent i = new Intent(com.aknayak.offchat.services.mainService.class.getName());
+
+        i.setPackage(this.getPackageName());
         startService(i);
 
         cdt = new CountDownTimer(25000, 25000) {
@@ -511,6 +535,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), AllConcacts.class));
                 break;
             case R.id.settings:
+                respData.playSound(MainActivity.this,sound_incoming_message);
                 Toast.makeText(getApplicationContext(), "You don't have access now.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:

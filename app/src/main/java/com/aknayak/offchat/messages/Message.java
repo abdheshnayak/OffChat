@@ -1,13 +1,9 @@
 package com.aknayak.offchat.messages;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import static com.aknayak.offchat.MainActivity.receiverUsername;
 
 /**
  * OffChat

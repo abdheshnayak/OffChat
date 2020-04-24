@@ -11,6 +11,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
@@ -31,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.ArrayList;
 
@@ -52,9 +58,13 @@ import static com.aknayak.offchat.MainActivity.updateLink;
 public class respData {
     public static boolean selection = false;
     public static ArrayList<String> delItem = new ArrayList<>();
-    private static final String CHANNEL_ID = "MyNotification";
+    public static final String CHANNEL_ID = "MyNotification";
     public static String mUsername;
-    public static typingDetails tdtls= new typingDetails(false, Calendar.getInstance().getTime());
+    public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance().getTime());
+
+    public static String MESSAGES_CHILD = "messages";
+    public static String MAINVIEW_CHILD = "history";
+    public static String TYPING_CHILD = "typing";
 
     public static String filterNumber(String number) {
         String temp = "";
@@ -147,6 +157,27 @@ public class respData {
         }
     }
 
+    public static Boolean isOnline() {
+        try {
+            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            int returnVal = p1.waitFor();
+            boolean reachable = (returnVal == 0);
+            return reachable;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static Boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfoListener = connectivityManager.getActiveNetworkInfo();
+        return networkInfoListener != null && networkInfoListener.isConnectedOrConnecting();
+    }
+
+
     public static void notifyIt(int icon, String title, String message, Context context, int notificationId) {
         String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
 
@@ -190,12 +221,12 @@ public class respData {
                         .setGroup(GROUP_KEY_WORK_EMAIL)
                         //set this notification as the summary for the group
                         .setGroupSummary(true)
-                        .setDefaults(Notification.DEFAULT_SOUND)
                         .setContentIntent(contentIntent)
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
+
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, newMessageNotification);
@@ -268,7 +299,7 @@ public class respData {
                                 return;
                             }
                             Toast.makeText(activity, "You will be exit.", Toast.LENGTH_SHORT).show();
-                            verifyUser(string, count + 1,activity);
+                            verifyUser(string, count + 1, activity);
                         }
                     });
                     alertDialogBuilder2.setTitle("Sign Out?");
@@ -283,7 +314,7 @@ public class respData {
                     if (count >= 1) {
                         activity.finish();
                     }
-                    verifyUser(string, count + 1,activity);
+                    verifyUser(string, count + 1, activity);
                 }
             });
             alertDialogBuilder.setTitle("Verify Your Account");
@@ -322,7 +353,7 @@ public class respData {
 
                         }
                     });
-                    checkUpdate(varforceUpdate, varnormalUpdate, 0,activity);
+                    checkUpdate(varforceUpdate, varnormalUpdate, 0, activity);
                 }
             });
 
@@ -335,7 +366,7 @@ public class respData {
                         return;
                     }
                     Toast.makeText(activity, "You will be exit.", Toast.LENGTH_SHORT).show();
-                    checkUpdate(varforceUpdate, varnormalUpdate, count + 1,activity);
+                    checkUpdate(varforceUpdate, varnormalUpdate, count + 1, activity);
                 }
             });
             alertDialogBuilder.setTitle("Compulsory Update");
@@ -382,6 +413,43 @@ public class respData {
     }
 
 
+    final public static int sound_sent = 0;
+    public final static int sound_notification = 1;
+    public final static int sound_incoming_message = 2;
+    public final static int sound_waiting = 3;
 
+
+    static MediaPlayer mp = null;
+
+    public static void playSound(Context context, int notification) {
+        if (mp == null) {
+            mp = MediaPlayer.create(context, R.raw.send_message);
+        }
+
+        AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if (audio.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+            mp.stop();
+            switch (notification) {
+                case sound_sent:
+                    mp = MediaPlayer.create(context, R.raw.send_message);
+                    mp.start();
+                    break;
+                case sound_notification:
+                    mp = MediaPlayer.create(context, R.raw.notification);
+                    mp.start();
+                    break;
+                case sound_incoming_message:
+                    mp = MediaPlayer.create(context, R.raw.incoming);
+                    mp.start();
+                    break;
+                case sound_waiting:
+                    mp = MediaPlayer.create(context, R.raw.waiting);
+                    mp.start();
+                    break;
+            }
+        }
+
+    }
 
 }

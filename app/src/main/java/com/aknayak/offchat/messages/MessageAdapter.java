@@ -3,9 +3,7 @@ package com.aknayak.offchat.messages;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aknayak.offchat.MainActivity;
@@ -22,8 +19,6 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messageViewActivity;
 import com.aknayak.offchat.users.connDetail;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -39,8 +34,8 @@ import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
-import static com.aknayak.offchat.messageViewActivity.MAINVIEW_CHILD;
-import static com.aknayak.offchat.messageViewActivity.MESSAGES_CHILD;
+import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
+import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 
 /**
  * OffChat
@@ -86,7 +81,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         final TextView messageboxView = viewHolder.Message;
         messageboxView.setText(decrypt(message.getMessage()));
         TextView textView = viewHolder.messageSentTime;
-//        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
 
 
         Date date = message.getMessageSentTime();
@@ -195,13 +189,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             mFirebaseDatabaseReference.setValue(new connDetail(true));
         }
 
-        if (message.getMessageSource().equals(receiverUsername)) {
-            if (message.getMessageStatus() == 1) {
-                message.setMessageStatus(2);
-                DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(rootPath).child(message.getMessageID());
-                fdbr.updateChildren(message.toMap());
-            }
-        }
         if (message.getMessageSource().equals(senderUserName)) {
             uiUpdate(message, seenStatusSingle, seenStatusDouble, seenStatusDoubleBlue, waitingForSent);
         }
