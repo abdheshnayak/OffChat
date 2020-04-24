@@ -178,9 +178,10 @@ public class respData {
     }
 
 
-    public static void notifyIt(int icon, String title, String message, Context context, int notificationId) {
+    public static void notifyIt(String title, String message, Context context, int notificationId) {
         String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
 
+        int icon = R.drawable.ic_launcher_empty;
         //use constant ID for notification used as group summary
         String msg;
         if (message.length() > 300) {

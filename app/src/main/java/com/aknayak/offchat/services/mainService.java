@@ -70,7 +70,7 @@ public class mainService extends Service {
 
                                 if( MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource())) )
                                 {
-                                notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                                 }
 //                              showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
                                 Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
@@ -119,7 +119,7 @@ public class mainService extends Service {
 
                                                 if( MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource())) )
                                                 {
-                                                    notifyIt(R.drawable.ic_launcher_empty, "" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                                    notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                                                 }
 //                                                showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
                                                 Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());

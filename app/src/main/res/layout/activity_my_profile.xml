@@ -95,10 +95,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/colorPrimary"
         app:adSize="BANNER"
+        android:layout_marginTop="10sp"
         app:adUnitId="ca-app-pub-7481473691227014/4539727969"
-        app:layout_constraintBottom_toTopOf="@+id/profileSaveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
