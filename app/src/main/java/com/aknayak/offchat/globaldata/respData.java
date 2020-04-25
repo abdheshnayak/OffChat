@@ -1,6 +1,7 @@
 package com.aknayak.offchat.globaldata;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -22,11 +23,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.notificationDialog;
 import com.aknayak.offchat.phone_verification;
 import com.aknayak.offchat.users.typingDetails;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
@@ -39,6 +40,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.aknayak.offchat.MainActivity.ANONYMOUS;
@@ -62,6 +64,7 @@ public class respData {
     public static String mUsername;
     public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance().getTime());
 
+    public static Boolean appLaunched;
     public static String MESSAGES_CHILD = "messages";
     public static String MAINVIEW_CHILD = "history";
     public static String TYPING_CHILD = "typing";
@@ -179,7 +182,7 @@ public class respData {
 
 
     public static void notifyIt(String title, String message, Context context, int notificationId) {
-        String GROUP_KEY_WORK_EMAIL = "com.android.example.WORK_EMAIL";
+        String GROUP_KEY_WORK_EMAIL = "com.aknayak.offchat.notificationBroadcast";
 
         int icon = R.drawable.ic_launcher_empty;
         //use constant ID for notification used as group summary
@@ -190,7 +193,7 @@ public class respData {
             msg = message;
         }
 
-        int SUMMARY_ID = 0;
+        int SUMMARY_ID = 9878;
 
         PendingIntent contentIntent =
                 PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
@@ -228,12 +231,31 @@ public class respData {
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
 
-
+        Intent i = new Intent(context, notificationDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("userName", title);
+        i.putExtra("userMessage", msg);
+        if (appLaunched == false) {
+            context.startActivity(i);
+        } else {
+//            context.startActivity(i);
+        }
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(notificationId, newMessageNotification);
         notificationManager.notify(SUMMARY_ID, summaryNotification);
 
 
+    }
+
+    public static boolean isRunning(Context ctx) {
+        ActivityManager activityManager = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningTaskInfo task : tasks) {
+            if (ctx.getPackageName().equalsIgnoreCase(task.baseActivity.getPackageName()))
+                return true;
+        }
+
+        return false;
     }
 
     public static String getRandString(int n) {
@@ -452,5 +474,6 @@ public class respData {
         }
 
     }
+
 
 }

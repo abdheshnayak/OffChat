@@ -17,6 +17,7 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         app:adSize="BANNER"
+        android:visibility="gone"
         app:adUnitId="ca-app-pub-7481473691227014/1810618693"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="parent"

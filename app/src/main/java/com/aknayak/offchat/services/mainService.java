@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,7 +46,8 @@ public class mainService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Log.d("servicea","start");
+//        Toast.makeText(getApplicationContext(),"runnign",Toast.LENGTH_SHORT).show();
+
         final DBHelper mydb = new DBHelper(getApplicationContext());
 
 //        FirebaseApp.initializeApp(this);
@@ -68,15 +70,15 @@ public class mainService extends Service {
 
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 
-                                if( MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource())) )
-                                {
-                                notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                if (MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource()))) {
+//                                    Toast.makeText(getApplicationContext(),MainActivity.temp+message.getMessageSource(),Toast.LENGTH_SHORT).show();
+                                    notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                                 }
 //                              showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
                                 Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                             }
                             if (message != null && (!message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),2);
+                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 2);
 
                             }
                         }
@@ -98,14 +100,14 @@ public class mainService extends Service {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     try {
-                        if (!mydb.getHist().equals(dataSnapshot.getChildrenCount())){
+                        if (!mydb.getHist().equals(dataSnapshot.getChildrenCount())) {
                             ArrayList<String> arList = new ArrayList<>();
-                            for (Message tmpmsg : mydb.getHist()){
+                            for (Message tmpmsg : mydb.getHist()) {
                                 arList.add(tmpmsg.getMessageSource().equals(mUsername) ? tmpmsg.getMessageFor() : tmpmsg.getMessageSource());
                             }
                             String st = snapshot.getKey();
-                            if (!arList.contains(snapshot.getKey())){
-                                final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot( st , mUsername));
+                            if (!arList.contains(snapshot.getKey())) {
+                                final DatabaseReference fdbr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(st, mUsername));
                                 fdbr.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -117,15 +119,15 @@ public class mainService extends Service {
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 
-                                                if( MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource())) )
-                                                {
+                                                if (MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource()))) {
+//                                                    Toast.makeText(getApplicationContext(),MainActivity.temp+message.getMessageSource(),Toast.LENGTH_SHORT).show();
                                                     notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                                                 }
 //                                                showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
                                                 Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                                             }
                                             if (message != null && (message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),3);
+                                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 3);
                                             }
                                         }
                                     }
@@ -168,10 +170,26 @@ public class mainService extends Service {
 //        Toast.makeText(getApplicationContext(),"Destroy",Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        onTaskRemoved(intent);
+
+        return START_STICKY;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
 //        Toast.makeText(getApplicationContext(),"Bind",Toast.LENGTH_SHORT).show();
         return null;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+        startService(restartServiceIntent);
+        super.onTaskRemoved(rootIntent);
     }
 }

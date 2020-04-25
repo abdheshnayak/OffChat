@@ -17,6 +17,10 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".notificationDialog"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Transparent"></activity>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -35,25 +39,30 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.aknayak.offchat.services.mainService"
+            android:name=".services.mainService"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="dataSync|connectedDevice">
             <intent-filter>
                 <action android:name="com.aknayak.offchat.services.mainService" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".autostart">
+        <receiver
+            android:name="com.aknayak.offchat.network.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="NetworkChangeReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.SCREEN_OFF" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.UMS_CONNECTED" />
+                <action android:name="android.intent.action.AIRPLANE_MODE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
     </application>

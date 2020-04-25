@@ -99,7 +99,6 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         }
     }
 
-
     public ArrayList<Message> getHist() throws ParseException {
         ArrayList<Message> array_list = new ArrayList<>();
 

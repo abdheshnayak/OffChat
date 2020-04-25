@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
+import static com.aknayak.offchat.MainActivity.showAds;
 
 /**
  * OffChat
@@ -55,15 +56,12 @@ public class profileCard extends AppCompatActivity {
         DBHelper mydb = new DBHelper(this);
 
         adView = findViewById(R.id.adView);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU", "Initialized");
-            }
-        });
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        if (showAds) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.setVisibility(View.VISIBLE);
+            adView.loadAd(adRequest);
+        }
 
 
         final DatabaseReference userNameRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(receiverUsername).child("username");

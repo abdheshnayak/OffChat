@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.MainActivity.showAds;
 
 /**
  * OffChat
@@ -49,15 +50,12 @@ public class myProfile extends AppCompatActivity {
         myNumber = findViewById(R.id.mynumber);
 
         adView = findViewById(R.id.adView);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU", "Initialized");
-            }
-        });
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        if (showAds) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.setVisibility(View.VISIBLE);
+            adView.loadAd(adRequest);
+        }
 
         myNumber.setText(getIntent().getStringExtra("phone"));
         final DatabaseReference userNameRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName).child("username");

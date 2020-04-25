@@ -57,6 +57,7 @@ import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.getRoot;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.MainActivity.showAds;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
@@ -212,6 +213,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         mydb = new DBHelper(getApplicationContext());
 
 
+        if (showAds) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.setVisibility(View.VISIBLE);
+            adView.loadAd(adRequest);
+        }
+
+
 //        Refrences
         o_status = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(receiverUsername).child("online_status");
         historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName);
@@ -243,34 +251,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-
-        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                typingDetails tpDetail = dataSnapshot.getValue(typingDetails.class);
-                if (tpDetail != null && tpDetail.isTyping() && tpDetail.getTime() != null) {
-                    Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
-                    long diff = 0;
-
-                    diff = currentTime.getTime() - tpDetail.getTime().getTime();
-                    long diffSeconds2 = diff / 1000 % 60;
-                    if (diffSeconds2 < 10) {
-                        onlineStatusTextView.setText("Typing...");
-                    } else {
-                        onlineStatusTextView.setText("online");
-                    }
-                } else {
-                    onlineStatusTextView.setText("online");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
         v2 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -283,7 +263,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
                     diff = currentTime.getTime() - date.getTime();
                     long diffSeconds = diff / 1000 % 60;
-                    onlineStatusTextView.setVisibility(View.VISIBLE);
                     if (diffSeconds < 20) {
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -296,12 +275,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                     diff = currentTime.getTime() - tpDetail.getTime().getTime();
                                     long diffSeconds2 = diff / 1000 % 60;
                                     if (diffSeconds2 < 10) {
+                                        onlineStatusTextView.setVisibility(View.VISIBLE);
                                         onlineStatusTextView.setText("Typing...");
                                     } else {
+                                        onlineStatusTextView.setVisibility(View.VISIBLE);
                                         onlineStatusTextView.setText("online");
                                     }
                                 } else {
-                                    onlineStatusTextView.setText("online");
+//                                    onlineStatusTextView.setText("online");
                                 }
                             }
 
@@ -331,6 +312,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         }
                         String str2 = str.replace("AM", "am").replace("PM", "pm");
                         str2 = "last seen " + str2;
+                        onlineStatusTextView.setVisibility(View.VISIBLE);
                         onlineStatusTextView.setText(str2);
                     }
                 } else {
@@ -356,7 +338,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
                             Log.d("UUUU", "kl");
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(),4);
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), 4);
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -420,7 +402,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(),5);
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), 5);
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -583,25 +565,25 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 int keypadHeight = screenHeight - r.bottom;
                 if (keypadHeight > screenHeight * 0.15) {
                     if (tdtls.isTyping() != true) {
-                        tdtls = new typingDetails(true,Calendar.getInstance(Locale.ENGLISH).getTime());
+                        tdtls = new typingDetails(true, Calendar.getInstance(Locale.ENGLISH).getTime());
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
                     } else {
                         long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
                         long diffSeconds = diff / 1000 % 60;
                         if (diffSeconds > 5) {
-                            tdtls = new typingDetails(true,Calendar.getInstance(Locale.ENGLISH).getTime());
+                            tdtls = new typingDetails(true, Calendar.getInstance(Locale.ENGLISH).getTime());
                             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
                         }
                     }
                 } else {
-                    if ( tdtls.isTyping() != false) {
-                        tdtls = new typingDetails(false,Calendar.getInstance(Locale.ENGLISH).getTime());
+                    if (tdtls.isTyping() != false) {
+                        tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
                     } else {
                         long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
                         long diffSeconds = diff / 1000 % 60;
                         if (diffSeconds > 5) {
-                            tdtls = new typingDetails(false,Calendar.getInstance(Locale.ENGLISH).getTime());
+                            tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
                             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
                         }
                     }
@@ -626,17 +608,35 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }
 
 
+//        adView = findViewById(R.id.adView);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+
+
+        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU", "Initialized");
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                typingDetails tpDetail = dataSnapshot.getValue(typingDetails.class);
+                if (tpDetail != null && tpDetail.isTyping() && tpDetail.getTime() != null) {
+                    Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
+                    long diff = 0;
+
+                    diff = currentTime.getTime() - tpDetail.getTime().getTime();
+                    long diffSeconds2 = diff / 1000 % 60;
+                    if (diffSeconds2 < 10) {
+                        onlineStatusTextView.setText("Typing...");
+                    } else {
+                        onlineStatusTextView.setText("online");
+                    }
+                } else {
+//                    onlineStatusTextView.setText("online");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
-
-//        adView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
 
 
     }
@@ -670,7 +670,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.deleteButton:
                 respData.selection = false;
-                playSound(messageViewActivity.this,sound_sent);
+                playSound(messageViewActivity.this, sound_sent);
                 for (final String st : respData.delItem) {
                     FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(st).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -717,7 +717,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 messageKey = getRandString(15);
                 final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
                 mMessageBox.getText().clear();
-                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(),6);
+                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), 6);
 
 
                 messages.clear();
@@ -727,16 +727,16 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
                 adapter.notifyDataSetChanged();
-                rvMessages.smoothScrollToPosition(messages.size()-1);
-                playSound(messageViewActivity.this,sound_waiting);
+                rvMessages.smoothScrollToPosition(messages.size() - 1);
+                playSound(messageViewActivity.this, sound_waiting);
 
 
                 FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
                         .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(),7);
-                        playSound(messageViewActivity.this,sound_sent);
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), 7);
+                        playSound(messageViewActivity.this, sound_sent);
                         messages.clear();
                         try {
                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -796,12 +796,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             findViewById(R.id.selectAllBoxContainer).setVisibility(View.GONE);
             findViewById(R.id.userSpace).setVisibility(View.VISIBLE);
         } else {
-            MainActivity.temp=null;
+            MainActivity.temp = null;
             super.onBackPressed();
         }
     }
-
-
 
 
     public void dellButton() {
@@ -841,7 +839,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -852,14 +849,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onPause() {
         super.onPause();
-        MainActivity.temp=null;
+        MainActivity.temp = null;
         cdt.cancel();
     }
 
     @Override
     protected void onResume() {
         messageRef.addValueEventListener(v3);
-        MainActivity.temp =mUsername;
+        MainActivity.temp = receiverUsername;
         super.onResume();
     }
 }

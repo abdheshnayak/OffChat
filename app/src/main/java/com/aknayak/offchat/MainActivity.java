@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ANONYMOUS = "anonymous";
 
 
-
     public static final String ROOT_CHILD = "UserData";
     public static final String INSTANCE_ID = "instance";
     private FirebaseAuth mFirebaseAuth;
@@ -95,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String normalupdateVersion = "1";
     public static final String forceUpdateVersion = "1";
     public static String updateLink;
+    public static boolean showAds;
     CountDownTimer cdt;
 
     public static String authUser;
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+        appLaunched = true;
         messages.clear();
         ArrayList<Message> arrayList = null;
         try {
@@ -128,24 +129,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
-
-        mydb = new DBHelper(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        MainActivity.receiverUsername=null;
 
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(9878);
 
-        adView = findViewById(R.id.adView);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-                Log.d("UUUU", "Initialized");
-            }
-        });
+        mydb = new DBHelper(getApplicationContext());
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        MainActivity.receiverUsername = null;
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -193,20 +187,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "My Notification", importance);
-//            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-
-
-
         senderUserName = mFirebaseUser.getPhoneNumber();
 
         authUser = mFirebaseUser.getPhoneNumber();
@@ -216,6 +196,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvUser = findViewById(R.id.recyclerView);
 
         adapter = new userAdapter(messages, this);
+
+        adView = findViewById(R.id.adView);
+        MobileAds.initialize(MainActivity.this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d("UUUU", "Initialized");
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference().child("admin").child("adview").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Boolean b = dataSnapshot.getValue(Boolean.class);
+                if (b != null && b) {
+                    showAds = true;
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    adView.setVisibility(View.VISIBLE);
+                    adView.loadAd(adRequest);
+                } else {
+                    showAds = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         // Attach the adapter to the recyclerview to populate items
         rvUser.setAdapter(adapter);
@@ -256,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 appVersion appVer = dataSnapshot.getValue(appVersion.class);
                 if (appVer != null) {
-                    checkUpdate(appVer.getForceupdateVersion(), appVer.getNormalUpdateVersion(), 0,MainActivity.this);
+                    checkUpdate(appVer.getForceupdateVersion(), appVer.getNormalUpdateVersion(), 0, MainActivity.this);
                 }
             }
 
@@ -273,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String string = dataSnapshot.getValue(String.class);
                     if (string != null) {
                         rvUser.setVisibility(View.GONE);
-                        boolean check = verifyUser(string, 0,MainActivity.this);
+                        boolean check = verifyUser(string, 0, MainActivity.this);
                         if (check) {
                             rvUser.setVisibility(View.VISIBLE);
                         }
@@ -362,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),1);
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 1);
                         }
                     }
                     messages.addAll(mydb.getHist());
@@ -394,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ValueEventListener v1 = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("kkkk","ll");
+                Log.d("kkkk", "ll");
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     connDetail check = snapshot.getValue(connDetail.class);
                     if (check != null && check.getConnected()) {
@@ -532,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(getApplicationContext(), AllConcacts.class));
                 break;
             case R.id.settings:
-                respData.playSound(MainActivity.this,sound_incoming_message);
+                respData.playSound(MainActivity.this, sound_incoming_message);
                 Toast.makeText(getApplicationContext(), "You don't have access now.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.profileButton:
@@ -562,18 +570,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     @Override
     protected void onPause() {
         super.onPause();
+        appLaunched = false;
         cdt.cancel();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        appLaunched = true;
         cdt.start();
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        appLaunched = false;
+    }
 }
