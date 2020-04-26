@@ -1,5 +1,6 @@
 package com.aknayak.offchat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -396,6 +397,13 @@ public class phone_verification extends AppCompatActivity implements
                         mVerificationField);
 
                 mDetailText.setText(R.string.status_verification_succeeded);
+
+                findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
+                findViewById(R.id.secondLayout).setVisibility(View.INVISIBLE);
+                ProgressDialog dialog = ProgressDialog.show(phone_verification.this, "",
+                        "Verification Success...\nLoading. Please wait...", true);
+                dialog.setCancelable(false);
+
 
                 // Set the verification text based on the credential
                 if (cred != null) {

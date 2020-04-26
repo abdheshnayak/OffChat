@@ -350,7 +350,7 @@ public class respData {
             alertDialogBuilder.setMessage("We Found another instance started with your phone number. If it is not you then please verify again.");
             alertDialogBuilder.show();
 
-            Toast.makeText(activity, "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(activity, "Someone may Using Your Acount in Another Phone.", Toast.LENGTH_LONG).show();
         } else {
             return true;
         }
