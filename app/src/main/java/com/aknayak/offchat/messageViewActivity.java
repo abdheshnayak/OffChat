@@ -25,7 +25,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
@@ -33,12 +32,8 @@ import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.typingDetails;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -65,7 +60,6 @@ import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.TYPING_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.isOnline;
-import static com.aknayak.offchat.globaldata.respData.mUsername;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.sound_sent;
 import static com.aknayak.offchat.globaldata.respData.sound_waiting;
@@ -270,7 +264,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                             str = sf.format(date);
                         }
                         userStatus = "last seen " + str;
-                        Toast.makeText(getApplicationContext(),"workign",Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     userStatus="Not on OffChat";
