@@ -25,7 +25,7 @@ public class aboutPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
         version = findViewById(R.id.version);
-        copyRight =findViewById(R.id.copyRight);
+        copyRight =findViewById(R.id.licence);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY");
         copyRight.setText("COPYRIGHT "+simpleDateFormat.format(Calendar.getInstance().getTime())+" OffChat Inc.");
         version.setText("Version "+MainActivity.forceUpdateVersion+"."+MainActivity.normalupdateVersion);

@@ -337,6 +337,7 @@ public class respData {
                 }
             });
 
+//            alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
@@ -386,18 +387,14 @@ public class respData {
                 }
             });
 
-            alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            alertDialogBuilder.setNegativeButton("Close app", new DialogInterface.OnClickListener() {
                 @Override
-                public void onCancel(DialogInterface dialog) {
-                    if (count >= 1) {
-                        Toast.makeText(activity, "Exit from OffChat.", Toast.LENGTH_LONG).show();
-                        activity.finish();
-                        return;
-                    }
-                    Toast.makeText(activity, "You will be exit.", Toast.LENGTH_SHORT).show();
-                    checkUpdate(varforceUpdate, varnormalUpdate, count + 1, activity);
+                public void onClick(DialogInterface dialog, int which) {
+                    activity.finish();
                 }
             });
+
+            alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setTitle("Compulsory Update");
             alertDialogBuilder.setMessage("This Version of OffChat App is no longer Supported so please update it.");
             alertDialogBuilder.show();
