@@ -98,13 +98,9 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         });
 
         if (mobileArray.size() <= 1) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (requestPermission(this)){
                 mReloadButton.performClick();
-            } else {
-                requestPermission(this);
             }
-
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);

@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             requestPermission(this);
         }
 
+
         // Initialize Firebase Auth
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
@@ -484,17 +485,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public static void requestPermission(Activity activity) {
+    public static boolean requestPermission(Activity activity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
             // show UI part if you want here to show some rationale !!!
+            return true;
         } else {
             ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
                     REQUEST_READ_CONTACTS);
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
+            return true;
         } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_READ_CONTACTS);
+            return false;
+//            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
+//                    REQUEST_READ_CONTACTS);
         }
     }
 

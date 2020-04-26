@@ -3,6 +3,7 @@ package com.aknayak.offchat.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -27,7 +28,6 @@ public class loadContact extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
 //        stopSelf();
     }
 
@@ -35,8 +35,12 @@ public class loadContact extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         mobileArray.addAll(getAllContacts(getContentResolver()));
 
-        for (int i = 0; i < mobileArray.size(); i++) {
-            mydb.insertContact(mobileArray.get(i).getUserName(), mobileArray.get(i).getPhoneNumber());
+        try {
+            for (int i = 0; i < mobileArray.size(); i++) {
+                mydb.insertContact(mobileArray.get(i).getUserName(), mobileArray.get(i).getPhoneNumber());
+            }
+        }catch (Exception e){
+            Log.d("contLoad",e.getMessage());
         }
         return super.onStartCommand(intent, flags, startId);
     }
