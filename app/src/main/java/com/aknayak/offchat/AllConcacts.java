@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.services.loadContact;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
@@ -53,7 +54,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     ConstraintLayout mLogoLayout;
     ImageButton mSearchButton;
     DBHelper mydb;
-    Thread t;
     Thread t2;
 
 
@@ -214,43 +214,16 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 break;
             case R.id.reloadfloatButton:
-                t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mobileArray != null) {
-                            mobileArray.clear();
-                        }
-                        mobileArray.addAll(getAllContacts(getContentResolver()));
-                        mydb.deleteAllContact();
-                        for (int i = 0; i < mobileArray.size(); i++) {
-                            mydb.insertContact(mobileArray.get(i).getUserName(), mobileArray.get(i).getPhoneNumber());
-                        }
-                    }
-                });
 
-                t2 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            t.join();
-                            usersLoadProgressBar.setVisibility(View.INVISIBLE);
-                            Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            AllConcacts.super.finish();
-                            startActivity(i);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                t.start();
-                t2.start();
+                startService(new Intent(AllConcacts.this, loadContact.class));
 
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
-                mSearchButton.setEnabled(false);
-                mReloadButton.startAnimation(animation);
-                mReloadButton.setEnabled(false);
-                rvUser.setVisibility(View.INVISIBLE);
-                usersLoadProgressBar.setVisibility(View.VISIBLE);
+
+//                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+//                mSearchButton.setEnabled(false);
+//                mReloadButton.startAnimation(animation);
+//                mReloadButton.setEnabled(false);
+//                rvUser.setVisibility(View.INVISIBLE);
+//                usersLoadProgressBar.setVisibility(View.VISIBLE);
                 break;
         }
     }

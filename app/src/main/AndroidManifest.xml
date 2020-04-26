@@ -54,6 +54,13 @@
                 <action android:name="com.aknayak.offchat.services.mainService" />
             </intent-filter>
         </service>
+        <service
+            android:name=".services.loadContact"
+            >
+            <intent-filter>
+                <action android:name="com.aknayak.offchat.services.loadContact" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".network.NetworkChangeReceiver"

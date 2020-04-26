@@ -29,6 +29,7 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.AESHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
+import com.aknayak.offchat.services.loadContact;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.userAdapter;
 import com.aknayak.offchat.versionInfo.appVersion;
@@ -469,6 +470,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
+        if (mydb.getAllCotacts().size() <= 1){
+            startService(new Intent(MainActivity.this, loadContact.class));
+        }
 
 //        rvUser.scrollToPosition(users.size());
     }

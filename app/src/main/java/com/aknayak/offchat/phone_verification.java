@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.services.loadContact;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -398,11 +399,15 @@ public class phone_verification extends AppCompatActivity implements
 
                 mDetailText.setText(R.string.status_verification_succeeded);
 
-                findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
-                findViewById(R.id.secondLayout).setVisibility(View.INVISIBLE);
-                ProgressDialog dialog = ProgressDialog.show(phone_verification.this, "",
-                        "Verification Success...\nLoading. Please wait...", true);
-                dialog.setCancelable(false);
+                try {
+                    findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.secondLayout).setVisibility(View.INVISIBLE);
+                    ProgressDialog dialog = ProgressDialog.show(phone_verification.this, "",
+                            "Verification Success...\nLoading. Please wait...", true);
+                    dialog.setCancelable(false);
+                }catch (Exception e){
+                    Log.d("verification: ",e.getMessage());
+                }
 
 
                 // Set the verification text based on the credential
@@ -447,6 +452,7 @@ public class phone_verification extends AppCompatActivity implements
                 }
             }
 
+            startService(new Intent(phone_verification.this, loadContact.class));
             final String inst = getRandString(10);
             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(globPhone).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
