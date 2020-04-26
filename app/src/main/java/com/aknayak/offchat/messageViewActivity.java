@@ -253,14 +253,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
                         String str;
                         if (dayCheck == 0) {
-                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
                             str = sf.format(date);
                         } else if (dayCheck == 1) {
-                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
                             str = sf.format(date);
                             str = "Yesterday " + str;
                         } else {
-                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
+                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa",Locale.ENGLISH);
                             str = sf.format(date);
                         }
                         userStatus = "last seen " + str;
@@ -407,7 +407,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         tdtls = new typingDetails(true, Calendar.getInstance(Locale.ENGLISH).getTime());
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
                     } else {
-                        long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
+                        long diff = Calendar.getInstance(Locale.ENGLISH).getTime().getTime() - tdtls.getTime().getTime();
                         long diffSeconds = diff / 1000 % 60;
                         if (diffSeconds > 5) {
                             tdtls = new typingDetails(true, Calendar.getInstance(Locale.ENGLISH).getTime());
@@ -419,7 +419,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
                     } else {
-                        long diff = Calendar.getInstance().getTime().getTime() - tdtls.getTime().getTime();
+                        long diff = Calendar.getInstance(Locale.ENGLISH).getTime().getTime() - tdtls.getTime().getTime();
                         long diffSeconds = diff / 1000 % 60;
                         if (diffSeconds > 5) {
                             tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());

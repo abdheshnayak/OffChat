@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.aknayak.offchat.MainActivity.ANONYMOUS;
@@ -62,7 +63,7 @@ public class respData {
     public static ArrayList<String> delItem = new ArrayList<>();
     public static final String CHANNEL_ID = "MyNotification";
     public static String mUsername;
-    public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance().getTime());
+    public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
 
     public static Boolean appLaunched;
     public static String MESSAGES_CHILD = "messages";

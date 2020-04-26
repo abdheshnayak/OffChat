@@ -441,7 +441,7 @@ public class phone_verification extends AppCompatActivity implements
 
             if (senderUserName != null) {
                 if (!senderUserName.equals(globPhone)) {
-                    Toast.makeText(phone_verification.this.getApplicationContext(), "hklsdf", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(phone_verification.this.getApplicationContext(), "hklsdf", Toast.LENGTH_LONG).show();
                     mydb.deleteAllMessages();
                     mydb.deleteuserInfo();
                 }

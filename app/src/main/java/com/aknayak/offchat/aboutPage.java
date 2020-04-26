@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * OffChat
@@ -27,7 +28,7 @@ public class aboutPage extends AppCompatActivity {
         version = findViewById(R.id.version);
         copyRight =findViewById(R.id.licence);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY");
-        copyRight.setText("COPYRIGHT "+simpleDateFormat.format(Calendar.getInstance().getTime())+" OffChat Inc.");
+        copyRight.setText("COPYRIGHT "+simpleDateFormat.format(Calendar.getInstance(Locale.ENGLISH).getTime())+" OffChat Inc.");
         version.setText("Version "+MainActivity.forceUpdateVersion+"."+MainActivity.normalupdateVersion);
     }
 }

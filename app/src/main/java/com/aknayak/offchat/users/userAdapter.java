@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -102,7 +103,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         }
 
         textView = viewHolder.lastMessageTimeTextView;
-        DateFormat df = new SimpleDateFormat("hh:mm aa");
+        DateFormat df = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
         String strDate = df.format(message.getMessageSentTime());
         textView.setText(strDate);
         final TextView unseenTextView = viewHolder.unseencount;

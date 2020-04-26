@@ -93,14 +93,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
             String str;
             if (dayCheck == 0) {
-                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
                 str = sf.format(date);
             } else if (dayCheck == 1) {
-                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa");
+                SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
                 str = sf.format(date);
                 str = "Yesterday " + str;
             } else {
-                SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
+                SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa",Locale.ENGLISH);
                 str = sf.format(date);
             }
 
