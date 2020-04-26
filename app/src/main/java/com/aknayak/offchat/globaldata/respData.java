@@ -235,7 +235,13 @@ public class respData {
         i.putExtra("userName", title);
         i.putExtra("userMessage", msg);
         if (appLaunched == false) {
-            context.startActivity(i);
+            if (notificationDialog.mNotificationApp == null)
+            {
+                context.startActivity(i);
+            }else{
+                notificationDialog.mNotificationApp.refreshData(title,msg);
+                Toast.makeText(context.getApplicationContext(),"update",Toast.LENGTH_SHORT).show();
+            }
         } else {
 //            context.startActivity(i);
         }

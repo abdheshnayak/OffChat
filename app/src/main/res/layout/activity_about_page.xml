@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorButtonPressed"
+    android:background="@color/colorPrimary"
     tools:context=".aboutPage">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OffChat"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/grey_100"
             android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -28,11 +28,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Version 1.0"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/grey_300"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,15 +46,15 @@
             android:padding="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
-            app:srcCompat="@drawable/ic_launcher_round" />
+            app:layout_constraintTop_toBottomOf="@id/version"
+            app:srcCompat="@drawable/ic_launcher_empty" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/licence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="COPYRIGHT 2020 OffChat Inc."
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/grey_300"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView2" />
@@ -65,12 +65,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/user_item_design"
             android:text="LICENSES"
-            android:textColor="#673AB7"
+            android:textColor="@color/colorButtonPressed"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView13" />
+            app:layout_constraintTop_toBottomOf="@+id/licence" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

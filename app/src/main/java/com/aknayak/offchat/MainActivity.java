@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        startActivity(new Intent(getApplicationContext(),splashScreen.class));
+
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
         setContentView(R.layout.activity_main);
