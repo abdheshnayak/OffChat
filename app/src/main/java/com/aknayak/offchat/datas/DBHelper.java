@@ -57,7 +57,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         // TODO Auto-generated method stub
         db.execSQL(
                 "create table contacts " +
-                        "(name text,phone text primary key)"
+                        "(name text,phone text primary key, active boolean)"
         );
         db.execSQL(
                 "create table messages " +
@@ -137,7 +137,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
         contentValues.put("phone", phone);
-
+        contentValues.put("active", false);
         Cursor res = db.rawQuery("select * from contacts where phone = '" + phone + "';", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
@@ -145,6 +145,24 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
 //                Log.d("Inserted",name);
         } else {
 //            Log.d("Already Inserted",name);
+        }
+        return true;
+    }
+
+    public boolean insertContact(String name, String phone, Boolean present) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("phone", phone);
+        contentValues.put("active", present);
+
+        Cursor res = db.rawQuery("select * from contacts where phone = '" + phone + "';", null);
+        res.moveToFirst();
+        if (res.getCount() == 0) {
+            db.insert("contacts", null, contentValues);
+//                Log.d("Inserted",name);
+        } else {
+            db.update("contacts", contentValues, "phone = ? ", new String[]{phone});
         }
         return true;
     }
@@ -158,7 +176,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), ""));
+            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), "",1==res.getInt(res.getColumnIndex("active"))));
             res.moveToNext();
         }
         return array_list;
@@ -173,7 +191,11 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         Cursor res = db.rawQuery("select * from contacts where phone = '" + searchData + "'", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
-            return searchData;
+            if (this.getUserInfo(searchData)!= null){
+                return this.getUserInfo(searchData);
+            }else {
+                return searchData;
+            }
         } else {
             return res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME));
         }
@@ -189,11 +211,11 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from contacts order by name desc", null);
+        Cursor res = db.rawQuery("select * from (select * from contacts order by name desc) order by active asc", null);
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), ""));
+            array_list.add(new contactsUser(res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)), res.getString(res.getColumnIndex(CONTACTS_COLUMN_PHONE)), "",res.getInt(res.getColumnIndex("active"))==1));
 //            Log.d("Retrived :",res.getString(res.getColumnIndex(CONTACTS_COLUMN_NAME)));
             res.moveToNext();
         }

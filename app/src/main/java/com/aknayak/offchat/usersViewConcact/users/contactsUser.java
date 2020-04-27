@@ -14,8 +14,18 @@ public class contactsUser implements Serializable {
     private String userName;
     private String phoneNumber;
     private String dp_photoAddress;
+    private Boolean present;
 
-    public contactsUser(String userName, String phoneNumber, String dp_photoAddress) {
+    public Boolean getPresent() {
+        return present;
+    }
+
+    public void setPresent(Boolean present) {
+        this.present = present;
+    }
+
+    public contactsUser(String userName, String phoneNumber, String dp_photoAddress, Boolean present) {
+        this.present = present;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.dp_photoAddress = dp_photoAddress;

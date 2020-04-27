@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -74,6 +75,10 @@ public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapte
 
         TextView textView1 = viewHolder.phoneNumberTextView;
         textView1.setText(contactsUser.getPhoneNumber());
+        if (contactsUser.getPresent()){
+            ImageView imgv = viewHolder.ispresent;
+            imgv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -85,9 +90,11 @@ public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapte
         TextView usernameTextView;
         TextView phoneNumberTextView;
         CircleImageView messengerImageView;
+        ImageView ispresent;
 
         public userViewHolder(View v) {
             super(v);
+            ispresent = itemView.findViewById(R.id.active);
             usernameTextView = itemView.findViewById(R.id.contactsUserName);
             phoneNumberTextView = itemView.findViewById(R.id.cvuiPhoneNumber);
             messengerImageView = itemView.findViewById(R.id.dp_user);

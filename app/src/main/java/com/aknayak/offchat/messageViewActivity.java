@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
@@ -196,7 +197,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 } else {
                     lastSeenTime = dataSnapshot.getValue(Date.class);
                     diff = currentTime.getTime() - lastSeenTime.getTime();
-                    long diffSeconds = diff / 1000 % 60;
+                    long diffSeconds = diff / 1000;
                     if (diffSeconds > 15) {
                         historyRef.child("online_status").setValue(Calendar.getInstance(Locale.ENGLISH).getTime());
                     }
@@ -219,8 +220,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
                     long diff = 0;
                     diff = currentTime.getTime() - date.getTime();
-                    long diffSeconds = diff / 1000 % 60;
+                    long diffSeconds = diff / 1000;
                     if (diffSeconds < 20) {
+//                        Toast.makeText(getApplicationContext(),""+diffSeconds,Toast.LENGTH_SHORT).show();
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -230,7 +232,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                     long diff = 0;
 
                                     diff = currentTime.getTime() - tpDetail.getTime().getTime();
-                                    long diffSeconds2 = diff / 1000 % 60;
+                                    long diffSeconds2 = diff / 1000;
                                     if (diffSeconds2 < 10) {
                                         onlineStatusTextView.setText("Typing...");
                                     } else {
@@ -408,7 +410,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
                     } else {
                         long diff = Calendar.getInstance(Locale.ENGLISH).getTime().getTime() - tdtls.getTime().getTime();
-                        long diffSeconds = diff / 1000 % 60;
+                        long diffSeconds = diff / 1000;
                         if (diffSeconds > 5) {
                             tdtls = new typingDetails(true, Calendar.getInstance(Locale.ENGLISH).getTime());
                             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(true, tdtls.getTime()).toMap());
@@ -420,7 +422,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());
                     } else {
                         long diff = Calendar.getInstance(Locale.ENGLISH).getTime().getTime() - tdtls.getTime().getTime();
-                        long diffSeconds = diff / 1000 % 60;
+                        long diffSeconds = diff / 1000;
                         if (diffSeconds > 5) {
                             tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
                             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(receiverUsername).child(senderUserName).updateChildren(new typingDetails(false, tdtls.getTime()).toMap());

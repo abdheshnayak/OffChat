@@ -115,7 +115,7 @@ public class respData {
 
                         phoneNo = filterNumber(phoneNo);
 
-                        contactsUser uj = new contactsUser(name, phoneNo, "");
+                        contactsUser uj = new contactsUser(name, phoneNo, "",true);
 
                         if (phoneNo.length() > 10 && isValidMobile(phoneNo)) {
                             if (!UserList.contains(uj)) {
