@@ -394,10 +394,6 @@ public class phone_verification extends AppCompatActivity implements
                 break;
             case STATE_VERIFY_SUCCESS:
                 // Verification has succeeded, proceed to firebase sign in
-                disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
-                        mVerificationField);
-
-                mDetailText.setText(R.string.status_verification_succeeded);
 
                 try {
                     findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
@@ -408,6 +404,12 @@ public class phone_verification extends AppCompatActivity implements
                 }catch (Exception e){
                     Log.d("verification: ",e.getMessage());
                 }
+
+                disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
+                        mVerificationField);
+
+                mDetailText.setText(R.string.status_verification_succeeded);
+
 
 
                 // Set the verification text based on the credential

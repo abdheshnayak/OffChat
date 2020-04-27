@@ -129,16 +129,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         startActivity(new Intent(getApplicationContext(),splashScreen.class));
 
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-
-        setContentView(R.layout.activity_main);
-
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.cancel(9878);
 
         mydb = new DBHelper(getApplicationContext());
 
@@ -475,6 +469,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startService(new Intent(MainActivity.this, loadContact.class));
         }
 
+
+
 //        rvUser.scrollToPosition(users.size());
     }
 
@@ -590,9 +586,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(9878);
         appLaunched = true;
         cdt.start();
     }
+
 
     @Override
     protected void onStop() {
