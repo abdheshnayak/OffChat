@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.services.loadContact;
@@ -211,13 +212,12 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.reloadfloatButton:
 
-                startService(new Intent(AllConcacts.this, loadContact.class));
-
-
 //                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
 //                mSearchButton.setEnabled(false);
-//                mReloadButton.startAnimation(animation);
 //                mReloadButton.setEnabled(false);
+//                mReloadButton.startAnimation(animation);
+                startService(new Intent(AllConcacts.this, loadContact.class));
+
 //                rvUser.setVisibility(View.INVISIBLE);
 //                usersLoadProgressBar.setVisibility(View.VISIBLE);
                 break;

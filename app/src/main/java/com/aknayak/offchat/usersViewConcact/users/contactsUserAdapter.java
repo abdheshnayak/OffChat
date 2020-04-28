@@ -75,9 +75,11 @@ public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapte
 
         TextView textView1 = viewHolder.phoneNumberTextView;
         textView1.setText(contactsUser.getPhoneNumber());
+        ImageView imgv = viewHolder.ispresent;
         if (contactsUser.getPresent()){
-            ImageView imgv = viewHolder.ispresent;
             imgv.setVisibility(View.VISIBLE);
+        }else {
+            imgv.setVisibility(View.GONE);
         }
     }
 

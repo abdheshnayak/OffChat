@@ -47,4 +47,5 @@
     <string name="mobile">Mobile</string>
     <string name="this_is_message_lenth_of_30">This is Message Lenth of 30...</string>
     <string name="time">Time</string>
+    <string name="loading">loading ...</string>
 </resources>
