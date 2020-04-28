@@ -7,10 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.aknayak.offchat.globaldata.AESHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -19,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.temp;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.sound_incoming_message;
@@ -182,7 +189,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         return array_list;
     }
 
-    public String getUserName(String searchData) {
+    public String getUserName(final String searchData) {
 
         SQLiteDatabase db = this.getReadableDatabase();
         if (searchData.equals("+1")) {
@@ -191,7 +198,20 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         Cursor res = db.rawQuery("select * from contacts where phone = '" + searchData + "'", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
-            if (this.getUserInfo(searchData)!= null){
+            if (this.getUserInfo(searchData)!= null && !this.getUserInfo(searchData).equals("[  ]")){
+                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(searchData).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue(String.class) != null) {
+                            insertuserInfo(searchData,"[ "+ dataSnapshot.getValue(String.class) + " ]");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 return this.getUserInfo(searchData);
             }else {
                 return searchData;

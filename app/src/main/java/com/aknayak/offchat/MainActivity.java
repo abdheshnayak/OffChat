@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue(String.class) != null) {
-                            mydb.insertuserInfo(name, dataSnapshot.getValue(String.class));
+                            mydb.insertuserInfo(name,"[ "+ dataSnapshot.getValue(String.class) + " ]");
                         }
                     }
 

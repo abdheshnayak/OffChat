@@ -72,6 +72,7 @@
 
         <EditText
 
+            android:maxLength="20"
             android:id="@+id/userNameEdit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

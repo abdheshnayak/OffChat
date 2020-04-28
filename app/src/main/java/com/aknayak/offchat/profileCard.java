@@ -71,7 +71,7 @@ public class profileCard extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String UserName = dataSnapshot.getValue(String.class);
-                if (UserName != null) {
+                if (UserName != null && !UserName.equals("")) {
                     user_Name.setText(UserName);
                 } else {
                     user_Name.setText("No available");
