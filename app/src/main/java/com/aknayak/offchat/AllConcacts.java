@@ -1,5 +1,6 @@
 package com.aknayak.offchat;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -14,6 +15,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,12 +26,20 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.services.loadCont;
 import com.aknayak.offchat.services.loadContact;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.requestPermission;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 
@@ -56,6 +66,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     ImageButton mSearchButton;
     DBHelper mydb;
     Thread t2;
+    Thread t1;
 
 
     @Override
@@ -95,18 +106,17 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
             public void afterTextChanged(Editable s) {
                 updateListData(searchBox.getText().toString().trim());
             }
-
         });
 
         if (mobileArray.size() <= 1) {
             if (requestPermission(this)){
+                Toast.makeText(getApplicationContext(),"hello",Toast.LENGTH_SHORT).show();
                 mReloadButton.performClick();
             }
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
         }
-
 
     }
 
@@ -212,14 +222,73 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.reloadfloatButton:
 
-//                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
-//                mSearchButton.setEnabled(false);
-//                mReloadButton.setEnabled(false);
-//                mReloadButton.startAnimation(animation);
-                startService(new Intent(AllConcacts.this, loadContact.class));
 
-//                rvUser.setVisibility(View.INVISIBLE);
-//                usersLoadProgressBar.setVisibility(View.VISIBLE);
+                t1 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        final ArrayList<contactsUser> mobileArray = new ArrayList<>();
+
+                        DatabaseReference dbfr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status");
+
+                        mobileArray.addAll(getAllContacts(getContentResolver()));
+                        final DBHelper mydb = new DBHelper(getApplicationContext());
+
+                        //        mydb.deleteAllContact();
+                        try {
+                            for (int i = 0; i < mobileArray.size(); i++) {
+                                final String name = mobileArray.get(i).getUserName();
+                                final String phone = mobileArray.get(i).getPhoneNumber();
+                                dbfr.child(phone).child("online_status").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.getValue(Date.class) != null) {
+                                            Log.d("abdhesh", "true " + phone);
+                                            mydb.insertContact(name, phone, true);
+                                        } else {
+                                            Log.d("abdhesh", "false" + phone);
+                                            mydb.insertContact(name, phone, false);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            Log.d("contLoad", e.getMessage());
+                        }
+
+                    }
+                });
+
+                t2 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            t1.join();
+//                            adapter.notifyDataSetChanged();
+                            usersLoadProgressBar.setVisibility(View.INVISIBLE);
+                            Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                            AllConcacts.super.finish();
+                            startActivity(i);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                t1.start();
+                t2.start();
+
+                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+                mSearchButton.setEnabled(false);
+                mReloadButton.startAnimation(animation);
+                mReloadButton.setEnabled(false);
+                rvUser.setVisibility(View.INVISIBLE);
+                usersLoadProgressBar.setVisibility(View.VISIBLE);
+
                 break;
         }
     }

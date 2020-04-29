@@ -454,9 +454,6 @@ public class phone_verification extends AppCompatActivity implements
                 }
             }
 
-            if (MainActivity.requestPermission(this)){
-                startService(new Intent(phone_verification.this, loadContact.class));
-            }
             final String inst = getRandString(10);
             FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(globPhone).child("InstanceVar").setValue(inst).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

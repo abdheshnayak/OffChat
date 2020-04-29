@@ -133,8 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startActivity(new Intent(getApplicationContext(), splashScreen.class));
-
+//        startActivity(new Intent(getApplicationContext(), splashScreen.class));
 
         mydb = new DBHelper(getApplicationContext());
 
@@ -166,11 +165,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         aboutButton.setOnClickListener(this);
 
 
-//        Check Acess for read Contacts
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermission(this);
-        }
 
 
         // Initialize Firebase Auth
@@ -480,9 +474,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             };
 
-            if (mydb.getAllCotacts().size() <= 1) {
-                startService(new Intent(MainActivity.this, loadContact.class));
-            }
+//            if (mydb.getAllCotacts().size() <= 1) {
+//                startService(new Intent(MainActivity.this, loadContact.class));
+//            }
 
 
 //        rvUser.scrollToPosition(users.size());
@@ -506,9 +500,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
             return true;
         } else {
-            return false;
-//            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-//                    REQUEST_READ_CONTACTS);
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
+                    REQUEST_READ_CONTACTS);
+            return true;
         }
     }
 

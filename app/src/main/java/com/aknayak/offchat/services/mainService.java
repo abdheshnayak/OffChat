@@ -76,7 +76,7 @@ public class mainService extends Service {
                                             Message message = snapshot.getValue(Message.class);
                                             if (message.getMessageStatus() == 1 && !message.getMessageSource().equals(mUsername)) {
                                                 message.setMessageStatus(2);
-                                                fdbr.child(getRoot(st, mUsername)).child(snapshot.getKey()).child("messageStatus").setValue(2);
+                                                fdbr.child(getRoot(message.getMessageSource(),message.getMessageFor())).child(snapshot.getKey()).child("messageStatus").setValue(2);
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 

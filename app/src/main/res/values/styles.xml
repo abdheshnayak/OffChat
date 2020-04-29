@@ -2,10 +2,6 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowEnterAnimation">@anim/fadein</item>
-        <item name="android:windowExitAnimation">@anim/fadeout</item>
-        <item name="android:windowDisablePreview">true</item>
-        <item name="android:windowIsTranslucent">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
