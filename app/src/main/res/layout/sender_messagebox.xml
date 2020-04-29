@@ -26,6 +26,58 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0">
 
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/replyLayout"
+                android:layout_width="0sp"
+                app:layout_constraintWidth_min="200sp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginStart="5sp"
+                android:background="@drawable/reply_sender_box"
+                android:visibility="gone"
+                android:maxWidth="320sp"
+                android:padding="5sp"
+                android:shadowColor="#000000"
+                android:text="@string/textview"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/replyUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5sp"
+                    android:text="@string/user_name"
+                    android:textIsSelectable="false"
+                    android:textColor="@color/colorPrimaryDark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/replyTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:maxWidth="270sp"
+                    android:minWidth="100sp"
+                    android:padding="5sp"
+                    android:text="@string/textview"
+                    android:textColor="#222222"
+                    android:textIsSelectable="false"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/replyUserName" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
@@ -39,7 +91,7 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/replyLayout"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout5"
@@ -52,6 +104,7 @@
                     android:id="@+id/sentStatus_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
                     android:background="@drawable/singletick"
                     android:textColor="#A9ADB0"
                     android:textSize="10sp"
@@ -65,6 +118,7 @@
                     android:id="@+id/sentStatusDouble_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
                     android:background="@drawable/doubletick"
                     android:textColor="#A9ADB0"
                     android:textSize="9sp"
@@ -78,6 +132,7 @@
                     android:id="@+id/waitingForSent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
                     android:background="@drawable/ic_access_time_black_24dp"
                     android:textColor="#A9ADB0"
                     android:textSize="10sp"
@@ -91,6 +146,7 @@
                     android:id="@+id/sentStatusDoubleBlue_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="1sp"
                     android:background="@drawable/doubletickblue"
                     android:textColor="#A9ADB0"
                     android:textSize="9sp"

@@ -22,6 +22,7 @@ import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.aknayak.offchat.MainActivity;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.MainActivity.ANONYMOUS;
 import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
 import static com.aknayak.offchat.MainActivity.authUser;
@@ -88,6 +90,23 @@ public class respData {
             return temp;
         }
     }
+
+    public static boolean requestPermission(Activity activity) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
+            // show UI part if you want here to show some rationale !!!
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
+                    REQUEST_READ_CONTACTS);
+        }
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
+            return false;
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
+                    REQUEST_READ_CONTACTS);
+            return true;
+        }
+    }
+
 
     public static String getRoot(String first, String second) {
 //        Log.d("kk", "" + Double.valueOf(first));

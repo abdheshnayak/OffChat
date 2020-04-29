@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aknayak.offchat.MainActivity;
@@ -74,7 +75,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final MessageAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final MessageAdapter.ViewHolder viewHolder, final int position) {
         final Message message = mMessage.get(position);
 
         // Set item views based on your views and data model
@@ -114,9 +115,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         final TextView seenStatusDouble = viewHolder.sentStatusSingleDouble;
         final TextView seenStatusDoubleBlue = viewHolder.sentStatusSingleDoubleBlue;
 
+        ConstraintLayout replyLayout = viewHolder.replyLayout;
+        TextView replyUserName = viewHolder.replyUsername;
+        TextView replyTextMessage = viewHolder.replyMessage;
         final DBHelper mydb = new DBHelper(parentActivity);
 
         final View messageView = viewHolder.itemView;
+
+        replyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (mydb.getMessage(message.getReplyId())!=null) {
+                        parentActivity.scrollTo(message.getReplyId());
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         messageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +150,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 parentActivity.refreshSelectCount();
             }
         });
+
         messageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -147,6 +165,28 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 return true;
             }
         });
+
+        if (message.getReplyId()!= null){
+            try {
+                final Message msg = mydb.getMessage(message.getReplyId());
+                if (msg!=null)
+                {
+                    replyLayout.setVisibility(View.VISIBLE);
+
+                    replyUserName.setVisibility(View.VISIBLE);
+                    replyUserName.setText(msg.getMessageSource().equals(senderUserName)?"You":msg.getMessageSource());
+                    replyTextMessage.setText(decrypt(msg.getMessage()));
+                }else {
+                    replyLayout.setVisibility(View.VISIBLE);
+                    replyUserName.setVisibility(View.GONE);
+                    replyTextMessage.setText("message has been deleted.");
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else {
+            replyLayout.setVisibility(View.GONE);
+        }
 
 //        Log.d("UUU","selected");
         if (!respData.selection) {
@@ -205,10 +245,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public TextView Message;
         public TextView messageSentTime;
 
+        ConstraintLayout replyLayout;
         TextView watitingForSent;
         TextView sentStatusSingle;
         TextView sentStatusSingleDouble;
         TextView sentStatusSingleDoubleBlue;
+        TextView replyUsername;
+        TextView replyMessage;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -217,6 +260,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             // to access the context from any ViewHolder instance.
             super(itemView);
 
+            replyLayout = itemView.findViewById(R.id.replyLayout);
+            replyUsername = itemView.findViewById(R.id.replyUserName);
+            replyMessage = itemView.findViewById(R.id.replyTextview);
             Message = itemView.findViewById(R.id.textView);
             messageSentTime = itemView.findViewById(R.id.sentTime);
 

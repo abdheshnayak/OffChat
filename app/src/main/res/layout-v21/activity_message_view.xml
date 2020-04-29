@@ -16,8 +16,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        app:adSize="BANNER"
         android:visibility="gone"
+        app:adSize="BANNER"
         app:adUnitId="ca-app-pub-7481473691227014/1810618693"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,18 +48,17 @@
                 android:layout_height="wrap_content"
 
                 android:layout_margin="8sp"
+                android:background="@drawable/receiver_messagebox_design"
                 android:paddingLeft="10sp"
                 android:paddingTop="5sp"
                 android:paddingRight="10sp"
+
                 android:paddingBottom="5sp"
 
                 android:visibility="gone"
-
-                android:background="@drawable/receiver_messagebox_design"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                >
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/selectedCount"
@@ -73,13 +72,14 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
                 <CheckBox
                     android:id="@+id/selectAllBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/select_all"
-
                     android:layout_marginStart="10sp"
+
+                    android:text="@string/select_all"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -89,6 +89,7 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/userSpace"
                 android:layout_width="wrap_content"
@@ -192,6 +193,64 @@
         app:layout_constraintStart_toStartOf="parent">
 
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/replyLayout"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginEnd="30sp"
+            android:background="@drawable/reply_sender_box"
+            android:elevation="5dp"
+            android:padding="5sp"
+            android:visibility="gone"
+            android:shadowColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/typeMessageContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/replyUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5sp"
+                android:text="@string/user_name"
+                android:textColor="@color/colorPrimaryDark"
+                android:textIsSelectable="false"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/replyTextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:maxWidth="270sp"
+                android:minWidth="100sp"
+                android:padding="5sp"
+                android:text="@string/textview"
+                android:textColor="#222222"
+                android:textIsSelectable="false"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/replyUserName" />
+
+            <ImageButton
+                android:id="@+id/imageButtonreplyClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circle_design"
+                android:src="@drawable/ic_close_white_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
@@ -205,7 +264,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/typeMessageContainer"
             app:maxImageSize="30sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -219,7 +278,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/replyLayout">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout4"

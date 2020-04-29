@@ -88,7 +88,7 @@ public class mainService extends Service {
                                                 Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                                             }
                                             if (message != null && (message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 3);
+                                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
                                             }
                                         }
                                     }
@@ -133,8 +133,7 @@ public class mainService extends Service {
                         Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
                     }
                     if (message != null && (!message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 2);
-
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), message.getReplyId());
                     }
                 }
             }

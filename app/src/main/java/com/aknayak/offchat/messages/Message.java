@@ -13,6 +13,7 @@ import java.util.Map;
  **/
 
 public class Message implements Serializable {
+    private String replyId;
     private String Message;
     private String messageSource;
     private Date messageSentTime;
@@ -36,6 +37,17 @@ public class Message implements Serializable {
         this.messageStatus = messageStatus;
         this.messageID = messageID;
         this.messageFor = messageFor;
+        this.replyId = null;
+    }
+
+    public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor,String ReplyId) {
+        this.messageSentTime = messageSentTime;
+        this.Message = message;
+        this.messageSource = messageSource;
+        this.messageStatus = messageStatus;
+        this.messageID = messageID;
+        this.messageFor = messageFor;
+        this.replyId = ReplyId;
     }
 
     public String getMessageID() {
@@ -82,6 +94,14 @@ public class Message implements Serializable {
         this.messageSentTime = messageSentTime;
     }
 
+    public String getReplyId() {
+        return replyId;
+    }
+
+    public void setReplyId(String replyId) {
+        this.replyId = replyId;
+    }
+
     public Map<String, Object> toMap() {
         Map<String, Object> userUpdates = new HashMap<>();
         userUpdates.put("message", Message);
@@ -90,6 +110,7 @@ public class Message implements Serializable {
         userUpdates.put("messageStatus", messageStatus);
         userUpdates.put("messageId", messageID);
         userUpdates.put("messageFor", messageFor);
+        userUpdates.put("replyId",replyId);
         return userUpdates;
     }
 }

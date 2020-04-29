@@ -68,7 +68,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         );
         db.execSQL(
                 "create table messages " +
-                        "(message text,messageId text primary key,messagesource text ,messagesenttime date, messageStatus number,messageRoot text,messageFor)"
+                        "(message text,messageId text primary key,messagesource text ,messagesenttime date, messageStatus number,messageRoot text,messageFor, replyId text)"
         );
         db.execSQL(
                 "create table userInfo " +
@@ -279,8 +279,8 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
     }
 
 
-    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot, String messageFor,int tag) {
-        Log.d("Message Insert"," "+messageSource+" "+messageStatus+"  "+ AESHelper.decrypt(Message)+" " +tag);
+    public boolean insertMessage(String Message, String messageSource, Date messageSentTime, int messageStatus, String messageId, String messageRoot, String messageFor,String replyId) {
+        Log.d("Message Insert"," "+messageSource+" "+messageStatus+"  "+ AESHelper.decrypt(Message)+" ");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("message", Message);
@@ -291,6 +291,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         contentValues.put("messageStatus", messageStatus);
         contentValues.put("messageRoot", messageRoot);
         contentValues.put("messageFor", messageFor);
+        contentValues.put("replyId", replyId);
         Cursor res = db.rawQuery("select * from messages where messageId = '" + messageId + "';", null);
         res.moveToFirst();
         if (res.getCount() == 0) {
@@ -318,7 +319,7 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
-            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor"))));
+            array_list.add(new Message(res.getString(res.getColumnIndex("message")), res.getString(res.getColumnIndex("messagesource")), simpleDateFormat.parse(res.getString(res.getColumnIndex("messagesenttime"))), res.getInt(res.getColumnIndex("messageStatus")), res.getString(res.getColumnIndex("messageId")), res.getString(res.getColumnIndex("messageFor")), res.getString(res.getColumnIndex("replyId"))));
             res.moveToNext();
         }
         return array_list;

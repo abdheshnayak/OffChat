@@ -49,8 +49,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
-import static com.aknayak.offchat.MainActivity.requestPermission;
 import static com.aknayak.offchat.globaldata.respData.*;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.verifyUser;
@@ -69,9 +67,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ANONYMOUS = "anonymous";
 
 
-//    public static final String ROOT_CHILD = "UserData";
-    public static final String ROOT_CHILD = "Debug";
+    public static final String ROOT_CHILD = "UserData";
+//    public static final String ROOT_CHILD = "Debug";
     public static final String INSTANCE_ID = "instance";
+    public static final String normalupdateVersion = "1";
+    public static final String forceUpdateVersion = "2";
+
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mPhotoUrl;
@@ -88,9 +89,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     userAdapter adapter;
     TextView settings;
     TextView checkAcess;
-
-    public static final String normalupdateVersion = "1";
-    public static final String forceUpdateVersion = "1";
     public static String updateLink;
     public static boolean showAds;
     CountDownTimer cdt;
@@ -177,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (mydb.getAllCotacts().size() <= 1) {
             if (requestPermission(this)) {
-                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
                 mImgButton.performClick();
             }
         }
@@ -379,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Message message = snapshot.getValue(Message.class);
                             if (message != null)if (!message.getMessageSource().equals(senderUserName) || message.getMessageStatus() != 1){
-                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 1);
+                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
                             }
                         }
                         messages.addAll(mydb.getHist());
@@ -490,22 +488,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public static boolean requestPermission(Activity activity) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
-            // show UI part if you want here to show some rationale !!!
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_READ_CONTACTS);
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_READ_CONTACTS);
-            return true;
-        }
-    }
 
     @Override
     public void onClick(View v) {

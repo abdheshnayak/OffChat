@@ -3,6 +3,7 @@ package com.aknayak.offchat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,8 @@ import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.aknayak.offchat.messages.MessageAdapter;
+import com.aknayak.offchat.swipetoreply.ISwipeControllerActions;
+import com.aknayak.offchat.swipetoreply.SwipeController;
 import com.aknayak.offchat.users.connDetail;
 import com.aknayak.offchat.users.typingDetails;
 import com.google.android.gms.ads.AdRequest;
@@ -54,6 +57,7 @@ import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
 import static com.aknayak.offchat.MainActivity.senderUserName;
 import static com.aknayak.offchat.MainActivity.showAds;
+import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
@@ -76,6 +80,10 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private  TextView replyUserName;
+    private  TextView replyTextMessage;
+    private  Message replyMessage;
+    ImageButton imageButtoncloseReply;
     EditText mMessageBox;
     ImageButton mMessageSendButton;
     ImageButton mMessageBoxCloseButton;
@@ -125,6 +133,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_view);
 
+        replyMessage = new Message();
         adView = findViewById(R.id.adView);
 
         respData.delItem = new ArrayList<>();
@@ -133,6 +142,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
+        imageButtoncloseReply = findViewById(R.id.imageButtonreplyClose);
         selectAllcheckBox = findViewById(R.id.selectAllBox);
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
         mDeleteButton = findViewById(R.id.deleteButton);
@@ -147,10 +157,21 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         constraintLayout = findViewById(R.id.rootLayout);
         userName = findViewById(R.id.msgUserName);
         scrollButton = findViewById(R.id.scrollbutton);
+        replyUserName = findViewById(R.id.replyUserName);
+        replyTextMessage = findViewById(R.id.replyTextview);
 
         onlineStatusTextView = findViewById(R.id.onlineStatusTextView_in_MessageView);
 
+
+
+
+
+
+
+
+
 //        Add All the components into OnClickListner
+        imageButtoncloseReply.setOnClickListener(this);
         findViewById(R.id.splashImage).setOnClickListener(this);
         scrollButton.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
@@ -176,6 +197,19 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             adView.setVisibility(View.VISIBLE);
             adView.loadAd(adRequest);
         }
+
+        SwipeController swipeController = new SwipeController(getApplicationContext(), new ISwipeControllerActions() {
+            @Override
+            public void onSwipePerformed(int position) {
+                findViewById(R.id.replyLayout).animate().translationX(0);
+                findViewById(R.id.replyLayout).setVisibility(View.VISIBLE);
+                replyMessage = messages.get(position);
+                replyUserName.setText(replyMessage.getMessageSource().equals(senderUserName)?"You":replyMessage.getMessageSource());
+                replyTextMessage.setText(decrypt(replyMessage.getMessage()));
+            }
+        });
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
+        itemTouchHelper.attachToRecyclerView(rvMessages);
 
 
 //        Refrences
@@ -291,7 +325,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
                             Log.d("UUUU", "kl");
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), 4);
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(),message.getReplyId());
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -515,7 +549,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), 5);
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(),msgvar.getReplyId());
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -617,6 +651,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.imageButtonreplyClose:
+                findViewById(R.id.replyLayout).animate().translationX(-20000);
+                findViewById(R.id.replyLayout).setVisibility(View.GONE);
+                replyMessage= new Message();
+                break;
             case R.id.menuButton:
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
                 menuButtonStatus = false;
@@ -686,10 +725,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating Message
                 final String messageKey;
                 messageKey = getRandString(15);
-                final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername);
+                final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername, replyMessage.getMessageID());
                 mMessageBox.getText().clear();
-                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), 6);
-
+                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
 
                 messages.clear();
                 try {
@@ -697,6 +735,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                findViewById(R.id.replyLayout).setVisibility(View.GONE);
+                replyMessage = new Message();
                 adapter.notifyDataSetChanged();
                 rvMessages.smoothScrollToPosition(messages.size() - 1);
                 playSound(messageViewActivity.this, sound_waiting);
@@ -706,7 +746,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), 7);
+                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
                         playSound(messageViewActivity.this, sound_sent);
                         messages.clear();
                         try {
@@ -830,5 +870,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         messageRef.addValueEventListener(v3);
         MainActivity.temp = receiverUsername;
         super.onResume();
+    }
+
+    public void scrollTo(String msgId) throws ParseException {
+        ArrayList<String> st = mydb.getAllMessagesID(rootPath);
+        int i = st.indexOf(msgId);
+//        Toast.makeText(getApplicationContext(),""+i,Toast.LENGTH_SHORT).show();
+        if (messages.size()>i){
+            rvMessages.smoothScrollToPosition(i);
+        }
     }
 }
