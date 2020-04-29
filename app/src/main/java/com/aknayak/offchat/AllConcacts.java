@@ -26,8 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
-import com.aknayak.offchat.services.loadCont;
-import com.aknayak.offchat.services.loadContact;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 import com.google.firebase.database.DataSnapshot;
