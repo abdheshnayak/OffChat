@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.services.loadCont;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -456,6 +457,7 @@ public class phone_verification extends AppCompatActivity implements
                 @Override
                 public void onSuccess(Void aVoid) {
                     mydb.insertuserInfo("instance", inst);
+                    loadCont.loadCont(getApplicationContext());
                     Intent i = new Intent(phone_verification.this, MainActivity.class);
                     startActivity(i);
                     finish();

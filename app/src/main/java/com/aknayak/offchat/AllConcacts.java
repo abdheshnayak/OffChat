@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.services.loadCont;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -224,41 +225,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 t1 = new Thread(new Runnable() {
                     @Override
                     public void run() {
-
-                        final ArrayList<contactsUser> mobileArray = new ArrayList<>();
-
-                        DatabaseReference dbfr = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status");
-
-                        mobileArray.addAll(getAllContacts(getContentResolver()));
-                        final DBHelper mydb = new DBHelper(getApplicationContext());
-
-                        //        mydb.deleteAllContact();
-                        try {
-                            for (int i = 0; i < mobileArray.size(); i++) {
-                                final String name = mobileArray.get(i).getUserName();
-                                final String phone = mobileArray.get(i).getPhoneNumber();
-                                dbfr.child(phone).child("online_status").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue(Date.class) != null) {
-                                            Log.d("abdhesh", "true " + phone);
-                                            mydb.insertContact(name, phone, true);
-                                        } else {
-                                            Log.d("abdhesh", "false" + phone);
-                                            mydb.insertContact(name, phone, false);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            Log.d("contLoad", e.getMessage());
-                        }
-
+                        loadCont.loadCont(getApplicationContext());
                     }
                 });
 
