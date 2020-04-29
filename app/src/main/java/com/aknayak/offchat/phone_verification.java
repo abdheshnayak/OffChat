@@ -457,7 +457,6 @@ public class phone_verification extends AppCompatActivity implements
                 @Override
                 public void onSuccess(Void aVoid) {
                     mydb.insertuserInfo("instance", inst);
-                    loadCont.loadCont(getApplicationContext());
                     Intent i = new Intent(phone_verification.this, MainActivity.class);
                     startActivity(i);
                     finish();

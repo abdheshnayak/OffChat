@@ -109,7 +109,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
 
         if (mobileArray.size() <= 1) {
             if (requestPermission(this)){
-                Toast.makeText(getApplicationContext(),"hello",Toast.LENGTH_SHORT).show();
                 mReloadButton.performClick();
             }
         } else {
@@ -253,7 +252,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 mReloadButton.setEnabled(false);
                 rvUser.setVisibility(View.INVISIBLE);
                 usersLoadProgressBar.setVisibility(View.VISIBLE);
-
                 break;
         }
     }

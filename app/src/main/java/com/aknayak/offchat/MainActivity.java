@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.MainActivity.requestPermission;
 import static com.aknayak.offchat.globaldata.respData.*;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.verifyUser;
@@ -174,8 +175,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
+        if (mydb.getAllCotacts().size() <= 1) {
+            if (requestPermission(this)) {
+                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
+                mImgButton.performClick();
+            }
+        }
 
-        senderUserName = mFirebaseUser.getPhoneNumber();
+            senderUserName = mFirebaseUser.getPhoneNumber();
 
         authUser = mFirebaseUser.getPhoneNumber();
 
