@@ -20,8 +20,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         Log.d("abdhesh", "hello");
 
-        String status = NetworkUtil.getConnectivityStatusString(context);
-
-//        Toast.makeText(context,"" status, Toast.LENGTH_LONG).show();
+//        String status = NetworkUtil.getConnectivityStatusString(context);
+        Intent i = new Intent(com.aknayak.offchat.services.mainService.class.getName());
+        i.setPackage(context.getPackageName());
+        context.startService(i);
+//        Toast.makeText(context,""+status, Toast.LENGTH_LONG).show();
     }
 }

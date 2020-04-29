@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <corners android:radius="50sp"/>
+            <solid android:color="@color/colorPrimary"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_empty" android:top="20sp" android:left="20sp" android:right="20sp" android:bottom="20sp">
+
+    </item>
+</layer-list>

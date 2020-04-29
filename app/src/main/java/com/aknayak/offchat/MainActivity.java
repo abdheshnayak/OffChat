@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -73,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String ANONYMOUS = "anonymous";
 
 
-    public static final String ROOT_CHILD = "UserData";
+//    public static final String ROOT_CHILD = "UserData";
+    public static final String ROOT_CHILD = "Debug";
     public static final String INSTANCE_ID = "instance";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -381,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         messages.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Message message = snapshot.getValue(Message.class);
-                            if ((message != null && !message.getMessageSource().equals(senderUserName)) || message.getMessageStatus() != 1) {
+                            if (message != null)if (!message.getMessageSource().equals(senderUserName) || message.getMessageStatus() != 1){
                                 mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), 1);
                             }
                         }
@@ -437,7 +439,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        FirebaseApp.initializeApp(this);
 
             Intent i = new Intent(com.aknayak.offchat.services.mainService.class.getName());
-
             i.setPackage(this.getPackageName());
             startService(i);
 
@@ -579,14 +580,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static String getRoot(String first, String second) {
-//        Log.d("kk", "" + Double.valueOf(first));
-        if (Double.valueOf(first) > Double.valueOf(second)) {
-            return first + second;
-        } else {
-            return second + first;
-        }
-    }
 
 
     @Override
@@ -603,6 +596,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         notificationManager.cancel(9878);
         appLaunched = true;
         cdt.start();
+
     }
 
 
@@ -611,4 +605,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
         appLaunched = false;
     }
+
 }

@@ -89,6 +89,15 @@ public class respData {
         }
     }
 
+    public static String getRoot(String first, String second) {
+//        Log.d("kk", "" + Double.valueOf(first));
+        if (Double.valueOf(first) > Double.valueOf(second)) {
+            return first + second;
+        } else {
+            return second + first;
+        }
+    }
+
 
     public static ArrayList getAllContacts(ContentResolver cr) {
         ArrayList<contactsUser> UserList = new ArrayList<>();

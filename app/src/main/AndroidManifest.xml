@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.REQUEST_COMPANION_RUN_IN_BACKGROUND" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +16,9 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".splashScreen"></activity>
+        <activity android:name=".splashScreen" />
         <activity
             android:name=".notificationDialog"
-            android:launchMode="singleInstance"
             android:theme="@style/Theme.Transparent" />
 
         <meta-data
@@ -47,16 +45,12 @@
 
         <service
             android:name=".services.mainService"
-            android:enabled="true"
-            android:exported="false"
             android:foregroundServiceType="dataSync|connectedDevice">
             <intent-filter>
                 <action android:name="com.aknayak.offchat.services.mainService" />
             </intent-filter>
         </service>
-        <service
-            android:name=".services.loadContact"
-            >
+        <service android:name=".services.loadContact">
             <intent-filter>
                 <action android:name="com.aknayak.offchat.services.loadContact" />
             </intent-filter>
@@ -64,13 +58,11 @@
 
         <receiver
             android:name=".network.NetworkChangeReceiver"
-            android:enabled="true"
-            android:exported="true"
             android:label="NetworkChangeReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.AIRPLANE_MODE" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_TICK" />
             </intent-filter>
         </receiver>
     </application>
