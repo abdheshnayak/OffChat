@@ -1,4 +1,4 @@
 /build
-./google-services.json
-./proguard-rules.pro
-./build.gradle
+google-services.json
+proguard-rules.pro
+build.gradle
