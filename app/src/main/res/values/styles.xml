@@ -13,6 +13,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="splashScreen" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splsscreen</item>
+    </style>
     <!-- Dark Buttons -->
     <style name="ThemeOverlay.MyDarkButton" parent="AppTheme">
         <item name="colorButtonNormal">@color/primary_button</item>
