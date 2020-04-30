@@ -12,6 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-./app/google-services.json
-./app/proguard-rules.pro
-./app/build.gradle
+/app
