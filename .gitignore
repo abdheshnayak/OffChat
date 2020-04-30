@@ -12,4 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-/app
+/app/google-services.json
