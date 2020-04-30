@@ -32,6 +32,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 
 }
 
@@ -55,6 +60,14 @@ dependencies {
     implementation 'com.hbb20:ccp:1.7.1'
 
     implementation 'com.google.android.material:material:1.2.0-alpha06'
+    implementation 'com.google.firebase:firebase-messaging:20.1.6'
+
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'androidx.room:room-runtime:2.2.5'
+    annotationProcessor 'androidx.room:room-compiler:2.2.5'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

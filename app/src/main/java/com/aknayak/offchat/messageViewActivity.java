@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -40,11 +41,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +56,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.receiverUsername;
@@ -80,6 +87,7 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
 
+    boolean notify = false;
     private  TextView replyUserName;
     private  TextView replyTextMessage;
     private  Message replyMessage;
@@ -757,6 +765,9 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         adapter.notifyDataSetChanged();
                     }
                 });
+
+
+
 
 
 //                Updating The Data base

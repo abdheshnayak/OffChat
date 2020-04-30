@@ -128,6 +128,7 @@ public class mainService extends Service {
                         if (MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource()))) {
 //                                    Toast.makeText(getApplicationContext(),MainActivity.temp+message.getMessageSource(),Toast.LENGTH_SHORT).show();
                             notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+//                            sendNotify(getApplicationContext() ,mydb.getUserName(message.getMessageSource()),"asdf","New Message",decrypt(message.getMessage()));
                         }
 //                              showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
                         Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());

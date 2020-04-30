@@ -19,6 +19,7 @@
         <activity android:name=".splashScreen" />
         <activity
             android:name=".notificationDialog"
+            android:launchMode="singleInstance"
             android:theme="@style/Theme.Transparent" />
 
         <meta-data
@@ -45,9 +46,12 @@
 
         <service
             android:name=".services.mainService"
+            android:exported="true"
+            android:enabled="true"
             android:foregroundServiceType="dataSync|connectedDevice">
             <intent-filter>
                 <action android:name="com.aknayak.offchat.services.mainService" />
+                <action android:name="com.google.firebase.MESSAGING_SERVICE"/>
             </intent-filter>
         </service>
 
