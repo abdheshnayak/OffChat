@@ -199,10 +199,8 @@
             android:layout_marginStart="10sp"
             android:layout_marginTop="5sp"
             android:layout_marginEnd="30sp"
-            android:background="@drawable/reply_sender_box"
+            android:background="@drawable/reply_receiver_box"
             android:padding="5sp"
-            android:shadowColor="#000000"
-            android:textSize="18sp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/typeMessageContainer"
             app:layout_constraintEnd_toEndOf="parent"
@@ -223,7 +221,7 @@
 
             <TextView
                 android:id="@+id/replyTextview"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:maxWidth="270sp"
@@ -242,8 +240,8 @@
                 android:id="@+id/imageButtonreplyClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/circle_design"
-                android:src="@drawable/ic_close_white_24dp"
+                android:background="@drawable/circle_design_white"
+                android:src="@drawable/ic_close_primary_24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>

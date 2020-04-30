@@ -6,9 +6,9 @@
 
     <item>
         <bitmap
-            android:src="@drawable/ic_launcher_empty"
-            android:width="70sp"
-            android:height="70sp"
+            android:src="@drawable/splashscreenimg"
+            android:width="300sp"
+            android:height="300sp"
             android:gravity="center"/>
     </item>
 
