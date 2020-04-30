@@ -1,5 +1,6 @@
 package com.aknayak.offchat.globaldata;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
@@ -50,6 +53,7 @@ import static com.aknayak.offchat.MainActivity.ANONYMOUS;
 import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
 import static com.aknayak.offchat.MainActivity.authUser;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.MainActivity.temp;
 import static com.aknayak.offchat.MainActivity.updateLink;
 
 
@@ -61,6 +65,9 @@ import static com.aknayak.offchat.MainActivity.updateLink;
  **/
 
 public class respData {
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=0;
+    public static Boolean IS_PERMISSIONS_REQUEST_READ_CONTACTS = false;
+
     public static boolean selection = false;
     public static ArrayList<String> delItem = new ArrayList<>();
     public static final String CHANNEL_ID = "MyNotification";
@@ -91,19 +98,32 @@ public class respData {
         }
     }
 
-    public static boolean requestPermission(Activity activity) {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
-            // show UI part if you want here to show some rationale !!!
+    public static void requestPermission(Activity activity) {
+
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
         } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_READ_CONTACTS);
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, android.Manifest.permission.READ_CONTACTS)) {
-            return false;
-        } else {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_CONTACTS},
-                    REQUEST_READ_CONTACTS);
-            return true;
+            IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
+            // Permission has already been granted
         }
     }
 
@@ -143,7 +163,7 @@ public class respData {
 
                         phoneNo = filterNumber(phoneNo);
 
-                        contactsUser uj = new contactsUser(name, phoneNo, "",true);
+                        contactsUser uj = new contactsUser(name, phoneNo, "", true);
 
                         if (phoneNo.length() > 10 && isValidMobile(phoneNo)) {
                             if (!UserList.contains(uj)) {
@@ -264,12 +284,11 @@ public class respData {
         i.putExtra("userName", title);
         i.putExtra("userMessage", msg);
         if (appLaunched == false) {
-            if (notificationDialog.mNotificationApp == null)
-            {
+            if (notificationDialog.mNotificationApp == null) {
                 context.startActivity(i);
-            }else{
-                notificationDialog.mNotificationApp.refreshData(title,msg);
-                Toast.makeText(context.getApplicationContext(),"update",Toast.LENGTH_SHORT).show();
+            } else {
+                notificationDialog.mNotificationApp.refreshData(title, msg);
+                Toast.makeText(context.getApplicationContext(), "update", Toast.LENGTH_SHORT).show();
             }
         } else {
 //            context.startActivity(i);

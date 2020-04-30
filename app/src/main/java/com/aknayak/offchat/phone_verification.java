@@ -2,6 +2,7 @@ package com.aknayak.offchat;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.services.loadCont;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,7 +42,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
 import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.respData.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
+import static com.aknayak.offchat.globaldata.respData.requestPermission;
 
 /**
  * OffChat
@@ -359,6 +364,33 @@ public class phone_verification extends AppCompatActivity implements
         }
     }
 
+    ProgressDialog dialog;
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
+                } else {
+                    // permission denied, boo! Disable the
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=false;
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
     private void updateUI(int uiState, FirebaseUser user) {
         updateUI(uiState, user, null);
     }
@@ -396,18 +428,19 @@ public class phone_verification extends AppCompatActivity implements
                 try {
                     findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
                     findViewById(R.id.secondLayout).setVisibility(View.INVISIBLE);
-                    ProgressDialog dialog = ProgressDialog.show(phone_verification.this, "",
+                    requestPermission(this);
+                    dialog = ProgressDialog.show(phone_verification.this, "",
                             "Verification Success...\nLoading. Please wait...", true);
                     dialog.setCancelable(false);
-                }catch (Exception e){
-                    Log.d("verification: ",e.getMessage());
+
+                } catch (Exception e) {
+                    Log.d("verification: ", e.getMessage());
                 }
 
                 disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
                         mVerificationField);
 
                 mDetailText.setText(R.string.status_verification_succeeded);
-
 
 
                 // Set the verification text based on the credential
@@ -459,6 +492,7 @@ public class phone_verification extends AppCompatActivity implements
                     mydb.insertuserInfo("instance", inst);
                     Intent i = new Intent(phone_verification.this, MainActivity.class);
                     startActivity(i);
+                    dialog.cancel();
                     finish();
                 }
             });

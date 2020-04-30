@@ -174,7 +174,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (mydb.getAllCotacts().size() <= 1) {
-            if (requestPermission(this)) {
+            requestPermission(this);
+            if (IS_PERMISSIONS_REQUEST_READ_CONTACTS) {
 //                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT).show();
                 mImgButton.performClick();
             }

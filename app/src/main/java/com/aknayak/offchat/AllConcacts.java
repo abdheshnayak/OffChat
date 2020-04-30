@@ -7,7 +7,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -23,13 +27,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
+import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.services.loadCont;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
 import java.util.ArrayList;
+
+import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.respData.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 import static com.aknayak.offchat.globaldata.respData.requestPermission;
 
@@ -99,9 +108,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         });
 
         if (mobileArray.size() <= 1) {
-            if (requestPermission(this)){
-                mReloadButton.performClick();
-            }
+            mReloadButton.performClick();
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
@@ -158,21 +165,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_READ_CONTACTS: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    mobileArray = getAllContacts();
-                } else {
-                    // permission denied,Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -211,39 +203,77 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.reloadfloatButton:
 
-
-                t1 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadCont.loadCont(getApplicationContext());
-                    }
-                });
-
-                t2 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            t1.join();
-//                            adapter.notifyDataSetChanged();
-                            usersLoadProgressBar.setVisibility(View.INVISIBLE);
-                            Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                            AllConcacts.super.finish();
-                            startActivity(i);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                requestPermission(AllConcacts.this);
+                if (IS_PERMISSIONS_REQUEST_READ_CONTACTS){
+                    t1 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadCont.loadCont(getApplicationContext());
                         }
-                    }
-                });
-                t1.start();
-                t2.start();
+                    });
 
-                Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
-                mSearchButton.setEnabled(false);
-                mReloadButton.startAnimation(animation);
-                mReloadButton.setEnabled(false);
-                rvUser.setVisibility(View.INVISIBLE);
-                usersLoadProgressBar.setVisibility(View.VISIBLE);
+                    t2 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                t1.join();
+//                            adapter.notifyDataSetChanged();
+                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
+                                Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                AllConcacts.super.finish();
+                                startActivity(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    t1.start();
+                    t2.start();
+
+                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+                    mSearchButton.setEnabled(false);
+                    mReloadButton.startAnimation(animation);
+                    mReloadButton.setEnabled(false);
+                    rvUser.setVisibility(View.INVISIBLE);
+                    usersLoadProgressBar.setVisibility(View.VISIBLE);
+
+                }else {
+                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(AllConcacts.this);
+                    alertDialogBuilder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    alertDialogBuilder2.setTitle("Contacts Permision");
+                    alertDialogBuilder2.setMessage("we don't have your contacts permissions. please Give Contact Permission to the app.");
+                    alertDialogBuilder2.show();
+                }
+
                 break;
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
+                } else {
+                    // permission denied, boo! Disable the
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=false;
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
 }
