@@ -16,11 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5sp"
 
-            android:elevation="3dp"
+            android:elevation="5sp"
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:background="@drawable/sender_messagebox_design"
             android:maxWidth="320sp"
+            android:minWidth="120sp"
             android:padding="5sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView5"
@@ -33,13 +34,10 @@
                 android:layout_width="0sp"
                 app:layout_constraintWidth_min="200sp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10sp"
-                android:layout_marginTop="5sp"
-                android:layout_marginStart="5sp"
                 android:background="@drawable/reply_sender_box"
                 android:maxWidth="320sp"
-                android:visibility="gone"
                 android:padding="5sp"
+                android:visibility="gone"
                 android:shadowColor="#000000"
                 android:text="@string/textview"
                 android:textSize="18sp"
@@ -61,7 +59,7 @@
 
                 <TextView
                     android:id="@+id/replyTextview"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0sp"
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:maxWidth="270sp"
@@ -79,20 +77,28 @@
 
 
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="270sp"
+            <LinearLayout
+                android:id="@+id/msgHolder"
+                android:layout_width="match_parent"
                 android:minWidth="100sp"
-                android:padding="5sp"
-                android:text="@string/textview"
-                android:textColor="#222222"
-                android:textIsSelectable="true"
-                android:textSize="18sp"
+                android:layout_height="wrap_content"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/replyLayout"/>
+                app:layout_constraintTop_toBottomOf="@id/replyLayout">
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="270sp"
+                    android:minWidth="100sp"
+                    android:padding="5sp"
+                    android:text="@string/textview"
+                    android:textColor="#222222"
+                    android:textIsSelectable="true"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout5"
@@ -169,7 +175,7 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@+id/msgHolder" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -183,7 +189,6 @@
             android:paddingTop="6sp"
             android:paddingRight="5sp"
             android:paddingBottom="10sp"
-            android:textSize="8sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
