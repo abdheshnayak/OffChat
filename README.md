@@ -2,7 +2,7 @@
 
 A simple android chatting app.
 
-App Link - [Download App](https://github.com/abdheshnayak/OffChat/blob/master/app/release/app-release.apk)
+App Link - [Download App](https://github.com/abdheshnayak/OffChat/releases)
 
 #### ScreenShots
 
