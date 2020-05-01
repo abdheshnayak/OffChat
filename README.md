@@ -20,6 +20,10 @@ This app is developed for online-offline chatting. but it is under construction.
 This app does not store your chat so you can use it without any fear.
 Your messages will be deleted instantly after its delivery.
 
+## LICENSE
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+
 ## Authors
 
 * **Abdhesh Nayak** - [Github](https://github.com/abdheshnayak), [LinkedIn](https://www.linkedin.com/in/abdhesh-nayak/)
