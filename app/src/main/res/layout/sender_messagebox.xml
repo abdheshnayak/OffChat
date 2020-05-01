@@ -3,8 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_marginTop="1sp"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="1sp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -32,28 +32,28 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/replyLayout"
                 android:layout_width="0sp"
-                app:layout_constraintWidth_min="200sp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/reply_sender_box"
                 android:maxWidth="320sp"
                 android:padding="5sp"
-                android:visibility="gone"
                 android:shadowColor="#000000"
                 android:text="@string/textview"
                 android:textSize="18sp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_min="200sp">
 
                 <TextView
-                    android:textStyle="bold"
                     android:id="@+id/replyUserName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5sp"
                     android:text="@string/user_name"
-                    android:textIsSelectable="false"
                     android:textColor="@color/colorPrimaryDark"
+                    android:textIsSelectable="false"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,7 +76,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
             <RelativeLayout
                 android:id="@+id/relativeLayout"
                 android:layout_width="wrap_content"
@@ -90,14 +89,14 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="12sp"
                     android:maxWidth="270sp"
                     android:minWidth="125sp"
-                    android:layout_marginBottom="12sp"
                     android:padding="5sp"
                     android:text="@string/textview"
                     android:textColor="#222222"
                     android:textIsSelectable="true"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
             </RelativeLayout>
 
             <Space
@@ -182,8 +181,7 @@
                 android:textColor="#673AB7"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
-                app:layout_constraintTop_toBottomOf="@+id/msgHolder" />
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout5" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

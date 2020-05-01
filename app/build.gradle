@@ -5,10 +5,6 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
-    lintOptions{
-        checkReleaseBuilds false
-    }
-
     defaultConfig {
         applicationId "com.aknayak.offchat"
         minSdkVersion 19
