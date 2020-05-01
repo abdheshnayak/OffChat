@@ -38,6 +38,7 @@
                 android:background="@drawable/reply_sender_box"
                 android:maxWidth="320sp"
                 android:padding="5sp"
+                android:elevation="3sp"
                 android:visibility="gone"
                 android:shadowColor="#000000"
                 android:text="@string/textview"

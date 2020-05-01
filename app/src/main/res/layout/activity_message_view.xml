@@ -192,59 +192,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/replyLayout"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10sp"
-            android:layout_marginTop="5sp"
-            android:layout_marginEnd="30sp"
-            android:background="@drawable/reply_receiver_box"
-            android:padding="5sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/typeMessageContainer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/replyUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5sp"
-                android:text="@string/user_name"
-                android:textColor="@color/colorPrimaryDark"
-                android:textIsSelectable="false"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/replyTextview"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:maxWidth="270sp"
-                android:minWidth="100sp"
-                android:padding="5sp"
-                android:text="@string/textview"
-                android:textColor="#222222"
-                android:textIsSelectable="false"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButtonreplyClose"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/replyUserName" />
-
-            <ImageButton
-                android:id="@+id/imageButtonreplyClose"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle_design_white"
-                android:src="@drawable/ic_close_primary_24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -325,6 +272,60 @@
                     app:maxImageSize="30sp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/replyLayout"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="5sp"
+            android:layout_marginEnd="30sp"
+            android:background="@drawable/reply_receiver_box"
+            android:padding="5sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/typeMessageContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/replyUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5sp"
+                android:text="@string/user_name"
+                android:textColor="@color/colorPrimaryDark"
+                android:textIsSelectable="false"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/replyTextview"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:maxWidth="270sp"
+                android:minWidth="100sp"
+                android:padding="5sp"
+                android:text="@string/textview"
+                android:textColor="#222222"
+                android:textIsSelectable="false"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButtonreplyClose"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/replyUserName" />
+
+            <ImageButton
+                android:id="@+id/imageButtonreplyClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/circle_design_white"
+                android:src="@drawable/ic_close_primary_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

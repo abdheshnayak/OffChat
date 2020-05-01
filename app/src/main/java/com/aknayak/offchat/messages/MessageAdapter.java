@@ -1,6 +1,8 @@
 package com.aknayak.offchat.messages;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -37,6 +39,7 @@ import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
+import static com.aknayak.offchat.globaldata.respData.repItem;
 
 /**
  * OffChat
@@ -127,6 +130,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             public void onClick(View v) {
                 try {
                     if (mydb.getMessage(message.getReplyId())!=null) {
+                        repItem = message.getReplyId();
                         parentActivity.scrollTo(message.getReplyId());
                     }
                 } catch (ParseException e) {
@@ -166,6 +170,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
         });
 
+
         if (message.getReplyId()!= null){
             try {
                 final Message msg = mydb.getMessage(message.getReplyId());
@@ -188,10 +193,35 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             replyLayout.setVisibility(View.GONE);
         }
 
-//        Log.d("UUU","selected");
-        if (!respData.selection) {
+        if (message.getMessageID().equals(repItem)){
+            int colorFrom = Color.rgb( 200, 200, 255);
+            int colorTo = Color.argb(0, 255, 255, 255);
+
+            repItem=null;
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
+            colorAnimation.setDuration(1000); // milliseconds
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    messageView.setBackgroundColor((int) animator.getAnimatedValue());
+                }
+
+            });
+            colorAnimation.start();
+
+            colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(3000); // milliseconds
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    messageView.setBackgroundColor((int) animator.getAnimatedValue());
+                }
+
+            });
+            colorAnimation.start();
+        }else if (!respData.selection) {
             messageView.setBackgroundColor(Color.argb(0, 255, 255, 255));
-        } else {
+        }else {
             if (respData.delItem.contains(message.getMessageID())) {
                 messageView.setBackgroundColor(Color.argb(150, 200, 200, 255));
             } else {

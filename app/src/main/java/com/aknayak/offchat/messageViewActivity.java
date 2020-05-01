@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -41,14 +40,11 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -70,6 +66,7 @@ import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
 import static com.aknayak.offchat.globaldata.respData.isOnline;
 import static com.aknayak.offchat.globaldata.respData.playSound;
+import static com.aknayak.offchat.globaldata.respData.repItem;
 import static com.aknayak.offchat.globaldata.respData.sound_sent;
 import static com.aknayak.offchat.globaldata.respData.sound_waiting;
 import static com.aknayak.offchat.globaldata.respData.tdtls;
@@ -85,9 +82,9 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean notify = false;
-    private  TextView replyUserName;
-    private  TextView replyTextMessage;
-    private  Message replyMessage;
+    private TextView replyUserName;
+    private TextView replyTextMessage;
+    private Message replyMessage;
     ImageButton imageButtoncloseReply;
     EditText mMessageBox;
     ImageButton mMessageSendButton;
@@ -168,13 +165,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         onlineStatusTextView = findViewById(R.id.onlineStatusTextView_in_MessageView);
 
 
-
-
-
-
-
-
-
 //        Add All the components into OnClickListner
         imageButtoncloseReply.setOnClickListener(this);
         findViewById(R.id.splashImage).setOnClickListener(this);
@@ -195,7 +185,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         }
 
 
-
         mydb = new DBHelper(getApplicationContext());
         if (showAds) {
             AdRequest adRequest = new AdRequest.Builder().build();
@@ -209,7 +198,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.replyLayout).animate().translationX(0);
                 findViewById(R.id.replyLayout).setVisibility(View.VISIBLE);
                 replyMessage = messages.get(position);
-                replyUserName.setText(replyMessage.getMessageSource().equals(senderUserName)?"You":replyMessage.getMessageSource());
+                replyUserName.setText(replyMessage.getMessageSource().equals(senderUserName) ? "You" : replyMessage.getMessageSource());
                 replyTextMessage.setText(decrypt(replyMessage.getMessage()));
             }
         });
@@ -220,7 +209,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //        Refrences
         o_status = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(receiverUsername).child("online_status");
         historyRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child("online_status").child(senderUserName);
-
 
 
 //        Value Event Listners
@@ -294,20 +282,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
                         String str;
                         if (dayCheck == 0) {
-                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
                             str = sf.format(date);
                         } else if (dayCheck == 1) {
-                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa",Locale.ENGLISH);
+                            SimpleDateFormat sf = new SimpleDateFormat("hh:mm aa", Locale.ENGLISH);
                             str = sf.format(date);
                             str = "Yesterday " + str;
                         } else {
-                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa",Locale.ENGLISH);
+                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa", Locale.ENGLISH);
                             str = sf.format(date);
                         }
                         userStatus = "last seen " + str;
                     }
                 } else {
-                    userStatus="Not on OffChat";
+                    userStatus = "Not on OffChat";
                 }
                 onlineStatusTextView.setText(userStatus);
             }
@@ -330,7 +318,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
                             Log.d("UUUU", "kl");
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(),message.getReplyId());
+                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), message.getReplyId());
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -358,7 +346,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             }
         };
-
 
 
         networkStateReceiver = new BroadcastReceiver() {
@@ -487,40 +474,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             e.printStackTrace();
         }
 
-
-//        adView = findViewById(R.id.adView);
-
-
-
-//        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(TYPING_CHILD).child(senderUserName).child(receiverUsername).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                typingDetails tpDetail = dataSnapshot.getValue(typingDetails.class);
-//                if (tpDetail != null && tpDetail.isTyping() && tpDetail.getTime() != null) {
-//                    Date currentTime = Calendar.getInstance(Locale.ENGLISH).getTime();
-//                    long diff = 0;
-//
-//                    diff = currentTime.getTime() - tpDetail.getTime().getTime();
-//                    long diffSeconds2 = diff / 1000 % 60;
-//                    if (diffSeconds2 < 10) {
-//                        onlineStatusTextView.setVisibility(View.VISIBLE);
-//                        onlineStatusTextView.setText("Typing...");
-//                    } else {
-//                        onlineStatusTextView.setVisibility(View.VISIBLE);
-//                        onlineStatusTextView.setText(userStatus);
-//                    }
-//                } else {
-//                    onlineStatusTextView.setVisibility(View.VISIBLE);
-//                    onlineStatusTextView.setText(userStatus);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
         //        Online Status Listner
         cdt = new CountDownTimer(5000, 5000) {
             @Override
@@ -554,7 +507,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(),msgvar.getReplyId());
+                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), msgvar.getReplyId());
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -634,7 +587,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         cdt.start();
 
 
-
         selectAllcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -659,7 +611,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             case R.id.imageButtonreplyClose:
                 findViewById(R.id.replyLayout).animate().translationX(-20000);
                 findViewById(R.id.replyLayout).setVisibility(View.GONE);
-                replyMessage= new Message();
+                replyMessage = new Message();
                 break;
             case R.id.menuButton:
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
@@ -764,9 +716,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 });
 
 
-
-
-
 //                Updating The Data base
 
 //                Updating History Of Sender
@@ -849,7 +798,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         flg = false;
                         scrollButton.setVisibility(View.INVISIBLE);
                     }
-                }, 2 * 1000); // wait for 5 seconds
+                }, 3 * 1000); // wait for 5 seconds
             }
         } else {
             scrollButton.setVisibility(View.INVISIBLE);
@@ -883,9 +832,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     public void scrollTo(String msgId) throws ParseException {
         ArrayList<String> st = mydb.getAllMessagesID(rootPath);
         int i = st.indexOf(msgId);
-//        Toast.makeText(getApplicationContext(),""+i,Toast.LENGTH_SHORT).show();
-        if (messages.size()>i){
-            rvMessages.smoothScrollToPosition(i);
-        }
+        rvMessages.smoothScrollToPosition(i);
+        adapter.notifyDataSetChanged();
     }
+
 }

@@ -70,6 +70,7 @@ public class respData {
 
     public static boolean selection = false;
     public static ArrayList<String> delItem = new ArrayList<>();
+    public static String repItem = null;
     public static final String CHANNEL_ID = "MyNotification";
     public static String mUsername;
     public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
