@@ -14,12 +14,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.widget.Toast;
 
@@ -256,6 +259,8 @@ public class respData {
                         .setGroup(GROUP_KEY_WORK_EMAIL)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
+//                        .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                        .setLights(Color.RED, 3000, 3000)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .build();
 
@@ -275,6 +280,7 @@ public class respData {
                         .setGroup(GROUP_KEY_WORK_EMAIL)
                         //set this notification as the summary for the group
                         .setGroupSummary(true)
+//                        .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                         .setContentIntent(contentIntent)
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true)

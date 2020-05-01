@@ -104,7 +104,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 str = sf.format(date);
                 str = "Yesterday " + str;
             } else {
-                SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa",Locale.ENGLISH);
+                SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd  hh:mm aa",Locale.ENGLISH);
                 str = sf.format(date);
             }
 
@@ -210,7 +210,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             colorAnimation.start();
 
             colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.setDuration(3000); // milliseconds
+            colorAnimation.setDuration(2000); // milliseconds
             colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animator) {

@@ -31,9 +31,8 @@
             android:layout_marginTop="5sp"
             android:layout_marginBottom="5sp"
             android:background="@drawable/receiver_messagebox_design"
-            android:elevation="3dp"
             android:maxWidth="320sp"
-            android:minWidth="120sp"
+            android:elevation="3sp"
             android:padding="5sp"
             android:shadowColor="#000000"
             android:text="@string/textview"
@@ -91,21 +90,36 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-            <TextView
-                android:id="@+id/textView"
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="270sp"
-                android:minWidth="100sp"
-                android:padding="5sp"
-                android:text="@string/textview"
-                android:textColor="#222222"
-                android:textIsSelectable="true"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/replyLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/replyLayout">
 
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12sp"
+                    android:maxWidth="290sp"
+                    android:minWidth="125sp"
+                    android:padding="5sp"
+                    android:text="@string/textview"
+                    android:textColor="#222222"
+                    android:textIsSelectable="true"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/relativeLayout"
+                app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/sentTime"
@@ -116,7 +130,7 @@
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

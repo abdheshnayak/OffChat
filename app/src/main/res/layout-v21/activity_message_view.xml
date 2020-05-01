@@ -201,8 +201,8 @@
             android:layout_marginTop="5sp"
             android:layout_marginEnd="30sp"
             android:background="@drawable/reply_receiver_box"
-            android:padding="5sp"
             android:elevation="3sp"
+            android:padding="5sp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/typeMessageContainer"
             app:layout_constraintEnd_toEndOf="parent"
@@ -242,12 +242,25 @@
                 android:id="@+id/imageButtonreplyClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:elevation="3sp"
                 android:background="@drawable/circle_design_white"
+                android:elevation="3sp"
                 android:src="@drawable/ic_close_primary_24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/letterCount"
+            android:text="5/5"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:visibility="invisible"
+            android:layout_marginRight="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/typeMessageContainer" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/sendButton"
@@ -262,7 +275,6 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/typeMessageContainer"
             app:maxImageSize="30sp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -292,6 +304,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <EditText
+                    android:maxLength="120"
                     android:id="@+id/messageBox"
                     android:layout_width="0sp"
                     android:layout_height="wrap_content"
@@ -330,7 +343,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

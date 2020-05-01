@@ -109,7 +109,7 @@ public class profileCard extends AppCompatActivity {
                             str = sf.format(date);
                             str = "yesterday " + str;
                         } else {
-                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa");
+                            SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd  hh:mm aa");
                             str = sf.format(date);
                         }
                         String str2 = str.replace("AM", "am").replace("PM", "pm");

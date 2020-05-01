@@ -77,28 +77,36 @@
 
 
 
-            <LinearLayout
-                android:id="@+id/msgHolder"
-                android:layout_width="match_parent"
-                android:minWidth="100sp"
+            <RelativeLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/replyLayout">
+                app:layout_constraintTop_toBottomOf="@+id/replyLayout">
+
+
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:maxWidth="270sp"
-                    android:minWidth="100sp"
+                    android:minWidth="125sp"
+                    android:layout_marginBottom="12sp"
                     android:padding="5sp"
                     android:text="@string/textview"
                     android:textColor="#222222"
                     android:textIsSelectable="true"
                     android:textSize="16sp"/>
+            </RelativeLayout>
 
-            </LinearLayout>
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/relativeLayout"
+                app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout5"
@@ -176,6 +184,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
                 app:layout_constraintTop_toBottomOf="@+id/msgHolder" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

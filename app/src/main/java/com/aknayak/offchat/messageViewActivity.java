@@ -81,7 +81,7 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
 
-    boolean notify = false;
+    TextView messageLenShow;
     private TextView replyUserName;
     private TextView replyTextMessage;
     private Message replyMessage;
@@ -144,6 +144,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
+        messageLenShow = findViewById(R.id.letterCount);
         imageButtoncloseReply = findViewById(R.id.imageButtonreplyClose);
         selectAllcheckBox = findViewById(R.id.selectAllBox);
         mMessageBoxCloseButton = findViewById(R.id.messageBox_closeButton);
@@ -289,7 +290,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                             str = sf.format(date);
                             str = "Yesterday " + str;
                         } else {
-                            SimpleDateFormat sf = new SimpleDateFormat("EEEE MMM dd  hh:mm aa", Locale.ENGLISH);
+                            SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd  hh:mm aa", Locale.ENGLISH);
                             str = sf.format(date);
                         }
                         userStatus = "last seen " + str;
@@ -402,6 +403,12 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mMessageBox.getLineCount()>1){
+                    messageLenShow.setText("120/"+mMessageBox.getText().length());
+                    messageLenShow.setVisibility(View.VISIBLE);
+                }else {
+                    messageLenShow.setVisibility(View.INVISIBLE);
+                }
                 if (mMessageBox.getText().toString().trim().equals("") && sendButtonStatus) {
                     sendButtonStatus = false;
                     mMessageBox.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);

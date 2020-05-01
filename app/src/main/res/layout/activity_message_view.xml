@@ -192,88 +192,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
 
-
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5sp"
-            android:layout_weight="1"
-            android:background="@drawable/circle_design_primary"
-            android:padding="5sp"
-            android:src="@drawable/ic_arrow_upward_white_24dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/typeMessageContainer"
-            app:maxImageSize="30sp" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/typeMessageContainer"
-            android:layout_width="0sp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5sp"
-            android:layout_marginEnd="4sp"
-            android:background="@drawable/circle_design_primary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/sendButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/replyLayout">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout4"
-                android:layout_width="0sp"
-                android:layout_height="wrap_content"
-                android:layout_margin="4sp"
-                android:layout_weight="1"
-                android:background="@drawable/circle_design_white"
-                android:ems="10"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <EditText
-                    android:id="@+id/messageBox"
-                    android:layout_width="0sp"
-                    android:layout_height="wrap_content"
-                    android:autofillHints=""
-                    android:background="@drawable/circle_design_white"
-                    android:hint="@string/type_a_message"
-                    android:inputType="textMultiLine"
-                    android:maxLines="6"
-                    android:paddingStart="15sp"
-                    android:paddingTop="7sp"
-                    android:paddingEnd="0sp"
-                    android:paddingBottom="7sp"
-                    android:scrollbarThumbVertical="@color/colorButtonPressed"
-                    android:scrollbars="vertical"
-                    android:textAlignment="center"
-                    android:verticalScrollbarPosition="right"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/messageBox_closeButton"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/messageBox_closeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4sp"
-                    android:layout_weight="1"
-
-                    android:background="@drawable/circle_design_white"
-                    android:src="@drawable/ic_close_primary_24dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:maxImageSize="30sp" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/replyLayout"
             android:layout_width="0sp"
@@ -326,6 +244,99 @@
                 android:src="@drawable/ic_close_primary_24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/letterCount"
+            android:text="5/5"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_margin="10sp"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/typeMessageContainer" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:layout_weight="1"
+            android:background="@drawable/circle_design_primary"
+            android:padding="5sp"
+            android:src="@drawable/ic_arrow_upward_white_24dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="30sp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/typeMessageContainer"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5sp"
+            android:layout_marginEnd="4sp"
+            android:background="@drawable/circle_design_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sendButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/replyLayout">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout4"
+                android:layout_width="0sp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4sp"
+                android:layout_weight="1"
+                android:background="@drawable/circle_design_white"
+                android:ems="10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:maxLength="120"
+                    android:id="@+id/messageBox"
+                    android:layout_width="0sp"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:background="@drawable/circle_design_white"
+                    android:hint="@string/type_a_message"
+                    android:inputType="textMultiLine"
+                    android:maxLines="6"
+                    android:paddingStart="15sp"
+                    android:paddingTop="7sp"
+                    android:paddingEnd="0sp"
+                    android:paddingBottom="7sp"
+                    android:scrollbarThumbVertical="@color/colorButtonPressed"
+                    android:scrollbars="vertical"
+                    android:textAlignment="center"
+                    android:verticalScrollbarPosition="right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/messageBox_closeButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/messageBox_closeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4sp"
+                    android:layout_weight="1"
+
+                    android:background="@drawable/circle_design_white"
+                    android:src="@drawable/ic_close_primary_24dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:maxImageSize="30sp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
