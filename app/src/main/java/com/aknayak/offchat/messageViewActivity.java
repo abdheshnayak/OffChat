@@ -645,40 +645,48 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             case R.id.deleteButton:
                 respData.selection = false;
                 playSound(messageViewActivity.this, sound_sent);
-                for (final String st : respData.delItem) {
-                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(st).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            mydb.deleteMessage(st);
-                            messages.clear();
-                            try {
-                                messages.addAll(mydb.getAllMessages(rootPath));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            adapter.notifyDataSetChanged();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (final String st : respData.delItem) {
+                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, receiverUsername)).child(st).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mydb.deleteMessage(st);
+                                    messages.clear();
+                                    try {
+                                        messages.addAll(mydb.getAllMessages(rootPath));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+//                            adapter.notifyDataSetChanged();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    mydb.deleteMessage(st);
+                                    messages.clear();
+                                    try {
+                                        messages.addAll(mydb.getAllMessages(rootPath));
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+//                            adapter.notifyDataSetChanged();
+                                }
+                            });
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            mydb.deleteMessage(st);
-                            messages.clear();
-                            try {
-                                messages.addAll(mydb.getAllMessages(rootPath));
-                            } catch (ParseException ex) {
-                                ex.printStackTrace();
-                            }
-                            adapter.notifyDataSetChanged();
+                        respData.delItem = new ArrayList<>();
+                        messages.clear();
+                        try {
+                            messages.addAll(mydb.getAllMessages(rootPath));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
-                respData.delItem = new ArrayList<>();
-                messages.clear();
-                try {
-                    messages.addAll(mydb.getAllMessages(rootPath));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+
+
+                    }
+                }).start();
+
                 adapter.notifyDataSetChanged();
                 mDeleteButton.setVisibility(View.GONE);
                 mMenuButton.setVisibility(View.VISIBLE);
