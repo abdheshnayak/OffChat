@@ -2,7 +2,6 @@ package com.aknayak.offchat.globaldata;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -47,16 +46,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.aknayak.offchat.AllConcacts.REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.MainActivity.ANONYMOUS;
 import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
 import static com.aknayak.offchat.MainActivity.authUser;
 import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.MainActivity.temp;
 import static com.aknayak.offchat.MainActivity.updateLink;
 
 
