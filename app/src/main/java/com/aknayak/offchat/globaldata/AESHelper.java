@@ -16,7 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESHelper {
 
-    static String seed="XYbTtTQc6qjcYGIj5FxYsbfNLBgh4hoM";
+    private static final String seed="XYbTtTQc6qjcPGIj5FxYsbfNLBgh4hoM";
 
     public static String encrypt(String clearText) {
         Log.d("UUUU",seed);

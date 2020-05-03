@@ -492,7 +492,7 @@ public class phone_verification extends AppCompatActivity implements
                     mydb.insertuserInfo("instance", inst);
                     Intent i = new Intent(phone_verification.this, MainActivity.class);
                     startActivity(i);
-                    dialog.cancel();
+//                    dialog.cancel();
                     finish();
                 }
             });

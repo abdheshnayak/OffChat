@@ -108,7 +108,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         });
 
         if (mobileArray.size() <= 1) {
-            mReloadButton.performClick();
+//            mReloadButton.performClick();
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
@@ -218,7 +218,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                             try {
                                 t1.join();
 //                            adapter.notifyDataSetChanged();
-                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
+//                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
                                 Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                                 AllConcacts.super.finish();
                                 startActivity(i);
