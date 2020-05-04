@@ -49,11 +49,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.aknayak.offchat.MainActivity.ANONYMOUS;
-import static com.aknayak.offchat.MainActivity.INSTANCE_ID;
-import static com.aknayak.offchat.MainActivity.authUser;
-import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.MainActivity.updateLink;
+import static com.aknayak.offchat.Constants.ANONYMOUS;
+import static com.aknayak.offchat.Constants.CHANNEL_ID;
+import static com.aknayak.offchat.Constants.INSTANCE_ID;
+import static com.aknayak.offchat.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.Constants.forceUpdateVersion;
+import static com.aknayak.offchat.Constants.normalupdateVersion;
 
 
 /**
@@ -64,13 +65,23 @@ import static com.aknayak.offchat.MainActivity.updateLink;
  **/
 
 public class respData {
-    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=0;
+
+    public static String updateLink;
+    public static boolean showAds;
+    public static String authUser;
+    public static String senderUserName;
+    public static String receiverUsername;
+
+    public static String temp;
+
+    public static notificationDialog mNotificationApp;
+    public static String userStatus = "";
+
     public static Boolean IS_PERMISSIONS_REQUEST_READ_CONTACTS = false;
 
     public static boolean selection = false;
     public static ArrayList<String> delItem = new ArrayList<>();
     public static String repItem = null;
-    public static final String CHANNEL_ID = "MyNotification";
     public static String mUsername;
     public static typingDetails tdtls = new typingDetails(false, Calendar.getInstance(Locale.ENGLISH).getTime());
 
@@ -78,6 +89,7 @@ public class respData {
     public static String MESSAGES_CHILD = "messages";
     public static String MAINVIEW_CHILD = "history";
     public static String TYPING_CHILD = "typing";
+
 
     public static String filterNumber(String number) {
         String temp = "";
@@ -287,10 +299,10 @@ public class respData {
         i.putExtra("userName", title);
         i.putExtra("userMessage", msg);
         if (appLaunched == false) {
-            if (notificationDialog.mNotificationApp == null) {
+            if (mNotificationApp == null) {
                 context.startActivity(i);
             } else {
-                notificationDialog.mNotificationApp.refreshData(title, msg);
+                mNotificationApp.refreshData(title, msg);
                 Toast.makeText(context.getApplicationContext(), "update", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -399,7 +411,7 @@ public class respData {
 
 
     public static boolean checkUpdate(final String varforceUpdate, final String varnormalUpdate, final int count, final Activity activity) {
-        if (!varforceUpdate.equals(MainActivity.forceUpdateVersion)) {
+        if (!varforceUpdate.equals(forceUpdateVersion)) {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
             alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
                 @Override
@@ -438,7 +450,7 @@ public class respData {
             alertDialogBuilder.setMessage("This Version of OffChat App is no longer Supported so please update it.");
             alertDialogBuilder.show();
 
-        } else if (!varnormalUpdate.equals(MainActivity.normalupdateVersion)) {
+        } else if (!varnormalUpdate.equals(normalupdateVersion)) {
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
             alertDialogBuilder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
                 @Override

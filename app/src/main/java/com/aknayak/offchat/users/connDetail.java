@@ -1,6 +1,6 @@
 package com.aknayak.offchat.users;
 
-import java.io.Serializable;
+import androidx.annotation.Keep;
 
 /**
  * OffChat
@@ -9,22 +9,23 @@ import java.io.Serializable;
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
 
-public class connDetail implements Serializable {
-    private Boolean Connected;
+@Keep
+public class connDetail{
+    private Boolean cnDetails;
 
     public connDetail(Boolean connected) {
-        Connected = connected;
+        cnDetails = connected;
     }
 
     public connDetail() {
 
     }
 
-    public Boolean getConnected() {
-        return Connected;
+    public Boolean getCnDetails() {
+        return cnDetails;
     }
 
-    public void setConnected(Boolean connected) {
-        Connected = connected;
+    public void setCnDetails(Boolean cnDetails) {
+        this.cnDetails = cnDetails;
     }
 }

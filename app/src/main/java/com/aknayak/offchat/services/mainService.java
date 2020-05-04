@@ -27,13 +27,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
 import static com.aknayak.offchat.globaldata.respData.mUsername;
 import static com.aknayak.offchat.globaldata.respData.notifyIt;
+import static com.aknayak.offchat.globaldata.respData.temp;
 
 /**
  * OffChat
@@ -80,15 +81,15 @@ public class mainService extends Service {
 
                                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 
-                                                if (MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource()))) {
+                                                if (temp == null || (temp != null && !temp.equals(message.getMessageSource()))) {
 //                                                    Toast.makeText(getApplicationContext(),MainActivity.temp+message.getMessageSource(),Toast.LENGTH_SHORT).show();
-                                                    notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                                                    notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMsgBody()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
                                                 }
 //                                                showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
-                                                Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
+                                                Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMsgBody());
                                             }
                                             if (message != null && (message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
+                                                mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
                                             }
                                         }
                                     }
@@ -125,16 +126,16 @@ public class mainService extends Service {
 
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hhmmss", Locale.ENGLISH);
 
-                        if (MainActivity.temp == null || (MainActivity.temp != null && !MainActivity.temp.equals(message.getMessageSource()))) {
+                        if (temp == null || (temp != null && !temp.equals(message.getMessageSource()))) {
 //                                    Toast.makeText(getApplicationContext(),MainActivity.temp+message.getMessageSource(),Toast.LENGTH_SHORT).show();
-                            notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
+                            notifyIt("" + mydb.getUserName(message.getMessageSource()), decrypt(message.getMsgBody()), getApplicationContext(), Double.valueOf(message.getMessageSource()).intValue() + Double.valueOf(simpleDateFormat.format(message.getMessageSentTime())).intValue());
 //                            sendNotify(getApplicationContext() ,mydb.getUserName(message.getMessageSource()),"asdf","New Message",decrypt(message.getMessage()));
                         }
 //                              showNotification(mydb.getUserName(message.getMessageSource()), decrypt(message.getMessage()),getApplicationContext());
-                        Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMessage());
+                        Log.d("LLLL", "" + Double.valueOf(message.getMessageSource()).intValue() + message.getMsgBody());
                     }
                     if (message != null && (!message.getMessageSource().equals(mUsername) || message.getMessageStatus() != 1)) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), message.getReplyId());
+                        mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(), message.getReplyId());
                     }
                 }
             }

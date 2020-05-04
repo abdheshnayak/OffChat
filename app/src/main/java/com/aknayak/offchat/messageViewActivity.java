@@ -3,19 +3,27 @@ package com.aknayak.offchat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -53,10 +61,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.receiverUsername;
-import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.MainActivity.showAds;
+import static com.aknayak.offchat.Constants.PREF_DATA;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
@@ -66,10 +72,13 @@ import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
 import static com.aknayak.offchat.globaldata.respData.isOnline;
 import static com.aknayak.offchat.globaldata.respData.playSound;
-import static com.aknayak.offchat.globaldata.respData.repItem;
+import static com.aknayak.offchat.globaldata.respData.receiverUsername;
+import static com.aknayak.offchat.globaldata.respData.senderUserName;
+import static com.aknayak.offchat.globaldata.respData.showAds;
 import static com.aknayak.offchat.globaldata.respData.sound_sent;
 import static com.aknayak.offchat.globaldata.respData.sound_waiting;
 import static com.aknayak.offchat.globaldata.respData.tdtls;
+import static com.aknayak.offchat.globaldata.respData.userStatus;
 
 /**
  * OffChat
@@ -80,6 +89,8 @@ import static com.aknayak.offchat.globaldata.respData.tdtls;
 
 
 public class messageViewActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private boolean PHONE_STATUS;
 
     TextView messageLenShow;
     private TextView replyUserName;
@@ -105,7 +116,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Message> messages = new ArrayList<Message>();
     public ImageButton scrollButton;
 
-    public static String userStatus = "";
 
     MessageAdapter adapter = new MessageAdapter(messages, this);
 
@@ -140,7 +150,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
         respData.delItem = new ArrayList<>();
         receiverUsername = getIntent().getStringExtra("phoneNumber");
-        MainActivity.temp = receiverUsername;
+        respData.temp = receiverUsername;
         rootPath = getRoot(senderUserName, receiverUsername);
 
         //        Initialize All the elements of the screen
@@ -166,8 +176,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         onlineStatusTextView = findViewById(R.id.onlineStatusTextView_in_MessageView);
 
 
+        findViewById(R.id.userModinfo).setOnClickListener(this);
 //        Add All the components into OnClickListner
         imageButtoncloseReply.setOnClickListener(this);
+        findViewById(R.id.onoffinfo).setOnClickListener(this);
         findViewById(R.id.splashImage).setOnClickListener(this);
         scrollButton.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
@@ -200,7 +212,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.replyLayout).setVisibility(View.VISIBLE);
                 replyMessage = messages.get(position);
                 replyUserName.setText(replyMessage.getMessageSource().equals(senderUserName) ? "You" : replyMessage.getMessageSource());
-                replyTextMessage.setText(decrypt(replyMessage.getMessage()));
+                replyTextMessage.setText(decrypt(replyMessage.getMsgBody()));
             }
         });
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
@@ -319,7 +331,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         Message message = snapshot.getValue(Message.class);
                         if ((message != null && message.getMessageSource().equals(receiverUsername)) || message.getMessageStatus() != 1) {
                             Log.d("UUUU", "kl");
-                            mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), message.getReplyId());
+                            mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), rootPath, message.getMessageFor(), message.getReplyId());
                         }
                     }
                     messages.addAll(mydb.getAllMessages(rootPath));
@@ -351,18 +363,34 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
         networkStateReceiver = new BroadcastReceiver() {
 
+
             @Override
             public void onReceive(Context context, Intent intent) {
                 boolean connectivity = respData.isNetworkAvailable(messageViewActivity.this);
-                TextView netWorkStatus = findViewById(R.id.networkStatus);
+                TextView online = findViewById(R.id.userOnline);
+                TextView offline = findViewById(R.id.userOffline);
+//                TextView useStatus = findViewById(R.id.userStatusTextView);
                 if (connectivity) {
                     if (isOnline()) {
-                        netWorkStatus.setText("Online");
+                        online.setVisibility(View.VISIBLE);
+                        offline.setVisibility(View.INVISIBLE);
+                        findViewById(R.id.aceptOffline).setVisibility(View.INVISIBLE);
+                        PHONE_STATUS=true;
+                        OFFLINE_SEND=false;
+//                        useStatus.setText("You are in online mode.");
                     } else {
-                        netWorkStatus.setText("Your Connection may Not Working");
+                        offline.setVisibility(View.VISIBLE);
+                        online.setVisibility(View.GONE);
+                        findViewById(R.id.aceptOffline).setVisibility(View.VISIBLE);
+                        PHONE_STATUS=false;
+//                        useStatus.setText("Your Connection may Not Working\nYou Are in Offline Mode");
                     }
                 } else {
-                    netWorkStatus.setText("Turn On Network Connection");
+                    offline.setVisibility(View.VISIBLE);
+                    online.setVisibility(View.GONE);
+                    findViewById(R.id.aceptOffline).setVisibility(View.VISIBLE);
+                    PHONE_STATUS=false;
+//                    useStatus.setText("You Are in Offline Mode");
                 }
 
             }
@@ -514,7 +542,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                                 fdbr.updateChildren(msgvar.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        mydb.insertMessage(msgvar.getMessage(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), msgvar.getReplyId());
+                                        mydb.insertMessage(msgvar.getMsgBody(), msgvar.getMessageSource(), msgvar.getMessageSentTime(), 1, msgvar.getMessageID(), getRoot(msgvar.getMessageFor(), msgvar.getMessageSource()), msgvar.getMessageFor(), msgvar.getReplyId());
                                         messages.clear();
                                         try {
                                             messages.addAll(mydb.getAllMessages(rootPath));
@@ -594,6 +622,27 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         cdt.start();
 
 
+        CheckBox cb;
+        cb = findViewById(R.id.oflineAceptCheckBox);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA,Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("off_permission")){
+            cb.setChecked(sharedPreferences.getBoolean("off_permission",false));
+        }
+
+        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                OFFLINE_SEND=isChecked;
+                SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA,Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("off_permission",isChecked);
+                editor.apply();
+                Toast.makeText(getApplicationContext(),""+isChecked,Toast.LENGTH_SHORT).show();
+            }
+        });
+
         selectAllcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -610,6 +659,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+    private Object OFFLINE_SEND;
 
     //    Listen Clicks
     @Override
@@ -619,6 +669,33 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 findViewById(R.id.replyLayout).animate().translationX(-20000);
                 findViewById(R.id.replyLayout).setVisibility(View.GONE);
                 replyMessage = new Message();
+                break;
+            case R.id.userModinfo:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(messageViewActivity.this);
+                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                alertDialogBuilder.setTitle("Red/Green Indicator");
+                alertDialogBuilder.setMessage("The Indicator shows internet Connectivity of your phone.");
+                alertDialogBuilder.show();
+
+                break;
+            case R.id.onoffinfo:
+                AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(messageViewActivity.this);
+                alertDialogBuilder2.setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                alertDialogBuilder2.setCancelable(false);
+                alertDialogBuilder2.setTitle("Agree ??");
+                alertDialogBuilder2.setMessage("By tick the box you agree to send SMS message from your phone using your sim card. Standard local charge will be detucted from your main balance. SMS will be charged same as your national SMS charge.");
+                alertDialogBuilder2.show();
+
                 break;
             case R.id.menuButton:
                 findViewById(R.id.splashImage).setVisibility(View.VISIBLE);
@@ -699,7 +776,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 messageKey = getRandString(15);
                 final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername, replyMessage.getMessageID());
                 mMessageBox.getText().clear();
-                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
+                mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
 
                 messages.clear();
                 try {
@@ -718,7 +795,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                         .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
+                        mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
                         playSound(messageViewActivity.this, sound_sent);
                         messages.clear();
                         try {
@@ -779,7 +856,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             findViewById(R.id.selectAllBoxContainer).setVisibility(View.GONE);
             findViewById(R.id.userSpace).setVisibility(View.VISIBLE);
         } else {
-            MainActivity.temp = null;
+            respData.temp = null;
             super.onBackPressed();
         }
     }
@@ -833,14 +910,14 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onPause() {
         super.onPause();
-        MainActivity.temp = null;
+        respData.temp = null;
         cdt.cancel();
     }
 
     @Override
     protected void onResume() {
         messageRef.addValueEventListener(v3);
-        MainActivity.temp = receiverUsername;
+        respData.temp = receiverUsername;
         super.onResume();
     }
 
@@ -849,6 +926,47 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         int i = st.indexOf(msgId);
         rvMessages.smoothScrollToPosition(i);
         adapter.notifyDataSetChanged();
+    }
+
+
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
+
+    public void sendSMSMessage(String phoneNo, String message) {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(),"Please Give Permission",Toast.LENGTH_SHORT).show();
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SEND_SMS)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }else {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, message, null, null);
+            Toast.makeText(getApplicationContext(), "SMS sent.",
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
+
     }
 
 }

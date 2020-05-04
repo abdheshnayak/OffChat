@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.temp;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.sound_incoming_message;
 import static com.aknayak.offchat.globaldata.respData.sound_notification;
+import static com.aknayak.offchat.globaldata.respData.temp;
 
 
 /**
@@ -39,7 +39,7 @@ import static com.aknayak.offchat.globaldata.respData.sound_notification;
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
 
-public class DBHelper extends SQLiteOpenHelper implements Serializable {
+public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDBName.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
@@ -76,6 +76,10 @@ public class DBHelper extends SQLiteOpenHelper implements Serializable {
         );
     }
 
+    public void closeConnection(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.close();
+    }
     public boolean insertuserInfo(String varName, String varData) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();

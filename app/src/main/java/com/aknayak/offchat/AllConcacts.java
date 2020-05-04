@@ -37,8 +37,8 @@ import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
 import java.util.ArrayList;
 
+import static com.aknayak.offchat.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
-import static com.aknayak.offchat.globaldata.respData.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 import static com.aknayak.offchat.globaldata.respData.requestPermission;
 
@@ -52,7 +52,6 @@ import static com.aknayak.offchat.globaldata.respData.requestPermission;
 
 public class AllConcacts extends AppCompatActivity implements View.OnClickListener {
 
-    public static final int REQUEST_READ_CONTACTS = 79;
     public ArrayList<contactsUser> contactsUsers = new ArrayList<contactsUser>();
     public ArrayList<contactsUser> mobileArray = new ArrayList<>();
     public RecyclerView rvUser;
@@ -108,12 +107,14 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         });
 
         if (mobileArray.size() <= 1) {
-//            mReloadButton.performClick();
+            mydb.closeConnection();
+            mobileArray.addAll(mydb.getAllCotacts());
+            loadContacts(2);
+            rvUser.scrollToPosition(contactsUsers.size() - 1);
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
         }
-
     }
 
 

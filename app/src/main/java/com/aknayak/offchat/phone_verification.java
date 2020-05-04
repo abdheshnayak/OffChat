@@ -40,12 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.senderUserName;
-import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
-import static com.aknayak.offchat.globaldata.respData.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.requestPermission;
+import static com.aknayak.offchat.globaldata.respData.senderUserName;
 
 /**
  * OffChat

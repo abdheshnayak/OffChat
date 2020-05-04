@@ -25,9 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.receiverUsername;
-import static com.aknayak.offchat.MainActivity.showAds;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.respData.receiverUsername;
+import static com.aknayak.offchat.globaldata.respData.showAds;
+
 
 /**
  * OffChat

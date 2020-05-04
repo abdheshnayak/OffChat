@@ -8,10 +8,9 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-
+import com.aknayak.offchat.globaldata.respData;
 public class notificationDialog extends AppCompatActivity {
 
-    public static notificationDialog mNotificationApp;
 
     TextView userName;
     TextView userMessage;
@@ -32,7 +31,7 @@ public class notificationDialog extends AppCompatActivity {
             }
         }, 5000);
 
-        mNotificationApp = this;
+        respData.mNotificationApp = this;
 
         userName = findViewById(R.id.notification_name);
         userMessage = findViewById(R.id.notification_message);
@@ -56,7 +55,7 @@ public class notificationDialog extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mNotificationApp = this;
+        respData.mNotificationApp = this;
     }
 
     protected void onPause() {
@@ -69,7 +68,7 @@ public class notificationDialog extends AppCompatActivity {
     }
 
     private void clearReferences(){
-            mNotificationApp = null;
+            respData.mNotificationApp = null;
     }
 
 }

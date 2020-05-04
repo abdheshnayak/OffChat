@@ -7,6 +7,8 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import static com.aknayak.offchat.Constants.seed;
+
 /**
  * OffChat
  * Created by Abdhesh Nayak on 4/22/20
@@ -16,7 +18,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESHelper {
 
-    private static final String seed="XYbTtTQc6qjcPGIj5FxYsbfNLBgh4hoM";
 
     public static String encrypt(String clearText) {
         Log.d("UUUU",seed);

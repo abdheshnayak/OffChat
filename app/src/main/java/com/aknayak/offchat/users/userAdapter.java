@@ -27,11 +27,11 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
+import static com.aknayak.offchat.globaldata.respData.senderUserName;
 
 /**
  * OffChat
@@ -91,7 +91,7 @@ public class userAdapter extends RecyclerView.Adapter<userAdapter.userViewHolder
         final DBHelper mydb = new DBHelper(parrentActivity);
         textView.setText(mydb.getUserName(message.getMessageSource().equals(senderUserName) ? message.getMessageFor() : message.getMessageSource()));
         final TextView lastMessageTextView = viewHolder.lastMessageTextView;
-        String messagedec = decrypt(message.getMessage());
+        String messagedec = decrypt(message.getMsgBody());
         try {
             if (messagedec.length() > 25) {
                 lastMessageTextView.setText(messagedec.substring(0, 25) + "...");

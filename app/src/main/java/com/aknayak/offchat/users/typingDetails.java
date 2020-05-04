@@ -1,5 +1,7 @@
 package com.aknayak.offchat.users;
 
+import androidx.annotation.Keep;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,9 +14,11 @@ import java.util.Map;
  * abdheshnayak@gmail.com
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
+@Keep
 public class typingDetails {
-    private boolean typing=false;
-    private Date time;
+    public boolean typing=false;
+    public Date time;
+
 
     public typingDetails(){
 

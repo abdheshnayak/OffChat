@@ -3,12 +3,10 @@ package com.aknayak.offchat;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
@@ -49,6 +47,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.aknayak.offchat.Constants.ANONYMOUS;
+import static com.aknayak.offchat.Constants.INSTANCE_ID;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.*;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.verifyUser;
@@ -64,14 +65,6 @@ import static com.aknayak.offchat.globaldata.respData.verifyUser;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public final ArrayList<Message> messages = new ArrayList<Message>();
     private static final String TAG = "MainActivity";
-    public static final String ANONYMOUS = "anonymous";
-
-
-    public static final String ROOT_CHILD = "UserData";
-//    public static final String ROOT_CHILD = "Debug";
-    public static final String INSTANCE_ID = "instance";
-    public static final String normalupdateVersion = "1";
-    public static final String forceUpdateVersion = "2";
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -89,17 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     userAdapter adapter;
     TextView settings;
     TextView checkAcess;
-    public static String updateLink;
-    public static boolean showAds;
     CountDownTimer cdt;
 
-    public static String authUser;
 
 
-    public static String senderUserName;
-    public static String receiverUsername;
-
-    public static String temp;
 
     @Override
     protected void onResume() {
@@ -130,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mydb = new DBHelper(getApplicationContext());
 
-        MainActivity.receiverUsername = null;
+        receiverUsername = null;
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -378,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Message message = snapshot.getValue(Message.class);
                             if (message != null)if (!message.getMessageSource().equals(senderUserName) || message.getMessageStatus() != 1){
-                                mydb.insertMessage(message.getMessage(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
+                                mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), message.getMessageStatus(), snapshot.getKey(), getRoot(message.getMessageFor(), message.getMessageSource()), message.getMessageFor(),message.getReplyId());
                             }
                         }
                         messages.addAll(mydb.getHist());
@@ -413,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("kkkk", "ll");
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         connDetail check = snapshot.getValue(connDetail.class);
-                        if (check != null && check.getConnected()) {
+                        if (check != null && check.getCnDetails()) {
                             String user = snapshot.getKey();
                             DatabaseReference messageRef = FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(senderUserName, user));
                             messageRef.addValueEventListener(v3);

@@ -1,13 +1,9 @@
 package com.aknayak.offchat.services;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
@@ -20,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 
 /**

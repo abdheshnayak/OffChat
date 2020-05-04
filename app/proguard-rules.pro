@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#ProguardTokenType.CRLF, ProguardTokenType.FLAG_NAME , ProguardTokenType.LINE_CMT or ProguardTokenType.WS expected, got '@'

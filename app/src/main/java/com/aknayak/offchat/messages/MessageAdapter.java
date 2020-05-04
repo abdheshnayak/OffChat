@@ -32,14 +32,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.aknayak.offchat.MainActivity.ROOT_CHILD;
-import static com.aknayak.offchat.MainActivity.receiverUsername;
-import static com.aknayak.offchat.MainActivity.senderUserName;
+import static com.aknayak.offchat.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
+import static com.aknayak.offchat.globaldata.respData.receiverUsername;
 import static com.aknayak.offchat.globaldata.respData.repItem;
+import static com.aknayak.offchat.globaldata.respData.senderUserName;
 
 /**
  * OffChat
@@ -51,7 +51,7 @@ import static com.aknayak.offchat.globaldata.respData.repItem;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
-        if (mMessage.get(position).getMessageSource().equals(MainActivity.senderUserName)) {
+        if (mMessage.get(position).getMessageSource().equals(senderUserName)) {
             return 1;
         } else {
             return 2;
@@ -83,7 +83,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         // Set item views based on your views and data model
         final TextView messageboxView = viewHolder.Message;
-        messageboxView.setText(decrypt(message.getMessage()));
+        messageboxView.setText(decrypt(message.getMsgBody()));
         TextView textView = viewHolder.messageSentTime;
 
 
@@ -180,7 +180,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
                     replyUserName.setVisibility(View.VISIBLE);
                     replyUserName.setText(msg.getMessageSource().equals(senderUserName)?"You":msg.getMessageSource());
-                    replyTextMessage.setText(decrypt(msg.getMessage()));
+                    replyTextMessage.setText(decrypt(msg.getMsgBody()));
                 }else {
                     replyLayout.setVisibility(View.VISIBLE);
                     replyUserName.setVisibility(View.GONE);
@@ -314,7 +314,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public void uiUpdate(Message message, TextView seenStatusSingle, TextView seenStatusDouble, TextView seenStatusDoubleBlue, TextView waitingForSent) {
         if (message.getMessageStatus() == 1) {
-            Log.d("abdhesh", message.getMessageStatus() + message.getMessage());
+            Log.d("abdhesh", message.getMessageStatus() + message.getMsgBody());
             seenStatusDoubleBlue.setVisibility(View.GONE);
             seenStatusDouble.setVisibility(View.GONE);
             seenStatusSingle.setVisibility(View.VISIBLE);

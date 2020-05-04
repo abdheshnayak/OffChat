@@ -2,12 +2,16 @@ package com.aknayak.offchat;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import static com.aknayak.offchat.Constants.forceUpdateVersion;
+import static com.aknayak.offchat.Constants.normalupdateVersion;
 
 /**
  * OffChat
@@ -21,6 +25,7 @@ public class aboutPage extends AppCompatActivity {
 
     TextView version;
     TextView copyRight;
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,6 @@ public class aboutPage extends AppCompatActivity {
         copyRight =findViewById(R.id.licence);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY");
         copyRight.setText("COPYRIGHT "+simpleDateFormat.format(Calendar.getInstance(Locale.ENGLISH).getTime())+" OffChat Inc.");
-        version.setText("Version "+MainActivity.forceUpdateVersion+"."+MainActivity.normalupdateVersion);
+        version.setText("Version "+forceUpdateVersion+"."+normalupdateVersion);
     }
 }

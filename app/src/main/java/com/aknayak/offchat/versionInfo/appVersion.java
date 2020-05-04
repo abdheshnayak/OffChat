@@ -1,5 +1,8 @@
 package com.aknayak.offchat.versionInfo;
 
+import androidx.annotation.Keep;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,18 +12,21 @@ import java.util.Map;
  * abdheshnayak@gmail.com
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
+
+@Keep
 public class appVersion {
-    private String normalUpdateVersion;
-    private String forceupdateVersion;
+    public String normalUpdateVersion;
+    public String forceupdateVersion;
+
 
     public appVersion() {
-
     }
 
     public appVersion(String normalUpdateVersion, String forceupdateVersion) {
         this.normalUpdateVersion = normalUpdateVersion;
         this.forceupdateVersion = forceupdateVersion;
     }
+
 
     public String getNormalUpdateVersion() {
         return normalUpdateVersion;

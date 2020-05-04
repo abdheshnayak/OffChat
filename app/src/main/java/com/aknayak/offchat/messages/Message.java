@@ -1,5 +1,7 @@
 package com.aknayak.offchat.messages;
 
+import androidx.annotation.Keep;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,9 +14,10 @@ import java.util.Map;
  * Copyright (c) 2020 OffChat All rights reserved.
  **/
 
-public class Message implements Serializable {
+@Keep
+public class Message {
     private String replyId;
-    private String Message;
+    private String msgBody;
     private String messageSource;
     private Date messageSentTime;
     private int messageStatus;
@@ -32,7 +35,7 @@ public class Message implements Serializable {
 
     public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor) {
         this.messageSentTime = messageSentTime;
-        this.Message = message;
+        this.msgBody = message;
         this.messageSource = messageSource;
         this.messageStatus = messageStatus;
         this.messageID = messageID;
@@ -42,7 +45,7 @@ public class Message implements Serializable {
 
     public Message(String message, String messageSource, Date messageSentTime, int messageStatus, String messageID, String messageFor,String ReplyId) {
         this.messageSentTime = messageSentTime;
-        this.Message = message;
+        this.msgBody = message;
         this.messageSource = messageSource;
         this.messageStatus = messageStatus;
         this.messageID = messageID;
@@ -66,12 +69,12 @@ public class Message implements Serializable {
         this.messageStatus = messageStatus;
     }
 
-    public String getMessage() {
-        return Message;
+    public String getMsgBody() {
+        return msgBody;
     }
 
-    public void setMessage(String message) {
-        Message = message;
+    public void setMsgBody(String msgBody) {
+        this.msgBody = msgBody;
     }
 
     public String getMessageSource() {
@@ -104,7 +107,7 @@ public class Message implements Serializable {
 
     public Map<String, Object> toMap() {
         Map<String, Object> userUpdates = new HashMap<>();
-        userUpdates.put("message", Message);
+        userUpdates.put("msgBody", msgBody);
         userUpdates.put("messageSentTime", messageSentTime);
         userUpdates.put("messageSource", messageSource);
         userUpdates.put("messageStatus", messageStatus);

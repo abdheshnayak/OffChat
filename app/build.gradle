@@ -12,13 +12,14 @@ android {
         versionCode 2
         versionName '2.1'
         multiDexEnabled true
-
+        resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionNameSuffix = 'beta'
     }
 
     buildTypes {
         release {
+            shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
