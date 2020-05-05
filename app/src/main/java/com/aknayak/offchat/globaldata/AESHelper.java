@@ -7,7 +7,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import static com.aknayak.offchat.Constants.seed;
+import static com.aknayak.offchat.globaldata.Constants.seed;
 
 /**
  * OffChat

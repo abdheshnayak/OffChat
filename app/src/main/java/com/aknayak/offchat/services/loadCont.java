@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 
 /**

@@ -1,4 +1,4 @@
-package com.aknayak.offchat;
+package com.aknayak.offchat.globaldata;
 
 import com.aknayak.offchat.users.typingDetails;
 

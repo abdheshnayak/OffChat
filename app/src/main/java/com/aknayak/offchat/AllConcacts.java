@@ -1,6 +1,5 @@
 package com.aknayak.offchat;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
@@ -8,8 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +16,6 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,7 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
@@ -37,7 +32,7 @@ import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
 import java.util.ArrayList;
 
-import static com.aknayak.offchat.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 import static com.aknayak.offchat.globaldata.respData.requestPermission;

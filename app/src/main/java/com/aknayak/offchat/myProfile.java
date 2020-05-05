@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.senderUserName;
 import static com.aknayak.offchat.globaldata.respData.showAds;
 

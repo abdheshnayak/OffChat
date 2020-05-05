@@ -18,14 +18,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.sound_incoming_message;
 import static com.aknayak.offchat.globaldata.respData.sound_notification;

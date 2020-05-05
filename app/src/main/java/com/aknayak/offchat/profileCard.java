@@ -4,16 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.receiverUsername;
 import static com.aknayak.offchat.globaldata.respData.showAds;
 

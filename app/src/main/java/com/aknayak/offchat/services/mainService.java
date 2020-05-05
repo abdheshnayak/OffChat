@@ -2,18 +2,13 @@ package com.aknayak.offchat.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.aknayak.offchat.MainActivity;
-import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
-import com.aknayak.offchat.globaldata.respData;
 import com.aknayak.offchat.messages.Message;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -27,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;

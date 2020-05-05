@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aknayak.offchat.MainActivity;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
@@ -32,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;

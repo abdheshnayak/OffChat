@@ -27,7 +27,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.respData.MESSAGES_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRoot;

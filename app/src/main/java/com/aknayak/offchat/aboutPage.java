@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.forceUpdateVersion;
-import static com.aknayak.offchat.Constants.normalupdateVersion;
+import static com.aknayak.offchat.globaldata.Constants.forceUpdateVersion;
+import static com.aknayak.offchat.globaldata.Constants.normalupdateVersion;
 
 /**
  * OffChat

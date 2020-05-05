@@ -20,8 +20,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.widget.Toast;
 
@@ -49,12 +47,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.aknayak.offchat.Constants.ANONYMOUS;
-import static com.aknayak.offchat.Constants.CHANNEL_ID;
-import static com.aknayak.offchat.Constants.INSTANCE_ID;
-import static com.aknayak.offchat.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
-import static com.aknayak.offchat.Constants.forceUpdateVersion;
-import static com.aknayak.offchat.Constants.normalupdateVersion;
+import static com.aknayak.offchat.globaldata.Constants.ANONYMOUS;
+import static com.aknayak.offchat.globaldata.Constants.CHANNEL_ID;
+import static com.aknayak.offchat.globaldata.Constants.INSTANCE_ID;
+import static com.aknayak.offchat.globaldata.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.Constants.forceUpdateVersion;
+import static com.aknayak.offchat.globaldata.Constants.normalupdateVersion;
 
 
 /**

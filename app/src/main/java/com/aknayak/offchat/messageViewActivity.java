@@ -61,8 +61,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.PREF_DATA;
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.PREF_DATA;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.AESHelper.decrypt;
 import static com.aknayak.offchat.globaldata.AESHelper.encrypt;
 import static com.aknayak.offchat.globaldata.respData.MAINVIEW_CHILD;
@@ -692,7 +692,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
                 alertDialogBuilder2.setCancelable(false);
-                alertDialogBuilder2.setTitle("Agree ??");
+                alertDialogBuilder2.setTitle("Agree ??[this feature available now]");
                 alertDialogBuilder2.setMessage("By tick the box you agree to send SMS message from your phone using your sim card. Standard local charge will be detucted from your main balance. SMS will be charged same as your national SMS charge.");
                 alertDialogBuilder2.show();
 

@@ -47,9 +47,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.aknayak.offchat.Constants.ANONYMOUS;
-import static com.aknayak.offchat.Constants.INSTANCE_ID;
-import static com.aknayak.offchat.Constants.ROOT_CHILD;
+import static com.aknayak.offchat.globaldata.Constants.ANONYMOUS;
+import static com.aknayak.offchat.globaldata.Constants.INSTANCE_ID;
+import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.*;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.verifyUser;
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Boolean b = dataSnapshot.getValue(Boolean.class);
                 if (b != null && b) {
                     showAds = true;
+                    Toast.makeText(getApplicationContext(),String.valueOf(showAds),Toast.LENGTH_SHORT).show();
                     AdRequest adRequest = new AdRequest.Builder().build();
                     adView.setVisibility(View.VISIBLE);
                     adView.loadAd(adRequest);
