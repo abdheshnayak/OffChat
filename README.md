@@ -30,6 +30,8 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## Authors
 
-* **Abdhesh Nayak** - [![Icon](https://img.shields.io/badge/Github-lightgrey)](https://github.com/abdheshnayak), [![Icon](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/abdhesh-nayak/)
+* **Abdhesh Nayak**
+
+ [![Icon](https://img.shields.io/badge/Github-lightgrey)](https://github.com/abdheshnayak) [![Icon](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/abdhesh-nayak/)
 
 See also the list of [Contributors](https://github.com/abdheshnayak/OffChat/contributors) who participated in this project.
