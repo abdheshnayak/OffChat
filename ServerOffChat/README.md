@@ -6,7 +6,7 @@ App Link - [Download App](app/release/app-release.apk)
 
 #### ScreenShots
 
-![Image of the Main Screen](screenshots/1.jpg)
+![Image of the Main Screen](screenshots/1.png)
 
 
 ## Built With
