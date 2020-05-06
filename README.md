@@ -24,7 +24,7 @@ Your messages will be deleted instantly after its delivery.
 
 The OffChat also have a server which is also build with android you can see it here:
 
-[![Icon](https://img.shields.io/badge/OffChat%20Server-brightgreen)](ServerOffChat)
+[![Icon](https://img.shields.io/badge/OffChat%20Server-brightgreen)](https://abdheshnayak.github.io/OffChat/ServerOffChat/)
 ## LICENSE
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
