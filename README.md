@@ -23,7 +23,8 @@ Your messages will be deleted instantly after its delivery.
 ## Server
 
 The OffChat also have a server which is also build with android you can see it here:
-[OffChat Server](https://github.com/abdheshnayak/OffChat/tree/master/ServerOffChat)
+
+[![Icon](https://img.shields.io/badge/OffChat%20Server-brightgreen)](https://github.com/abdheshnayak/OffChat/tree/master/ServerOffChat)
 ## LICENSE
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
@@ -32,6 +33,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 * **Abdhesh Nayak**
 
- [![Icon](https://img.shields.io/badge/Github-lightgrey)](https://github.com/abdheshnayak) [![Icon](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/abdhesh-nayak/)
+	[![Icon](https://img.shields.io/badge/Github-lightgrey)](https://github.com/abdheshnayak) [![Icon](https://img.shields.io/badge/LinkedIn-blue)](https://www.linkedin.com/in/abdhesh-nayak/)
 
 See also the list of [Contributors](https://github.com/abdheshnayak/OffChat/contributors) who participated in this project.
