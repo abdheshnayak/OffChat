@@ -26,10 +26,10 @@ The OffChat also have a server which is also build with android you can see it h
 [OffChat Server](https://github.com/abdheshnayak/OffChat/tree/master/ServerOffChat)
 ## LICENSE
 
-This project is licensed under the Apache License 2.0 - see the [![Icon](https://img.shields.io/badge/LICENSE-brightgreen](LICENSE) file for details
+This project is licensed under the Apache License 2.0 - see the [![Icon](https://img.shields.io/badge/LICENSE-brightgreen)](LICENSE) file for details
 
 ## Authors
 
-* **Abdhesh Nayak** - [![Icon](https://img.shields.io/badge/Github-brightgreen](https://github.com/abdheshnayak), [![Icon](https://img.shields.io/badge/LinkedIn-brightgreen](https://www.linkedin.com/in/abdhesh-nayak/)
+* **Abdhesh Nayak** - [![Icon](https://img.shields.io/badge/Github-brightgreen)](https://github.com/abdheshnayak), [![Icon](https://img.shields.io/badge/LinkedIn-brightgreen)](https://www.linkedin.com/in/abdhesh-nayak/)
 
-See also the list of [![Icon](https://img.shields.io/badge/Contributors-brightgreen](https://github.com/abdheshnayak/OffChat/contributors) who participated in this project.
+See also the list of [![Icon](https://img.shields.io/badge/Contributors-brightgreen)](https://github.com/abdheshnayak/OffChat/contributors) who participated in this project.
