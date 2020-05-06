@@ -2,7 +2,7 @@
 
 A simple android chatting app.
 
-App Link - [![dwIcon](screenshots/downloadicon.png)](https://github.com/abdheshnayak/OffChat/releases)
+App Link - [![dwIcon](https://img.shields.io/badge/OffChat-Download-brightgreen)](https://github.com/abdheshnayak/OffChat/releases)
 
 #### ScreenShots
 
