@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_launcher_empty" android:top="10sp" android:left="10sp" android:right="10sp" android:bottom="10sp">
+
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="10sp"/>
+            <solid android:color="#FFAAAAAA"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_empty" android:top="10sp" android:left="10sp" android:right="10sp" android:bottom="10sp">
+
+    </item>
+    <item android:bottom="2sp" android:right="2sp" >
+        <shape>
+            <corners android:radius="10sp"/>
+            <solid android:color="#FF555555"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_empty" android:top="10sp" android:left="10sp" android:right="10sp" android:bottom="10sp">
+
+    </item>
+</layer-list>
