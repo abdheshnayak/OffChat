@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/navbar_default" />
+
+    <TextView
+        android:id="@+id/onlineStatus"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
+        android:layout_marginEnd="20sp"
+        android:background="@drawable/circle_design_status_online"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/include2"
+        app:layout_constraintBottom_toBottomOf="@id/include2"
+        app:layout_constraintRight_toRightOf="@id/include2"/>
+    <TextView
+        android:id="@+id/offlineStatus"
+        android:layout_width="22sp"
+        android:layout_height="22sp"
+        android:layout_marginEnd="20sp"
+        android:background="@drawable/circle_design_status_offline"
+        app:layout_constraintTop_toTopOf="@id/include2"
+        app:layout_constraintBottom_toBottomOf="@id/include2"
+        app:layout_constraintRight_toRightOf="@id/include2"
+        />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutTop"
+        android:layout_width="match_parent"
+        android:layout_margin="4sp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sn_design"
+        app:layout_constraintTop_toBottomOf="@id/include2"
+        >
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8sp"
+            android:layout_marginStart="4sp"
+            android:layout_marginTop="4sp"
+            android:background="@drawable/sn_design2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/startbutton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/operatorLayout"
+            >
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/country"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/include2" />
+
+            <Spinner
+                android:id="@+id/countryPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="3sp"
+                app:layout_constraintStart_toEndOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/include2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/operatorLayout"
+            android:layout_width="0sp"
+            android:layout_marginEnd="8sp"
+            android:layout_marginStart="4sp"
+            android:paddingBottom="4sp"
+            android:visibility="gone"
+            android:layout_marginTop="4sp"
+            android:layout_marginBottom="4sp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sn_design2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/startbutton"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout2"
+            >
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/operator" />
+
+            <Spinner
+                android:id="@+id/operatorPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="3sp"
+                app:layout_constraintBottom_toTopOf="@+id/deviedrLayout"
+                app:layout_constraintEnd_toStartOf="@+id/startbutton"
+                app:layout_constraintStart_toEndOf="@+id/countryPicker"
+                app:layout_constraintTop_toBottomOf="@+id/countryPicker" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/startbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="38sp"
+            android:width="120sp"
+            android:layout_margin="8sp"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            android:textSize="12sp"
+            android:textOff="@string/start_server"
+            android:textOn="@string/stop_server"
+            android:textColor="@color/black"
+            android:background="#FFFE788E"
+            app:layout_constraintEnd_toStartOf="@+id/refreshButton"
+            app:layout_constraintTop_toTopOf="@id/linearLayout2"
+            app:layout_constraintBottom_toBottomOf="@id/operatorLayout"
+            />
+
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4sp"
+            android:text="@string/Refresh"
+            android:theme="@style/ThemeOverlay.MyDarkButton"
+            app:layout_constraintTop_toTopOf="@id/linearLayout2"
+            app:layout_constraintBottom_toBottomOf="@id/operatorLayout"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/deviedrLayout"
+        android:layout_width="0sp"
+        android:layout_height="0sp"
+        android:layout_marginTop="4sp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutTop">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#aa000011"
+                android:translationX="1500sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewQueue"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#aa001100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/quebtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/queue_background"
+                android:padding="5sp"
+                android:text="@string/queue"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/sentbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/sentbtn_background"
+                android:padding="5sp"
+                android:text="@string/sent"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

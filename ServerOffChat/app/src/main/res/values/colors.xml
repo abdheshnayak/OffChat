@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorButton">#FF788EFE</color>
+    <color name="colorButtonPressed">#FF9791FF</color>
+    <color name="colorPrimary">#FF788EFE</color>
+    <color name="colorPrimaryDark">#FF877EFE</color>
+    <color name="colorAccent">#FF9791FF</color>
+
+    <color name="colorDeletedTransParent">#88D0A0FF</color>
+
+
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_500">#9E9E9E</color>
+    <color name="white">#FFFFFF</color>
+</resources>

@@ -1,0 +1,60 @@
+<resources>
+
+    <string name="app_name">Server OffChat</string>
+    <string name="user_dp">user_dp</string>
+    <string name="user_name">User Name</string>
+    <string name="channel_description">chanel Discription</string>
+    <string name="channel_name">chanelName</string>
+    <string name="todo">imgLogo</string>
+    <string name="this_messages_are_end_to_end_encrypted">This messages are end to end encrypted.</string>
+    <string name="type_a_message">Type a message</string>
+    <string name="desc_offchat_lockup">Firebase logo and name</string>
+    <string name="signed_in">Signed In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_verification_code">Verification Code</string>
+    <string name="start_phone_auth">Next</string>
+    <string name="verify_phone_auth">Verify</string>
+    <string name="resend_phone_auth">Resend</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="status_code_sent">Code Sent</string>
+    <string name="status_verification_failed">Verification failed</string>
+    <string name="status_verification_succeeded">Verification succeeded</string>
+    <string name="status_sign_in_failed">Sign-in failed</string>
+    <string name="instant_validation">(instant validation)</string>
+
+    <string name="firebase_status_fmt">Firebase UID: %s</string>
+
+    <string name="phone_title_text">Enter your phone number</string>
+    <string name="verification_phone_info">OffChat will send an SMS message to verify your phone number.</string>
+    <string name="verification_phone_charges_info">Carrier SMS charges may apply</string>
+    <string name="country_info_phone_auth">Nepal and India only.</string>
+    <string name="Refresh">Refresh</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search by Name/Number</string>
+    <string name="profile_button">Profile</string>
+    <string name="ffchat">ffchat Server</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="delete">Delete</string>
+    <string name="alex_pardian">Alex Pardian</string>
+    <string name="select_all">Select All</string>
+    <string name="phone_number">Phone Number:</string>
+    <string name="username">Username:</string>
+    <string name="save">Save</string>
+    <string name="mobile">Mobile</string>
+    <string name="this_is_message_lenth_of_30">This is Message Lenth of 30...</string>
+    <string name="time">Time</string>
+    <string name="loading">loading ...</string>
+    <string name="country">Country</string>
+    <string name="operator">Operator</string>
+    <string name="start_server">Start Server</string>
+    <string name="u27b4">➴</string>
+    <string name="u27b9">➹</string>
+    <string name="to">To :</string>
+    <string name="stop_server">Stop Server</string>
+    <string name="queue">Queue</string>
+    <string name="sent">Sent</string>
+    <string name="permissions_info">Please Give All the permissions that are required by the app to run without any interruption in processes.\n\nActually this permissions are the basic needs of a chatting app so we just get your contacts for showing you. The app don\'t store your contacts. and app read you message for filtering the message if the message came from the OffChat app.</string>
+</resources>
