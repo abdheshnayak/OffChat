@@ -2,7 +2,7 @@
 
 Server app of Project [OffChat](https://github.com/abdheshnayak/OffChat).
 
-App Link - [Download App](app/release/app-release.apk)
+App Link - [Download App](https://github.com/abdheshnayak/OffChat/releases/tag/v1.1)
 
 #### ScreenShots
 

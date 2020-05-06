@@ -20,6 +20,10 @@ This app is developed for online-offline chatting. but it is under construction.
 This app does not store your chat so you can use it without any fear.
 Your messages will be deleted instantly after its delivery.
 
+## Server
+
+The OffChat also have a server which is also build with android you can see it here:
+[OffChat Server](https://github.com/abdheshnayak/OffChat/tree/master/ServerOffChat)
 ## LICENSE
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details
