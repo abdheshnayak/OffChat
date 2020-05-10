@@ -132,7 +132,7 @@ public class respData {
                 // result of the request.
             }
         } else {
-            IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
+            IS_PERMISSIONS_REQUEST_READ_CONTACTS = true;
             // Permission has already been granted
         }
     }
@@ -301,7 +301,7 @@ public class respData {
                 context.startActivity(i);
             } else {
                 mNotificationApp.refreshData(title, msg);
-                Toast.makeText(context.getApplicationContext(), "update", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context.getApplicationContext(), "update", Toast.LENGTH_SHORT).show();
             }
         } else {
 //            context.startActivity(i);
@@ -526,13 +526,10 @@ public class respData {
         }
 
     }
-    public static  boolean checkPhoneNumber(String PhoneNumber){
-        if (PhoneNumber!=null){
+
+    public static boolean checkPhoneNumber(String PhoneNumber) {
+        if (PhoneNumber != null) {
             return isValidMobile(PhoneNumber);
-        }else return false;
+        } else return false;
     }
-
-
-
-
 }
