@@ -1,6 +1,6 @@
 # OffChat Server
 
-Server app of Project [OffChat](https://github.com/abdheshnayak/OffChat).
+Server app of Project [OffChat](https://abdheshnayak.github.io/OffChat/).
 
 App Link - [Download App](https://github.com/abdheshnayak/OffChat/releases/tag/v1.1)
 
