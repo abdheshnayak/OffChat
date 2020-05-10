@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aknayak.offchat.R;
 import com.aknayak.offchat.messageViewActivity;
 import com.google.firebase.database.DatabaseReference;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  **/
 
 
-public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapter.userViewHolder> {
+public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapter.userViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
 
     private static final String USERRELATION_CHILD = "userRelations";
     private DatabaseReference mFirebaseDatabaseReference;
@@ -86,6 +87,12 @@ public class contactsUserAdapter extends RecyclerView.Adapter<contactsUserAdapte
     @Override
     public int getItemCount() {
         return mContactsUser.size();
+    }
+
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        return mContactsUser.get(position).getUserName().trim().substring(0,1);
     }
 
     public class userViewHolder extends RecyclerView.ViewHolder {

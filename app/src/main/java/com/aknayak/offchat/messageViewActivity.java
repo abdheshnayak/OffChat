@@ -71,6 +71,7 @@ import static com.aknayak.offchat.globaldata.respData.TYPING_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
 import static com.aknayak.offchat.globaldata.respData.isOnline;
+import static com.aknayak.offchat.globaldata.respData.mUsername;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.receiverUsername;
 import static com.aknayak.offchat.globaldata.respData.senderUserName;
@@ -372,24 +373,30 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                TextView useStatus = findViewById(R.id.userStatusTextView);
                 if (connectivity) {
                     if (isOnline()) {
-                        online.setVisibility(View.VISIBLE);
-                        offline.setVisibility(View.INVISIBLE);
-                        findViewById(R.id.aceptOffline).setVisibility(View.INVISIBLE);
-                        PHONE_STATUS=true;
-                        OFFLINE_SEND=false;
+//                        online.setVisibility(View.VISIBLE);
+//                        offline.setVisibility(View.GONE);
+//                        findViewById(R.id.indiContainer).setVisibility(View.GONE);
+//                        findViewById(R.id.aceptOffline).setVisibility(View.GONE);
+                        findViewById(R.id.networkStatusContainer).setVisibility(View.GONE);
+                        PHONE_STATUS = true;
+                        OFFLINE_SEND = false;
 //                        useStatus.setText("You are in online mode.");
                     } else {
                         offline.setVisibility(View.VISIBLE);
-                        online.setVisibility(View.GONE);
+//                        online.setVisibility(View.GONE);
+                        findViewById(R.id.indiContainer).setVisibility(View.VISIBLE);
                         findViewById(R.id.aceptOffline).setVisibility(View.VISIBLE);
-                        PHONE_STATUS=false;
+                        findViewById(R.id.networkStatusContainer).setVisibility(View.VISIBLE);
+                        PHONE_STATUS = false;
 //                        useStatus.setText("Your Connection may Not Working\nYou Are in Offline Mode");
                     }
                 } else {
                     offline.setVisibility(View.VISIBLE);
-                    online.setVisibility(View.GONE);
+//                    online.setVisibility(View.GONE);
+                    findViewById(R.id.indiContainer).setVisibility(View.VISIBLE);
                     findViewById(R.id.aceptOffline).setVisibility(View.VISIBLE);
-                    PHONE_STATUS=false;
+                    findViewById(R.id.networkStatusContainer).setVisibility(View.VISIBLE);
+                    PHONE_STATUS = false;
 //                    useStatus.setText("You Are in Offline Mode");
                 }
 
@@ -431,10 +438,10 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (mMessageBox.getLineCount()>1){
-                    messageLenShow.setText("120/"+mMessageBox.getText().length());
+                if (mMessageBox.getLineCount() > 1) {
+                    messageLenShow.setText("120/" + mMessageBox.getText().length());
                     messageLenShow.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     messageLenShow.setVisibility(View.INVISIBLE);
                 }
                 if (mMessageBox.getText().toString().trim().equals("") && sendButtonStatus) {
@@ -625,21 +632,47 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         CheckBox cb;
         cb = findViewById(R.id.oflineAceptCheckBox);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA,Context.MODE_PRIVATE);
-        if (sharedPreferences.contains("off_permission")){
-            cb.setChecked(sharedPreferences.getBoolean("off_permission",false));
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("off_permission")) {
+            cb.setChecked(sharedPreferences.getBoolean("off_permission", false));
+            OFFLINE_SEND=sharedPreferences.getBoolean("off_permission", false);
         }
 
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                OFFLINE_SEND=isChecked;
-                SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA,Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("off_permission",isChecked);
-                editor.apply();
-                Toast.makeText(getApplicationContext(),""+isChecked,Toast.LENGTH_SHORT).show();
+                if (isChecked){
+                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(messageViewActivity.this);
+                    alertDialogBuilder2.setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            OFFLINE_SEND = isChecked;
+                            SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean("off_permission", isChecked);
+                            editor.apply();
+                        }
+                    });
+                    alertDialogBuilder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            cb.setChecked(false);
+                        }
+                    });
+
+                    alertDialogBuilder2.setCancelable(false);
+                    alertDialogBuilder2.setTitle("Agree ??[Under Cunstruction]");
+                    alertDialogBuilder2.setMessage("This feature may not work because of server may be not running now.\n\nSMS Charge will be decuted from your SIM Card main balance.");
+                    alertDialogBuilder2.show();
+                }else {
+                    OFFLINE_SEND = false;
+                    SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("off_permission", isChecked);
+                    editor.apply();
+                }
+//                Toast.makeText(getApplicationContext(), "" + isChecked, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -659,7 +692,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-    private Object OFFLINE_SEND;
+    private boolean OFFLINE_SEND;
 
     //    Listen Clicks
     @Override
@@ -692,7 +725,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
                 alertDialogBuilder2.setCancelable(false);
-                alertDialogBuilder2.setTitle("Agree ??[this feature available now]");
+                alertDialogBuilder2.setTitle("Agree ??[this not feature available now]");
                 alertDialogBuilder2.setMessage("By tick the box you agree to send SMS message from your phone using your sim card. Standard local charge will be detucted from your main balance. SMS will be charged same as your national SMS charge.");
                 alertDialogBuilder2.show();
 
@@ -777,45 +810,52 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 final Message message = new Message(encrypt(mMessageBox.getText().toString().trim()), senderUserName, Calendar.getInstance(Locale.ENGLISH).getTime(), 1, messageKey, receiverUsername, replyMessage.getMessageID());
                 mMessageBox.getText().clear();
                 mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
-
-                messages.clear();
-                try {
-                    messages.addAll(mydb.getAllMessages(rootPath));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                findViewById(R.id.replyLayout).setVisibility(View.GONE);
-                replyMessage = new Message();
-                adapter.notifyDataSetChanged();
-                rvMessages.smoothScrollToPosition(messages.size() - 1);
-                playSound(messageViewActivity.this, sound_waiting);
-
-
-                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
-                        .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
-                        playSound(messageViewActivity.this, sound_sent);
-                        messages.clear();
-                        try {
-                            messages.addAll(mydb.getAllMessages(rootPath));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        adapter.notifyDataSetChanged();
+                if (!OFFLINE_SEND || PHONE_STATUS || !senderUserName.substring(0,senderUserName.length()-10).equals("+977")) {
+                    if (!OFFLINE_SEND || PHONE_STATUS){
+//                        Toast.makeText(getApplicationContext(),String.valueOf(OFFLINE_SEND)+String.valueOf(PHONE_STATUS)+senderUserName.substring(0,senderUserName.length()-10),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Offline Mode not supported in your Country",Toast.LENGTH_LONG).show();
                     }
-                });
+                    messages.clear();
+                    try {
+                        messages.addAll(mydb.getAllMessages(rootPath));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    findViewById(R.id.replyLayout).setVisibility(View.GONE);
+                    replyMessage = new Message();
+                    adapter.notifyDataSetChanged();
+                    rvMessages.smoothScrollToPosition(messages.size() - 1);
+                    playSound(messageViewActivity.this, sound_waiting);
+
+
+                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(message.getMessageSource(), message.getMessageFor()))
+                            .child(message.getMessageID()).updateChildren(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 1, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
+                            playSound(messageViewActivity.this, sound_sent);
+                            messages.clear();
+                            try {
+                                messages.addAll(mydb.getAllMessages(rootPath));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
 
 
 //                Updating The Data base
 
 //                Updating History Of Sender
-                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageSource()).child(message.getMessageFor()).setValue(new connDetail(true));
+                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageSource()).child(message.getMessageFor()).setValue(new connDetail(true));
 
 //                Updating History Of Reciver
-                FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageFor()).child(message.getMessageSource()).setValue(new connDetail(true));
-
+                    FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageFor()).child(message.getMessageSource()).setValue(new connDetail(true));
+                }else {
+                    String msg = decrypt(message.getMsgBody());
+                    sendSMSMessage(servNumber,"For\n"+message.getMessageFor()+"\n"+message.getMessageID()+"\n"+(msg.length()>120?msg.substring(0,120):msg));
+                }
                 break;
             case R.id.profileButton_message:
                 findViewById(R.id.userSpace).performClick();
@@ -844,6 +884,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
+    public  static String servNumber = "+9779805953008";
 
     @Override
     public void onBackPressed() {
@@ -884,13 +925,13 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
             if (!flg) {
                 scrollButton.setVisibility(View.VISIBLE);
                 flg = true;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        flg = false;
-                        scrollButton.setVisibility(View.INVISIBLE);
-                    }
-                }, 3 * 1000); // wait for 5 seconds
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        flg = false;
+//                        scrollButton.setVisibility(View.INVISIBLE);
+//                    }
+//                }, 3 * 1000); // wait for 5 seconds
             }
         } else {
             scrollButton.setVisibility(View.INVISIBLE);
@@ -928,33 +969,11 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         adapter.notifyDataSetChanged();
     }
 
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
 
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
-
-    public void sendSMSMessage(String phoneNo, String message) {
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getApplicationContext(),"Please Give Permission",Toast.LENGTH_SHORT).show();
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.SEND_SMS)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.SEND_SMS},
-                        MY_PERMISSIONS_REQUEST_SEND_SMS);
-            }
-        }else {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, message, null, null);
-            Toast.makeText(getApplicationContext(), "SMS sent.",
-                    Toast.LENGTH_LONG).show();
-        }
-
-    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_SEND_SMS: {
                 if (grantResults.length > 0
@@ -965,6 +984,32 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                     return;
                 }
             }
+        }
+
+    }
+
+    String sendingMessage;
+    String sendingNumber;
+    public void sendSMSMessage(String phoneNo, String message) {
+        sendingMessage = message;
+        sendingNumber = phoneNo;
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(), "Please Give Permission", Toast.LENGTH_SHORT).show();
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SEND_SMS)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        } else {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, message, null, null);
+            Toast.makeText(getApplicationContext(), "SMS sent.",
+                    Toast.LENGTH_LONG).show();
         }
 
     }

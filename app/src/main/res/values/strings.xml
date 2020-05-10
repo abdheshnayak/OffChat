@@ -48,4 +48,5 @@
     <string name="this_is_message_lenth_of_30">This is Message Lenth of 30...</string>
     <string name="time">Time</string>
     <string name="loading">loading ...</string>
+    <string name="permissions_info">Please Give All the permissions that are required by the app to run without any interruption in processes.\n\nActually this permissions are the basic needs of a chatting app so we just get your contacts for showing you. The app don\'t store your contacts. and app read you message for filtering the message if the message came from the OffChat app.</string>
 </resources>

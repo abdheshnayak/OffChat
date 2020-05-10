@@ -5,15 +5,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -23,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.aknayak.offchat.datas.DBHelper;
 import com.aknayak.offchat.globaldata.respData;
@@ -30,9 +34,11 @@ import com.aknayak.offchat.services.loadCont;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import static com.aknayak.offchat.globaldata.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
+import static com.aknayak.offchat.globaldata.Constants.PREF_DATA;
 import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
 import static com.aknayak.offchat.globaldata.respData.requestPermission;
@@ -54,7 +60,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
     ImageButton closeButton;
     EditText searchBox;
     contactsUserAdapter adapter;
-    ImageButton mReloadButton;
     ConstraintLayout mLogoLayout;
     ImageButton mSearchButton;
     DBHelper mydb;
@@ -68,15 +73,11 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_all_contacts);
 
 
-        mReloadButton = findViewById(R.id.reloadfloatButton);
-        usersLoadProgressBar = findViewById(R.id.progressBar);
         rvUser = findViewById(R.id.contactsRecyclerView);
         searchBox = findViewById(R.id.searchBox);
         closeButton = findViewById(R.id.closeButton);
         mSearchButton = findViewById(R.id.searchButton);
         mLogoLayout = findViewById(R.id.contact_info_logo);
-        usersLoadProgressBar.setVisibility(View.INVISIBLE);
-        usersLoadProgressBar.getIndeterminateDrawable().setColorFilter(Color.rgb(133, 94, 238), PorterDuff.Mode.MULTIPLY);
 
 
         mydb = new DBHelper(this);
@@ -84,7 +85,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
 
         closeButton.setOnClickListener(this);
         mSearchButton.setOnClickListener(this);
-        mReloadButton.setOnClickListener(this);
 
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
@@ -101,17 +101,91 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
             }
         });
 
-        if (mobileArray.size() <= 1) {
-            mydb.closeConnection();
-            mobileArray.addAll(mydb.getAllCotacts());
-            loadContacts(2);
-            rvUser.scrollToPosition(contactsUsers.size() - 1);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.msgContainer).setVisibility(View.VISIBLE);
+            }
+        },1000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.msgContainer).setVisibility(View.GONE);
+            }
+        },3000);
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                requestPermission(AllConcacts.this);
+                if (IS_PERMISSIONS_REQUEST_READ_CONTACTS) {
+                    t1 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadCont.loadCont(getApplicationContext());
+//                            mSearchButton.setEnabled(true);
+//                            mReloadButton.setEnabled(true);
+                        }
+                    });
+
+                    t2 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                t1.join();
+//                            adapter.notifyDataSetChanged();
+//                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
+                                loadCont.loadCont(getApplicationContext());
+                                swipeContainer.setRefreshing(false);
+                                Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                AllConcacts.super.finish();
+                                startActivity(i);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    t1.start();
+                    t2.start();
+
+//                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+//                    mSearchButton.setEnabled(false);
+//                    mReloadButton.startAnimation(animation);
+//                    mReloadButton.setEnabled(false);
+                }
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        if (mobileArray.size() == 0) {
+//            Toast.makeText(getApplicationContext(),"hello",Toast.LENGTH_SHORT).show();
+            SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, Context.MODE_PRIVATE);
+            if (sharedPreferences.contains("allcontacts")) {
+                int k = sharedPreferences.getInt("allcontacts", 0);
+                if (k < 2) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("allcontacts", k + 1);
+                    editor.apply();
+                }
+            }
         } else {
             loadContacts(2);
             rvUser.scrollToPosition(contactsUsers.size() - 1);
         }
+
+
     }
 
+    private SwipeRefreshLayout swipeContainer;
 
     private void updateListData(String trim) {
 
@@ -154,12 +228,9 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         rvUser.setLayoutManager(linearLayoutManager);
 
         contactsUsers.addAll(mobileArray);
-
-
         adapter.notifyDataSetChanged();
 
     }
-
 
 
     @Override
@@ -168,7 +239,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         switch (v.getId()) {
             case R.id.closeButton:
-                mReloadButton.setVisibility(View.VISIBLE);
                 searchBox.getText().clear();
                 imm.hideSoftInputFromWindow(searchBox.getWindowToken(),
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
@@ -183,7 +253,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 mSearchButton.animate().translationX(0);
                 break;
             case R.id.searchButton:
-                mReloadButton.setVisibility(View.GONE);
                 mLogoLayout.setVisibility(View.GONE);
                 mLogoLayout.animate().translationX(-200);
                 mSearchButton.animate().translationX(-200);
@@ -197,55 +266,55 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 imm.showSoftInput(searchBox,
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 break;
-            case R.id.reloadfloatButton:
-
-                requestPermission(AllConcacts.this);
-                if (IS_PERMISSIONS_REQUEST_READ_CONTACTS){
-                    t1 = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadCont.loadCont(getApplicationContext());
-                        }
-                    });
-
-                    t2 = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                t1.join();
-//                            adapter.notifyDataSetChanged();
-//                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
-                                Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                AllConcacts.super.finish();
-                                startActivity(i);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    t1.start();
-                    t2.start();
-
-                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
-                    mSearchButton.setEnabled(false);
-                    mReloadButton.startAnimation(animation);
-                    mReloadButton.setEnabled(false);
-                    rvUser.setVisibility(View.INVISIBLE);
-                    usersLoadProgressBar.setVisibility(View.VISIBLE);
-
-                }else {
-                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(AllConcacts.this);
-                    alertDialogBuilder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    alertDialogBuilder2.setTitle("Contacts Permision");
-                    alertDialogBuilder2.setMessage("we don't have your contacts permissions. please Give Contact Permission to the app.");
-                    alertDialogBuilder2.show();
-                }
-
-                break;
+//            case R.id.reloadfloatButton:
+//
+//                requestPermission(AllConcacts.this);
+//                if (IS_PERMISSIONS_REQUEST_READ_CONTACTS) {
+//                    t1 = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            loadCont.loadCont(getApplicationContext());
+//                        }
+//                    });
+//
+//                    t2 = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                t1.join();
+////                            adapter.notifyDataSetChanged();
+////                                usersLoadProgressBar.setVisibility(View.INVISIBLE);
+//                                Intent i = new Intent(getApplicationContext(), AllConcacts.class).addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//                                AllConcacts.super.finish();
+//                                startActivity(i);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                    t1.start();
+//                    t2.start();
+//
+//                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+//                    mSearchButton.setEnabled(false);
+//                    mReloadButton.startAnimation(animation);
+//                    mReloadButton.setEnabled(false);
+//                    rvUser.setVisibility(View.INVISIBLE);
+//                    usersLoadProgressBar.setVisibility(View.VISIBLE);
+//
+//                } else {
+//                    AlertDialog.Builder alertDialogBuilder2 = new AlertDialog.Builder(AllConcacts.this);
+//                    alertDialogBuilder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                        }
+//                    });
+//                    alertDialogBuilder2.setTitle("Contacts Permision");
+//                    alertDialogBuilder2.setMessage("we don't have your contacts permissions. please Give Contact Permission to the app.");
+//                    alertDialogBuilder2.show();
+//                }
+//
+//                break;
         }
     }
 
@@ -258,10 +327,10 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS = true;
                 } else {
                     // permission denied, boo! Disable the
-                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=false;
+                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS = false;
                     // functionality that depends on this permission.
                 }
                 return;

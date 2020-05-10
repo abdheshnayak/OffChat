@@ -526,6 +526,13 @@ public class respData {
         }
 
     }
+    public static  boolean checkPhoneNumber(String PhoneNumber){
+        if (PhoneNumber!=null){
+            return isValidMobile(PhoneNumber);
+        }else return false;
+    }
+
+
 
 
 }

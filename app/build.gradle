@@ -45,7 +45,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-database:19.3.0'
     implementation 'com.google.firebase:firebase-ads:19.1.0'
-    implementation 'com.google.firebase:firebase-analytics:17.4.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
     implementation 'com.google.firebase:firebase-auth'
 
     testImplementation 'junit:junit:4.13'
@@ -56,8 +56,8 @@ dependencies {
     implementation 'com.hbb20:ccp:1.7.1'
 
     implementation 'com.google.android.material:material:1.2.0-alpha06'
-    implementation 'com.google.firebase:firebase-messaging:20.1.6'
-
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.simplecityapps:recyclerview-fastscroll:2.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
