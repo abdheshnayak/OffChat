@@ -811,7 +811,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 mMessageBox.getText().clear();
                 mydb.insertMessage(message.getMsgBody(), message.getMessageSource(), message.getMessageSentTime(), 0, message.getMessageID(), getRoot(message.getMessageSource(), message.getMessageFor()), message.getMessageFor(), message.getReplyId());
                 if (!OFFLINE_SEND || PHONE_STATUS || !senderUserName.substring(0,senderUserName.length()-10).equals("+977")) {
-                    if (!OFFLINE_SEND || PHONE_STATUS){
+                    if (OFFLINE_SEND && !PHONE_STATUS){
 //                        Toast.makeText(getApplicationContext(),String.valueOf(OFFLINE_SEND)+String.valueOf(PHONE_STATUS)+senderUserName.substring(0,senderUserName.length()-10),Toast.LENGTH_LONG).show();
                         Toast.makeText(getApplicationContext(),"Offline Mode not supported in your Country",Toast.LENGTH_LONG).show();
                     }
@@ -1008,8 +1008,8 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
         } else {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNo, null, message, null, null);
-            Toast.makeText(getApplicationContext(), "SMS sent.",
-                    Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "SMS sent.",
+//                    Toast.LENGTH_LONG).show();
         }
 
     }

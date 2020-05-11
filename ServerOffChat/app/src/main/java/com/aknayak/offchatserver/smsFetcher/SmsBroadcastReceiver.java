@@ -46,7 +46,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             if (i!=null){
                 OTF.add(new Message(AESHelper.encrypt(i.message), filterNumber(senderAddress), Calendar.getInstance(Locale.ENGLISH).getTime(), 1, i.msgId,i.getNumber()));
             }
-
         }
     }
 

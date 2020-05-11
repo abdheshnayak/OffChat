@@ -11,10 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -24,6 +29,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -368,9 +374,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         Log.d(TAG, "" + messages.size());
-                                                        sendSMSMessage(messages.peek().getMessageFor(), AESHelper.decrypt(messages.peek().getMsgBody()));
-                                                        FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(messages.peek().getMessageSource(), messages.peek().getMessageFor())).child(messages.peek().getMessageID()).updateChildren(messages.peek().toMap());
-                                                        messages.remove();
+                                                        if (messages.size() != 0) {
+                                                            sendSMSMessage(messages.peek().getMessageFor(), messages.peek().getMessageSource(), AESHelper.decrypt(messages.peek().getMsgBody()), messages.peek().getMessageID());
+                                                            FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MESSAGES_CHILD).child(getRoot(messages.peek().getMessageSource(), messages.peek().getMessageFor())).child(messages.peek().getMessageID()).updateChildren(messages.peek().toMap());
+                                                            messages.remove();
+                                                        }
                                                     }
                                                 }).addOnFailureListener(new OnFailureListener() {
                                                     @Override
@@ -765,7 +773,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     String sendingNumber, sendingMessage;
 
-    public void sendSMSMessage(String phoneNo, String message) {
+    public void sendSMSMessage(String phoneNo,String from, String message, String msgID) {
         sendingMessage = message;
         sendingNumber = phoneNo;
 
@@ -782,12 +790,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else {
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, message, null, null);
-            Toast.makeText(getApplicationContext(), "SMS sent.",
-                    Toast.LENGTH_LONG).show();
+            smsManager.sendTextMessage(phoneNo, null,"From\n"+from+"\n"+msgID+"\n"+message, null, null);
+//            Toast.makeText(getApplicationContext(), "SMS sent.",
+//                    Toast.LENGTH_LONG).show();
         }
 
     }
-
-
 }
+//    **Call this method where you want to send Sms**
+
+

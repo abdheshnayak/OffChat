@@ -419,9 +419,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        FirebaseApp.initializeApp(this);
 
-        Intent i = new Intent(com.aknayak.offchat.services.mainService.class.getName());
-        i.setPackage(this.getPackageName());
-        startService(i);
 
         cdt = new CountDownTimer(25000, 25000) {
             @Override
@@ -600,6 +597,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(getApplicationContext(), permissions_grant.class));
             finish();
         } else {
+            Intent i = new Intent(com.aknayak.offchat.services.mainService.class.getName());
+            i.setPackage(this.getPackageName());
+            startService(i);
+
             if (mydb.getAllCotacts().size() <= 1) {
                 SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -610,6 +611,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return true;
     }
-
-
 }
