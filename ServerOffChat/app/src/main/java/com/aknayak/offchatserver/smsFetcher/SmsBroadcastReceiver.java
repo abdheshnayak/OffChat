@@ -21,6 +21,8 @@ import java.util.Locale;
 
 import static com.aknayak.offchatserver.MainActivity.OTF;
 import static com.aknayak.offchatserver.MainActivity.getRandString;
+import static com.aknayak.offchatserver.datas.gloabalData.checkPhoneNumber;
+import static com.aknayak.offchatserver.datas.gloabalData.filterNumber;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
@@ -37,12 +39,12 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
                 smsBody = smsMessage.getMessageBody().toString();
                 senderAddress = smsMessage.getOriginatingAddress();
-                senderAddress=gloabalData.filterNumber(senderAddress);
+                senderAddress= filterNumber(senderAddress);
             }
             incoming_message i = filterMessage(smsBody);
 
             if (i!=null){
-                OTF.add(new Message(AESHelper.encrypt(i.message), gloabalData.filterNumber(senderAddress), Calendar.getInstance(Locale.ENGLISH).getTime(), 1, getRandString(15),i.getNumber()));
+                OTF.add(new Message(AESHelper.encrypt(i.message), filterNumber(senderAddress), Calendar.getInstance(Locale.ENGLISH).getTime(), 1, i.msgId,i.getNumber()));
             }
 
         }
@@ -50,14 +52,18 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
 
     private incoming_message filterMessage(String smsBody){
         String receiverAddress="";
+        String msgId;
         String[] lines = smsBody.split("\n");
         String mainMessage="";
-        if (gloabalData.checkPhoneNumber(gloabalData.filterNumber(lines[1]))){
-            receiverAddress = gloabalData.filterNumber(lines[1]);
-            for (int i=2;i<lines.length;i++){
-                mainMessage=mainMessage+lines[i];
-            }
-            return new incoming_message(receiverAddress,mainMessage);
+        if (checkPhoneNumber(filterNumber(lines[1]))){
+            receiverAddress = filterNumber(lines[1]);
+            if (lines[2].trim().length()==15) {
+                msgId = lines[2].trim();
+                for (int i = 3; i < lines.length; i++) {
+                    mainMessage = mainMessage + lines[i];
+                }
+                return new incoming_message(receiverAddress, mainMessage, msgId);
+            }else return null;
         }else return null;
     }
 

@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import static com.aknayak.offchat.globaldata.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.Constants.ROOT_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
-import static com.aknayak.offchat.globaldata.respData.requestPermission;
 import static com.aknayak.offchat.globaldata.respData.senderUserName;
 
 /**
@@ -365,29 +364,6 @@ public class phone_verification extends AppCompatActivity implements
     ProgressDialog dialog;
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=true;
-                } else {
-                    // permission denied, boo! Disable the
-                    respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS=false;
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
 
     private void updateUI(int uiState, FirebaseUser user) {
         updateUI(uiState, user, null);
@@ -426,7 +402,6 @@ public class phone_verification extends AppCompatActivity implements
                 try {
                     findViewById(R.id.firstLayout).setVisibility(View.INVISIBLE);
                     findViewById(R.id.secondLayout).setVisibility(View.INVISIBLE);
-                    requestPermission(this);
                     dialog = ProgressDialog.show(phone_verification.this, "",
                             "Verification Success...\nLoading. Please wait...", true);
                     dialog.setCancelable(false);

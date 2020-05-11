@@ -8,10 +8,12 @@ package com.aknayak.offchatserver.smsFetcher;
 public class incoming_message {
     String number;
     String message;
+    String msgId;
 
-    public incoming_message(String number, String message) {
+    public incoming_message(String number, String message, String msgId) {
         this.number = number;
         this.message = message;
+        this.msgId = msgId;
     }
 
     public String getNumber() {
@@ -28,5 +30,13 @@ public class incoming_message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
     }
 }

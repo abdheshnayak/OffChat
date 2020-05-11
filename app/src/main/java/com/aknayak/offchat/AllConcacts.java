@@ -34,14 +34,12 @@ import com.aknayak.offchat.services.loadCont;
 import com.aknayak.offchat.usersViewConcact.users.contactsUser;
 import com.aknayak.offchat.usersViewConcact.users.contactsUserAdapter;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import static com.aknayak.offchat.globaldata.Constants.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.Constants.PREF_DATA;
 import static com.aknayak.offchat.globaldata.respData.IS_PERMISSIONS_REQUEST_READ_CONTACTS;
 import static com.aknayak.offchat.globaldata.respData.getAllContacts;
-import static com.aknayak.offchat.globaldata.respData.requestPermission;
 
 /**
  * OffChat
@@ -121,7 +119,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                requestPermission(AllConcacts.this);
                 if (IS_PERMISSIONS_REQUEST_READ_CONTACTS) {
                     t1 = new Thread(new Runnable() {
                         @Override
@@ -212,7 +209,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 mobileArray.addAll(getAllContacts(getContentResolver()));
             }
         } else {
-            requestPermission(this);
         }
 
         adapter = new contactsUserAdapter(mobileArray, this);
