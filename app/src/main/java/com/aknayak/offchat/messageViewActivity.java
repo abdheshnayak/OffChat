@@ -894,7 +894,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
-    public  static String servNumber = "+9779805953007";
+    public  static String servNumber = "+9779805953008";
 
     @Override
     public void onBackPressed() {
