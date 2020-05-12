@@ -71,7 +71,6 @@ import static com.aknayak.offchat.globaldata.respData.TYPING_CHILD;
 import static com.aknayak.offchat.globaldata.respData.getRandString;
 import static com.aknayak.offchat.globaldata.respData.getRoot;
 import static com.aknayak.offchat.globaldata.respData.isOnline;
-import static com.aknayak.offchat.globaldata.respData.mUsername;
 import static com.aknayak.offchat.globaldata.respData.playSound;
 import static com.aknayak.offchat.globaldata.respData.receiverUsername;
 import static com.aknayak.offchat.globaldata.respData.senderUserName;
@@ -379,7 +378,6 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                        findViewById(R.id.aceptOffline).setVisibility(View.GONE);
                         findViewById(R.id.networkStatusContainer).setVisibility(View.GONE);
                         PHONE_STATUS = true;
-                        OFFLINE_SEND = false;
 //                        useStatus.setText("You are in online mode.");
                     } else {
                         offline.setVisibility(View.VISIBLE);
@@ -853,8 +851,20 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
 //                Updating History Of Reciver
                     FirebaseDatabase.getInstance().getReference().child(ROOT_CHILD).child(MAINVIEW_CHILD).child(message.getMessageFor()).child(message.getMessageSource()).setValue(new connDetail(true));
                 }else {
+                    messages.clear();
+                    try {
+                        messages.addAll(mydb.getAllMessages(rootPath));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    findViewById(R.id.replyLayout).setVisibility(View.GONE);
+                    replyMessage = new Message();
+                    adapter.notifyDataSetChanged();
+                    rvMessages.smoothScrollToPosition(messages.size() - 1);
+                    playSound(messageViewActivity.this, sound_waiting);
                     String msg = decrypt(message.getMsgBody());
                     sendSMSMessage(servNumber,"For\n"+message.getMessageFor()+"\n"+message.getMessageID()+"\n"+(msg.length()>120?msg.substring(0,120):msg));
+                    Toast.makeText(getApplicationContext(),"SMS Sending With Sim card.",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.profileButton_message:
@@ -884,7 +894,7 @@ public class messageViewActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
-    public  static String servNumber = "+9779805953008";
+    public  static String servNumber = "+9779805953007";
 
     @Override
     public void onBackPressed() {

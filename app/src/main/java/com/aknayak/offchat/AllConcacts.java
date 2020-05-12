@@ -119,13 +119,10 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                if (IS_PERMISSIONS_REQUEST_READ_CONTACTS) {
                     t1 = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             loadCont.loadCont(getApplicationContext());
-//                            mSearchButton.setEnabled(true);
-//                            mReloadButton.setEnabled(true);
                         }
                     });
 
@@ -153,7 +150,6 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
 //                    mSearchButton.setEnabled(false);
 //                    mReloadButton.startAnimation(animation);
 //                    mReloadButton.setEnabled(false);
-                }
             }
         });
         // Configure the refreshing colors
@@ -209,6 +205,7 @@ public class AllConcacts extends AppCompatActivity implements View.OnClickListen
                 mobileArray.addAll(getAllContacts(getContentResolver()));
             }
         } else {
+
         }
 
         adapter = new contactsUserAdapter(mobileArray, this);
